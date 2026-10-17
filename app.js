@@ -60,30 +60,30 @@ function analizarPartidoCompleto(cLocal, cEmpate, cVisitante, eLocal, eVisitante
 
 async function cargarPartidos(codigoLiga = 'PD') {
   const container = document.getElementById('partidos-container');
-  container.innerHTML = '<p class="text-slate-400 text-center py-16 text-sm">Sincronizando cuotas y escudos oficiales de API-Sports...</p>';
+  if (container) {
+    container.innerHTML = '<p class="text-slate-400 text-center py-16 text-sm">Sincronizando cuotas y escudos oficiales...</p>';
+  }
 
   const sportKey = LIGAS_ODDS[codigoLiga] || LIGAS_ODDS['PD'];
   const leagueId = LIGAS_FOOTBALL_ID[codigoLiga] || 140;
   const currentYear = new Date().getFullYear();
 
   try {
-    // 1. Petición simultánea a The Odds API (Cuotas) y API-Football (Escudos y datos oficiales)
     const [responseOdds, responseFootball] = await Promise.all([
       fetch(`https://api.the-odds-api.com/v4/sports/${sportKey}/odds/?apiKey=${ODDS_API_KEY}&regions=eu&markets=h2h&dateFormat=iso`),
       fetch(`https://v3.football.api-sports.io/fixtures?league=${leagueId}&season=${currentYear}&next=10`, {
         headers: {
           'x-apisports-key': FOOTBALL_API_KEY
         }
-      })
+      }).catch(() => null)
     ]);
 
     if (!responseOdds.ok) throw new Error('Error al conectar con The Odds API');
     
     const dataOdds = await responseOdds.json();
     
-    // Intentamos extraer escudos de API-Football si la petición es exitosa
     let mapEscudos = {};
-    if (responseFootball.ok) {
+    if (responseFootball && responseFootball.ok) {
       const dataFootball = await responseFootball.json();
       if (dataFootball.response && dataFootball.response.length > 0) {
         dataFootball.response.forEach(item => {
@@ -94,20 +94,24 @@ async function cargarPartidos(codigoLiga = 'PD') {
     }
 
     partidosCargados = dataOdds;
-    // Guardamos temporalmente el mapa de escudos en la variable global
     window.escudosEquipos = mapEscudos;
 
     renderizarPartidos();
 
   } catch (error) {
     console.error('Error:', error);
-    container.innerHTML = `<p class="text-red-400 text-center py-16 text-sm">Error al sincronizar las APIs (${error.message}).</p>`;
+    if (container) {
+      container.innerHTML = `<p class="text-red-400 text-center py-16 text-sm">Error al sincronizar las APIs (${error.message}).</p>`;
+    }
   }
 }
 
 function renderizarPartidos() {
   const container = document.getElementById('partidos-container');
-  const stake = parseFloat(document.getElementById('input-stake').value) || 10;
+  if (!container) return;
+
+  const inputStake = document.getElementById('input-stake');
+  const stake = parseFloat(inputStake ? inputStake.value : 10) || 10;
   const mapEscudos = window.escudosEquipos || {};
 
   if (!partidosCargados || partidosCargados.length === 0) {
@@ -159,78 +163,77 @@ function renderizarPartidos() {
     const analisis = analizarPartidoCompleto(cuotaLocal, cuotaEmpate, cuotaVisitante, partido.home_team, partido.away_team);
     const gananciaEstimada = (stake * analisis.resultado.cuotaSugerida).toFixed(2);
 
-    // Buscamos el escudo oficial de API-Sports o usamos un marcador de respaldo
     const logoLocal = mapEscudos[partido.home_team.toLowerCase()] || '';
     const logoVisitante = mapEscudos[partido.away_team.toLowerCase()] || '';
 
     const card = document.createElement('div');
-    card.className = 'card-glass rounded-2xl p-5 flex flex-col gap-4';
+    card.className = 'card-glass rounded-2xl p-4 sm:p-5 flex flex-col gap-4';
 
     card.innerHTML = `
-      <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-        <div class="text-xs text-slate-400 w-full md:w-auto text-center md:text-left">${fecha}</div>
+      <div class="flex flex-col lg:flex-row justify-between items-center gap-4">
+        <div class="text-xs text-slate-400 w-full lg:w-auto text-center lg:text-left">${fecha}</div>
         
-        <!-- Equipos con Escudos Oficiales de API-Sports -->
-        <div class="flex items-center justify-center gap-4 w-full md:w-auto">
-          <div class="flex items-center gap-2 justify-end w-40">
-            <span class="font-bold text-right text-sm truncate" title="${partido.home_team}">${partido.home_team}</span>
-            ${logoLocal ? `<img src="${logoLocal}" class="w-6 h-6 object-contain" alt="local">` : ''}
+        <!-- Equipos -->
+        <div class="flex items-center justify-center gap-2 sm:gap-4 w-full lg:w-auto">
+          <div class="flex items-center gap-2 justify-end w-36 sm:w-40">
+            <span class="font-bold text-right text-xs sm:text-sm truncate" title="${partido.home_team}">${partido.home_team}</span>
+            ${logoLocal ? `<img src="${logoLocal}" class="w-5 h-5 sm:w-6 sm:h-6 object-contain" alt="local">` : ''}
           </div>
           <span class="text-slate-500 font-extrabold text-xs">VS</span>
-          <div class="flex items-center gap-2 w-40">
-            ${logoVisitante ? `<img src="${logoVisitante}" class="w-6 h-6 object-contain" alt="visitante">` : ''}
-            <span class="font-bold text-left text-sm truncate" title="${partido.away_team}">${partido.away_team}</span>
+          <div class="flex items-center gap-2 w-36 sm:w-40">
+            ${logoVisitante ? `<img src="${logoVisitante}" class="w-5 h-5 sm:w-6 sm:h-6 object-contain" alt="visitante">` : ''}
+            <span class="font-bold text-left text-xs sm:text-sm truncate" title="${partido.away_team}">${partido.away_team}</span>
           </div>
         </div>
 
         <!-- Panel de Cuotas 1X2 -->
-        <div class="flex items-center gap-2 bg-slate-900/80 p-2 rounded-xl border border-slate-700/60">
-          <div class="text-center px-2.5">
+        <div class="flex items-center justify-center gap-2 bg-slate-900/80 p-2 rounded-xl border border-slate-700/60 w-full sm:w-auto">
+          <div class="text-center px-3">
             <div class="text-[10px] text-slate-400 font-bold">1</div>
             <div class="text-xs font-bold text-green-400">${cuotaLocal}</div>
           </div>
-          <div class="text-center px-2.5 border-x border-slate-700/60">
+          <div class="text-center px-3 border-x border-slate-700/60">
             <div class="text-[10px] text-slate-400 font-bold">X</div>
             <div class="text-xs font-bold text-yellow-400">${cuotaEmpate}</div>
           </div>
-          <div class="text-center px-2.5">
+          <div class="text-center px-3">
             <div class="text-[10px] text-slate-400 font-bold">2</div>
             <div class="text-xs font-bold text-green-400">${cuotaVisitante}</div>
           </div>
         </div>
       </div>
 
-      <!-- Panel Multimercado (Goles, BTTS, Córners) -->
+      <!-- Panel Multimercado -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-slate-950/60 p-3 rounded-xl border border-slate-800 text-xs">
-        <div class="flex items-center gap-1.5">
+        <div class="flex items-center justify-between sm:justify-start gap-1.5">
           <span class="text-slate-400">⚽ Goles:</span>
           <span class="font-bold text-slate-200">${analisis.goles}</span>
         </div>
-        <div class="flex items-center gap-1.5">
+        <div class="flex items-center justify-between sm:justify-start gap-1.5">
           <span class="text-slate-400">🔄 Ambos Marcan:</span>
           <span class="font-bold text-slate-200">${analisis.btts}</span>
         </div>
-        <div class="flex items-center gap-1.5">
+        <div class="flex items-center justify-between sm:justify-start gap-1.5">
           <span class="text-slate-400">🚩 Córners:</span>
           <span class="font-bold text-slate-200">${analisis.corners}</span>
         </div>
       </div>
 
-      <!-- Barra de Pronóstico Principal & Apuesta -->
+      <!-- Barra de Pronóstico & Apuesta -->
       <div class="bg-slate-900/90 p-3 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-3 border border-slate-700/50">
-        <div class="flex items-center gap-2">
+        <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-center sm:text-left">
           ${analisis.resultado.esTop ? '<span class="text-[11px] bg-amber-500/20 text-amber-400 font-bold px-2.5 py-0.5 rounded-lg border border-amber-500/30">🔥 Top Pick</span>' : ''}
           <span class="text-xs text-slate-400">Recomendación:</span>
           <span class="text-xs font-bold ${analisis.resultado.color}">${analisis.resultado.texto}</span>
         </div>
 
-        <div class="flex items-center gap-3">
-          <div class="text-xs text-right">
+        <div class="flex items-center justify-between w-full sm:w-auto gap-3">
+          <div class="text-xs text-left sm:text-right">
             <span class="text-slate-400">Retorno est. (${stake}€):</span>
             <span class="font-extrabold text-green-400 ml-1">${gananciaEstimada}€</span>
           </div>
 
-          <a href="https://www.bet365.com" target="_blank" rel="noopener noreferrer" class="btn-primary text-white text-xs font-bold px-4 py-2 rounded-xl text-center">
+          <a href="https://www.bet365.com" target="_blank" rel="noopener noreferrer" class="btn-primary text-white text-xs font-bold px-4 py-2.5 rounded-xl text-center active:scale-95 transition">
             Apostar
           </a>
         </div>
@@ -248,8 +251,10 @@ function cambiarLiga(codigo) {
     btn.classList.add('bg-slate-800/80', 'hover:bg-slate-700', 'text-slate-300', 'border', 'border-slate-700/60');
   });
   const btnActivo = document.getElementById(`btn-${codigo}`);
-  btnActivo.classList.remove('bg-slate-800/80', 'hover:bg-slate-700', 'text-slate-300', 'border', 'border-slate-700/60');
-  btnActivo.classList.add('btn-primary', 'text-white');
+  if (btnActivo) {
+    btnActivo.classList.remove('bg-slate-800/80', 'hover:bg-slate-700', 'text-slate-300', 'border', 'border-slate-700/60');
+    btnActivo.classList.add('btn-primary', 'text-white');
+  }
 
   cargarPartidos(codigo);
 }
@@ -257,12 +262,14 @@ function cambiarLiga(codigo) {
 function toggleTopPicks() {
   soloTopPicks = !soloTopPicks;
   const btn = document.getElementById('btn-top-picks');
-  if (soloTopPicks) {
-    btn.classList.remove('bg-slate-800/90', 'border-slate-700/80', 'text-slate-300');
-    btn.classList.add('bg-amber-600', 'border-amber-500', 'text-white');
-  } else {
-    btn.classList.remove('bg-amber-600', 'border-amber-500', 'text-white');
-    btn.classList.add('bg-slate-800/90', 'border-slate-700/80', 'text-slate-300');
+  if (btn) {
+    if (soloTopPicks) {
+      btn.classList.remove('bg-slate-800/90', 'border-slate-700/80', 'text-slate-300');
+      btn.classList.add('bg-amber-600', 'border-amber-500', 'text-white');
+    } else {
+      btn.classList.remove('bg-amber-600', 'border-amber-500', 'text-white');
+      btn.classList.add('bg-slate-800/90', 'border-slate-700/80', 'text-slate-300');
+    }
   }
   renderizarPartidos();
 }
