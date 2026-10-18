@@ -3,33 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SportPredicts - Pronósticos & Cuotas en Vivo</title>
-  
+  <meta name="description" content="Compara cuotas de fútbol, probabilidades sin margen y cuotas con valor en La Liga, Premier League y Champions League.">
+  <title>SportPredicts - Análisis de cuotas</title>
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
+
   <!-- Custom Stylesheet -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="min-h-screen p-3 sm:p-6 md:p-8 pb-16">
   <div class="max-w-5xl mx-auto">
-    
+
     <!-- Encabezado Principal -->
     <header class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 border-b border-slate-700/60 pb-6">
       <div class="text-center sm:text-left">
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-gradient flex items-center justify-center sm:justify-start gap-2">⚽ SportPredicts</h1>
-        <p class="text-xs text-slate-400 mt-1">Pronósticos inteligentes y análisis de cuotas en tiempo real</p>
+        <h1 class="text-2xl sm:text-3xl font-extrabold flex items-center justify-center sm:justify-start gap-2"><span>⚽</span><span class="text-gradient">SportPredicts</span></h1>
+        <p class="text-xs text-slate-400 mt-1">Cuotas comparadas y probabilidades sin el margen de las casas</p>
       </div>
       <div class="flex items-center gap-3">
-        <span class="bg-green-500/10 text-green-400 text-xs font-semibold px-3 py-1.5 rounded-full border border-green-500/20 badge-glow flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span> Odds API En Vivo
-        </span>
+        <span class="text-xs font-bold text-slate-300 border border-slate-600 rounded-full px-3 py-1.5">+18</span>
       </div>
     </header>
 
     <!-- Panel de Control y Filtros -->
-    <div class="card-glass p-4 rounded-2xl mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
-      
+    <div class="card-glass p-4 rounded-2xl mb-3 flex flex-col md:flex-row justify-between items-center gap-4">
+
       <!-- Selector de Ligas -->
       <div class="flex flex-wrap justify-center sm:justify-start gap-2 w-full md:w-auto">
         <button onclick="cambiarLiga('PD')" id="btn-PD" class="liga-btn btn-primary text-white text-xs font-bold px-3.5 py-2.5 rounded-xl transition active:scale-95">La Liga</button>
@@ -37,18 +36,23 @@
         <button onclick="cambiarLiga('CL')" id="btn-CL" class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 text-xs font-bold px-3.5 py-2.5 rounded-xl border border-slate-700/60 transition active:scale-95">Champions League</button>
       </div>
 
-      <!-- Filtro de Confianza & Calculadora de Apuesta -->
+      <!-- Filtro de valor, actualizar & Calculadora de Apuesta -->
       <div class="flex flex-wrap items-center justify-between sm:justify-end gap-3 w-full md:w-auto">
-        
-        <!-- Toggle Solo Top Picks -->
-        <button onclick="toggleTopPicks()" id="btn-top-picks" class="bg-slate-800/90 hover:bg-slate-700 text-slate-300 text-xs font-bold px-3.5 py-2.5 rounded-xl border border-slate-700/80 flex items-center gap-2 transition active:scale-95">
-          🔥 Solo Top Picks
+
+        <!-- Toggle Solo con valor -->
+        <button onclick="toggleSoloValor()" id="btn-solo-valor" aria-pressed="false" class="bg-slate-800/90 hover:bg-slate-700 text-slate-300 text-xs font-bold px-3.5 py-2.5 rounded-xl border border-slate-700/80 flex items-center gap-2 transition active:scale-95">
+          💎 Solo con valor
+        </button>
+
+        <!-- Volver a pedir las cuotas (gasta créditos de la API) -->
+        <button onclick="recargar()" id="btn-recargar" title="Volver a pedir las cuotas a la API" class="bg-slate-800/90 hover:bg-slate-700 text-slate-300 text-xs font-bold px-3.5 py-2.5 rounded-xl border border-slate-700/80 flex items-center gap-2 transition active:scale-95">
+          ↻ Actualizar
         </button>
 
         <!-- Calculadora de Apuestas -->
         <div class="flex items-center gap-2 bg-slate-900/90 px-3 py-1.5 rounded-xl border border-slate-700/80">
           <label for="input-stake" class="text-[11px] text-slate-400 font-semibold">Simular Apostar:</label>
-          <input type="number" id="input-stake" value="10" min="1" max="1000" onchange="actualizarSimulacion()" oninput="actualizarSimulacion()" class="w-14 bg-slate-800 border border-slate-600 text-center text-xs font-bold text-green-400 rounded-lg py-1 focus:outline-none focus:border-green-400">
+          <input type="number" id="input-stake" value="10" min="1" max="10000" onchange="actualizarSimulacion()" oninput="actualizarSimulacion()" class="w-14 bg-slate-800 border border-slate-600 text-center text-xs font-bold text-green-400 rounded-lg py-1 focus:outline-none focus:border-green-400">
           <span class="text-xs text-slate-400 font-bold">€</span>
         </div>
 
@@ -56,10 +60,19 @@
 
     </div>
 
+    <!-- Estado de la última carga -->
+    <p id="estado" class="text-[11px] text-slate-500 mb-4 px-1" aria-live="polite"></p>
+
     <!-- Contenedor Principal de Partidos -->
-    <div id="partidos-container" class="grid gap-4">
+    <main id="partidos-container" class="grid gap-4">
       <p class="text-slate-400 text-center py-16 text-sm">Cargando próximos partidos y analizando cuotas...</p>
-    </div>
+    </main>
+
+    <!-- Aviso legal -->
+    <footer class="mt-10 pt-6 border-t border-slate-700/60 text-[11px] text-slate-500 leading-relaxed space-y-2">
+      <p>Las probabilidades son estimaciones calculadas a partir de las cuotas del mercado. No garantizan ningún resultado y las cuotas pueden cambiar. "Valor" indica que una cuota supera la estimación del mercado, no que la apuesta vaya a ganar.</p>
+      <p>Solo para mayores de 18 años. El juego puede crear adicción: juega con responsabilidad. Si necesitas ayuda, visita <a href="https://www.jugarbien.es" target="_blank" rel="noopener noreferrer" class="underline text-slate-400">jugarbien.es</a>.</p>
+    </footer>
 
   </div>
 

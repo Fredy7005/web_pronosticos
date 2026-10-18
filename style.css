@@ -70,3 +70,42 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #475569;
 }
+/* ---- Añadidos ---- */
+
+/* Insignia de cuota con valor */
+.badge-valor {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  padding: 0.125rem 0.625rem;
+  border-radius: 0.5rem;
+}
+
+/* Carga (esqueleto) */
+.skeleton {
+  background: linear-gradient(90deg, rgba(30, 41, 59, 0.5) 25%, rgba(51, 65, 85, 0.6) 50%, rgba(30, 41, 59, 0.5) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+/* Foco visible para navegar con teclado */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 2px solid #4ade80;
+  outline-offset: 2px;
+}
+
+/* Respeta a quien desactiva las animaciones */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton { animation: none; }
+  .card-glass, .btn-primary { transition: none; }
+  .card-glass:hover, .btn-primary:hover { transform: none; }
+}
