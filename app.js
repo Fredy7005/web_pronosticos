@@ -1,7 +1,6 @@
 // ===================== CONFIGURACIÓN =====================
 
 const ODDS_API_KEY = '2a11173b5f716f77724b660faf014a27';
-const FOOTBALL_API_KEY = '726c6d912ebf9bb9415e9dfd0fb8a498';
 
 const LIGAS_ODDS = {
   'PD': 'soccer_spain_la_liga',
@@ -9,37 +8,72 @@ const LIGAS_ODDS = {
   'CL': 'soccer_uefa_champs_league'
 };
 
-const LIGAS_FOOTBALL_ID = {
-  'PD': [140, 141], // Primera y Segunda División
-  'PL': [39, 40],   // Premier y Championship
-  'CL': [2]
-};
-
 const UMBRAL_VALOR = 0.02;
 const MAX_PARTIDOS = 12;
-
 const TTL_CUOTAS_MIN = 15;
-const TTL_ESCUDOS_MIN = 720;
 
-const MAPA_EQUIPOS = {
-  'wolverhampton wanderers': 'wolves',
-  'bayern munich': 'bayern munchen',
-  'red star belgrade': 'crvena zvezda',
-  'athletic bilbao': 'athletic club',
-  'celta vigo': 'celta de vigo'
-};
+// ===================== 🟢 TUS ESCUDOS MANUALES 🟢 =====================
 
-const PALABRAS_RUIDO = new Set(['fc', 'cf', 'ud', 'cd', 'afc', 'sc', 'club', 'de', 'rcd', 'the']);
+const ESCUDOS_MANUALES = {
+  // === LA LIGA EA SPORTS (Temporada 26/27) ===
+  'real madrid': 'https://upload.wikimedia.org/wikipedia/en/thumb/5/56/Real_Madrid_CF.svg/800px-Real_Madrid_CF.svg.png',
+  'barcelona': 'https://upload.wikimedia.org/wikipedia/en/thumb/4/47/FC_Barcelona_%28crest%29.svg/800px-FC_Barcelona_%28crest%29.svg.png',
+  'atletico madrid': 'https://upload.wikimedia.org/wikipedia/en/thumb/f/f4/Atletico_Madrid_2017_logo.svg/800px-Atletico_Madrid_2017_logo.svg.png',
+  'athletic club': 'https://upload.wikimedia.org/wikipedia/en/thumb/8/8c/Athletic_Club_logo.svg/800px-Athletic_Club_logo.svg.png',
+  'real sociedad': 'https://upload.wikimedia.org/wikipedia/en/thumb/f/f1/Real_Sociedad_logo.svg/800px-Real_Sociedad_logo.svg.png',
+  'real betis': 'https://upload.wikimedia.org/wikipedia/en/thumb/1/13/Real_Betis_logo.svg/800px-Real_Betis_logo.svg.png',
+  'villarreal': 'https://upload.wikimedia.org/wikipedia/en/thumb/7/70/Villarreal_CF_logo.svg/800px-Villarreal_CF_logo.svg.png',
+  'valencia': 'https://upload.wikimedia.org/wikipedia/en/thumb/c/ce/Valenciacf.svg/800px-Valenciacf.svg.png',
+  'sevilla': 'https://upload.wikimedia.org/wikipedia/en/thumb/3/3b/Sevilla_FC_logo.svg/800px-Sevilla_FC_logo.svg.png',
+  'getafe': 'https://upload.wikimedia.org/wikipedia/en/thumb/5/5c/Getafe_CF_logo.svg/800px-Getafe_CF_logo.svg.png',
+  'osasuna': 'https://upload.wikimedia.org/wikipedia/en/thumb/d/db/Osasuna_logo.svg/800px-Osasuna_logo.svg.png',
+  'celta de vigo': 'https://upload.wikimedia.org/wikipedia/en/thumb/1/12/RC_Celta_de_Vigo_logo.svg/800px-RC_Celta_de_Vigo_logo.svg.png',
+  'alaves': 'https://upload.wikimedia.org/wikipedia/en/thumb/2/2e/Deportivo_Alaves_logo.svg/800px-Deportivo_Alaves_logo.svg.png',
+  'rayo vallecano': 'https://upload.wikimedia.org/wikipedia/en/thumb/1/17/Rayo_Vallecano_logo.svg/800px-Rayo_Vallecano_logo.svg.png',
+  'espanyol': 'https://upload.wikimedia.org/wikipedia/en/thumb/d/d6/Rcd_espanyol_logo.svg/800px-Rcd_espanyol_logo.svg.png',
+  // Ascendidos / Recientes en Primera:
+  'malaga': 'https://upload.wikimedia.org/wikipedia/en/thumb/c/cd/M%C3%A1laga_CF_logo.svg/800px-M%C3%A1laga_CF_logo.svg.png',
+  'levante': 'https://upload.wikimedia.org/wikipedia/en/thumb/7/7b/Levante_UD_logo.svg/800px-Levante_UD_logo.svg.png',
+  'racing de santander': 'https://upload.wikimedia.org/wikipedia/en/thumb/c/c5/Racing_Santander_logo.svg/800px-Racing_Santander_logo.svg.png',
+  'elche': 'https://upload.wikimedia.org/wikipedia/en/thumb/a/a7/Elche_CF_logo.svg/800px-Elche_CF_logo.svg.png',
+  'deportivo de la coruna': 'https://upload.wikimedia.org/wikipedia/en/thumb/4/4e/RC_Deportivo_La_Coru%C3%B1a_logo.svg/800px-RC_Deportivo_La_Coru%C3%B1a_logo.svg.png',
 
-// Fallbacks manuales garantizados por si el límite de API-Sports se agota
-const ESCUDOS_SEGUROS = {
-  'levante': 'https://media.api-sports.io/football/teams/539.png',
-  'athletic': 'https://media.api-sports.io/football/teams/531.png',
-  'alaves': 'https://media.api-sports.io/football/teams/543.png',
-  'malaga': 'https://media.api-sports.io/football/teams/547.png',
-  'real madrid': 'https://media.api-sports.io/football/teams/541.png',
-  'barcelona': 'https://media.api-sports.io/football/teams/529.png',
-  'atletico madrid': 'https://media.api-sports.io/football/teams/530.png'
+  // === PREMIER LEAGUE (Temporada 26/27) ===
+  'arsenal': 'https://upload.wikimedia.org/wikipedia/en/thumb/5/53/Arsenal_FC.svg/800px-Arsenal_FC.svg.png',
+  'manchester city': 'https://upload.wikimedia.org/wikipedia/en/thumb/e/eb/Manchester_City_FC_badge.svg/800px-Manchester_City_FC_badge.svg.png',
+  'liverpool': 'https://upload.wikimedia.org/wikipedia/en/thumb/0/0c/Liverpool_FC.svg/800px-Liverpool_FC.svg.png',
+  'chelsea': 'https://upload.wikimedia.org/wikipedia/en/thumb/c/cc/Chelsea_FC.svg/800px-Chelsea_FC.svg.png',
+  'manchester united': 'https://upload.wikimedia.org/wikipedia/en/thumb/7/7a/Manchester_United_FC_crest.svg/800px-Manchester_United_FC_crest.svg.png',
+  'tottenham': 'https://upload.wikimedia.org/wikipedia/en/thumb/b/b4/Tottenham_Hotspur.svg/800px-Tottenham_Hotspur.svg.png',
+  'newcastle': 'https://upload.wikimedia.org/wikipedia/en/thumb/5/56/Newcastle_United_Logo.svg/800px-Newcastle_United_Logo.svg.png',
+  'aston villa': 'https://upload.wikimedia.org/wikipedia/en/thumb/f/f9/Aston_Villa_FC_crest_%282016%29.svg/800px-Aston_Villa_FC_crest_%282016%29.svg.png',
+  'brighton': 'https://upload.wikimedia.org/wikipedia/en/thumb/f/fd/Brighton_%26_Hove_Albion_logo.svg/800px-Brighton_%26_Hove_Albion_logo.svg.png',
+  'everton': 'https://upload.wikimedia.org/wikipedia/en/thumb/f/f9/Everton_FC_logo.svg/800px-Everton_FC_logo.svg.png',
+  'crystal palace': 'https://upload.wikimedia.org/wikipedia/en/thumb/0/0c/Crystal_Palace_FC_logo.svg/800px-Crystal_Palace_FC_logo.svg.png',
+  'brentford': 'https://upload.wikimedia.org/wikipedia/en/thumb/9/93/Brentford_FC_crest.svg/800px-Brentford_FC_crest.svg.png',
+  'nottingham forest': 'https://upload.wikimedia.org/wikipedia/en/thumb/e/e5/Nottingham_Forest_F.C._logo.svg/800px-Nottingham_Forest_F.C._logo.svg.png',
+  'bournemouth': 'https://upload.wikimedia.org/wikipedia/en/thumb/e/e5/AFC_Bournemouth_%282013%29.svg/800px-AFC_Bournemouth_%282013%29.svg.png',
+  'fulham': 'https://upload.wikimedia.org/wikipedia/en/thumb/a/a8/Fulham_FC_%28shield%29.svg/800px-Fulham_FC_%28shield%29.svg.png',
+  // Ascendidos / Recientes en Primera:
+  'leeds united': 'https://upload.wikimedia.org/wikipedia/en/thumb/5/54/Leeds_United_F.C._logo.svg/800px-Leeds_United_F.C._logo.svg.png',
+  'ipswich town': 'https://upload.wikimedia.org/wikipedia/en/thumb/4/43/Ipswich_Town.svg/800px-Ipswich_Town.svg.png',
+  'sunderland': 'https://upload.wikimedia.org/wikipedia/en/thumb/7/77/Logo_Sunderland.svg/800px-Logo_Sunderland.svg.png',
+  'hull city': 'https://upload.wikimedia.org/wikipedia/en/thumb/5/54/Hull_City_A.F.C._logo.svg/800px-Hull_City_A.F.C._logo.svg.png',
+  'coventry city': 'https://upload.wikimedia.org/wikipedia/en/thumb/2/24/Coventry_City_FC_logo.svg/800px-Coventry_City_FC_logo.svg.png',
+
+  // === CHAMPIONS LEAGUE (Principales) ===
+  'bayern munich': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/FC_Bayern_M%C3%BCnchen_logo_%282017%29.svg/800px-FC_Bayern_M%C3%BCnchen_logo_%282017%29.svg.png',
+  'borussia dortmund': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Borussia_Dortmund_logo.svg/800px-Borussia_Dortmund_logo.svg.png',
+  'bayer leverkusen': 'https://upload.wikimedia.org/wikipedia/en/thumb/5/59/Bayer_04_Leverkusen_logo.svg/800px-Bayer_04_Leverkusen_logo.svg.png',
+  'psg': 'https://upload.wikimedia.org/wikipedia/en/thumb/a/a7/Paris_Saint-Germain_F.C..svg/800px-Paris_Saint-Germain_F.C..svg.png',
+  'paris saint germain': 'https://upload.wikimedia.org/wikipedia/en/thumb/a/a7/Paris_Saint-Germain_F.C..svg/800px-Paris_Saint-Germain_F.C..svg.png',
+  'juventus': 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Juventus_FC_2017_icon_%28black%29.svg/800px-Juventus_FC_2017_icon_%28black%29.svg.png',
+  'inter': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/FC_Internazionale_Milano_2021.svg/800px-FC_Internazionale_Milano_2021.svg.png',
+  'ac milan': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Logo_of_AC_Milan.svg/800px-Logo_of_AC_Milan.svg.png',
+  'napoli': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/SSC_Napoli_2024_%28deep_blue_navy%29.svg/800px-SSC_Napoli_2024_%28deep_blue_navy%29.svg.png',
+  'benfica': 'https://upload.wikimedia.org/wikipedia/en/thumb/a/a2/SL_Benfica_logo.svg/800px-SL_Benfica_logo.svg.png',
+  'sporting cp': 'https://upload.wikimedia.org/wikipedia/en/thumb/e/e2/Sporting_CP_logo.svg/800px-Sporting_CP_logo.svg.png',
+  'porto': 'https://upload.wikimedia.org/wikipedia/en/thumb/f/f1/FC_Porto.svg/800px-FC_Porto.svg.png'
 };
 
 // ===================== ESTADO =====================
@@ -48,7 +82,6 @@ let ligaActual = 'PD';
 let soloValor = false;
 let ordenActual = 'fecha';
 let partidosAnalizados = [];
-let indiceEscudos = [];
 let metaCarga = null;
 let cargaId = 0;
 
@@ -63,47 +96,20 @@ const FECHA = new Intl.DateTimeFormat('es-ES', {
 });
 const media = (arr) => arr.reduce((s, x) => s + x, 0) / arr.length;
 
-function obtenerAnioTemporada() {
-  const hoy = new Date();
-  const mes = hoy.getMonth();
-  const anio = hoy.getFullYear();
-  return mes < 6 ? anio - 1 : anio;
-}
-
-function normalizarNombre(nombre) {
-  if (!nombre) return '';
-  const base = String(nombre).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
-    .replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
-  return (MAPA_EQUIPOS[base] || base).split(' ').filter((t) => t && !PALABRAS_RUIDO.has(t)).join(' ');
-}
-
-function construirIndiceEscudos(equipos) {
-  return (equipos || [])
-    .filter((e) => e && e.nombre && /^https:\/\//.test(e.logo || ''))
-    .map((e) => ({ clave: normalizarNombre(e.nombre), logo: e.logo }))
-    .map((e) => ({ ...e, tokens: e.clave.split(' ') }));
-}
-
 function buscarEscudo(nombre) {
-  const clave = normalizarNombre(nombre);
-  if (!clave) return '';
+  if (!nombre) return '';
+  // Limpiamos el nombre (minúsculas y sin tildes) para que sea fácil de buscar
+  const nombreLimpio = nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
 
-  // 1. Búsqueda exacta
-  const exacto = indiceEscudos.find((e) => e.clave === clave);
-  if (exacto) return exacto.logo;
-
-  // 2. Búsqueda por tokens (menos estricta ahora)
-  const tokens = clave.split(' ');
-  const contenidos = (a, b) => a.every((t) => b.includes(t));
-  const candidatos = indiceEscudos.filter((e) => contenidos(tokens, e.tokens) || contenidos(e.tokens, tokens));
-  if (candidatos.length > 0) return candidatos[0].logo;
-
-  // 3. Sistema de Respaldo por si la API-Sports devolvió array vacío por límite de cuota
-  for (const [key, url] of Object.entries(ESCUDOS_SEGUROS)) {
-    if (clave.includes(key)) return url;
+  // Busca en tu lista manual
+  for (const [equipo, url] of Object.entries(ESCUDOS_MANUALES)) {
+    if (nombreLimpio.includes(equipo)) {
+      return url;
+    }
   }
-
-  return ''; // Si no encuentra nada, devuelve vacío (no mostrará imagen rota)
+  
+  // Si no has puesto el escudo en la lista, muestra un balón por defecto
+  return 'https://cdn-icons-png.flaticon.com/512/53/53283.png';
 }
 
 // ===================== CAPA DE DATOS =====================
@@ -137,36 +143,6 @@ async function pedirCuotas(sportKey) {
     restantes: res.headers.get('x-requests-remaining'),
     partidos: await res.json()
   };
-}
-
-async function pedirEscudos(leagueIds, temporada) {
-  const ids = Array.isArray(leagueIds) ? leagueIds : [leagueIds];
-  let todosLosEquipos = [];
-
-  for (const id of ids) {
-    try {
-      const res = await fetch(`https://v3.football.api-sports.io/teams?league=${id}&season=${temporada}`, {
-        headers: { 'x-apisports-key': FOOTBALL_API_KEY }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        // Evitar procesar si la API devuelve error de límites
-        if (data.errors && Object.keys(data.errors).length > 0) {
-          console.warn("Límite de API-Sports alcanzado o error:", data.errors);
-        } else {
-          const equipos = (data.response || []).map((item) => ({ nombre: item.team.name, logo: item.team.logo }));
-          todosLosEquipos = todosLosEquipos.concat(equipos);
-        }
-      }
-    } catch (e) {
-      console.warn(`Falló la descarga de liga ${id}`);
-    }
-  }
-  
-  if (todosLosEquipos.length === 0) {
-    throw new Error("No se cargaron escudos. Usando respaldo...");
-  }
-  return { equipos: todosLosEquipos };
 }
 
 // ===================== MOTOR DE ANÁLISIS ROBUSTO =====================
@@ -304,20 +280,13 @@ async function cargarPartidos(codigoLiga = 'PD') {
   setEstado('Sincronizando pronósticos...');
 
   const sportKey = LIGAS_ODDS[codigoLiga] || LIGAS_ODDS['PD'];
-  const leagueId = LIGAS_FOOTBALL_ID[codigoLiga] || [140];
-  const temporada = obtenerAnioTemporada();
 
   try {
-    const [cuotas, escudos] = await Promise.all([
-      obtenerConCache(`odds:${codigoLiga}`, TTL_CUOTAS_MIN, () => pedirCuotas(sportKey)),
-      // SIMPA: Llave v3 forzando limpiar la caché corrupta del navegador
-      obtenerConCache(`escudos_v3:${codigoLiga}:${temporada}`, TTL_ESCUDOS_MIN, () => pedirEscudos(leagueId, temporada))
-        .catch(() => ({ equipos: [] }))
-    ]);
+    // Al quitar la API de escudos, la página cargará el doble de rápido
+    const cuotas = await obtenerConCache(`odds:${codigoLiga}`, TTL_CUOTAS_MIN, () => pedirCuotas(sportKey));
     if (id !== cargaId) return;
 
     partidosAnalizados = (cuotas.partidos || []).map((p, idx) => analizarPartido(p, idx)).filter(Boolean);
-    indiceEscudos = construirIndiceEscudos(escudos.equipos);
     metaCarga = { actualizado: cuotas.actualizado };
     renderizarPartidos();
   } catch (error) {
@@ -350,7 +319,7 @@ function descripcionApuesta(p, clave) {
   return 'Empate';
 }
 
-const imgEscudo = (url, alt) => url ? `<img src="${esc(url)}" class="w-7 h-7 object-contain shrink-0" alt="${esc(alt)}" loading="lazy" onerror="this.remove()">` : '';
+const imgEscudo = (url, alt) => url ? `<img src="${esc(url)}" class="w-7 h-7 object-contain shrink-0" alt="${esc(alt)}" loading="lazy" onerror="this.src='https://cdn-icons-png.flaticon.com/512/53/53283.png'">` : '';
 
 function tarjetaPartido(p, stake) {
   const cuotaFinal = p.mejorCuota.cuota;
