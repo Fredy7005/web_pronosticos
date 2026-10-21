@@ -9,10 +9,11 @@ const LIGAS_ODDS = {
   'CL': 'soccer_uefa_champs_league'
 };
 
+// SIMPA: Añadidas las segundas divisiones para garantizar que encuentra todos los escudos
 const LIGAS_FOOTBALL_ID = {
-  'PD': 140,
-  'PL': 39,
-  'CL': 2
+  'PD': [140, 141], // La Liga (140) y Segunda División España (141)
+  'PL': [39, 40],   // Premier League (39) y Championship Inglaterra (40)
+  'CL': [2]         // Champions League
 };
 
 const UMBRAL_VALOR = 0.02;
@@ -21,10 +22,14 @@ const MAX_PARTIDOS = 12;
 const TTL_CUOTAS_MIN = 15;
 const TTL_ESCUDOS_MIN = 720;
 
+// SIMPA: Añadidas las traducciones de nombres para que coincidan entre APIs
 const MAPA_EQUIPOS = {
   'wolverhampton wanderers': 'wolves',
   'bayern munich': 'bayern munchen',
-  'red star belgrade': 'crvena zvezda'
+  'red star belgrade': 'crvena zvezda',
+  'athletic bilbao': 'athletic club',
+  'celta vigo': 'celta de vigo',
+  'real betis': 'real betis'
 };
 
 const PALABRAS_RUIDO = new Set(['fc', 'cf', 'ud', 'cd', 'afc', 'sc', 'club', 'de', 'rcd', 'the']);
@@ -114,13 +119,26 @@ async function pedirCuotas(sportKey) {
   };
 }
 
-async function pedirEscudos(leagueId, temporada) {
-  const res = await fetch(`https://v3.football.api-sports.io/teams?league=${leagueId}&season=${temporada}`, {
-    headers: { 'x-apisports-key': FOOTBALL_API_KEY }
-  });
-  if (!res.ok) throw new Error(`Error al cargar escudos (${res.status})`);
-  const data = await res.json();
-  return { equipos: (data.response || []).map((item) => ({ nombre: item.team.name, logo: item.team.logo })) };
+// SIMPA: Función modificada para procesar múltiples divisiones a la vez
+async function pedirEscudos(leagueIds, temporada) {
+  const ids = Array.isArray(leagueIds) ? leagueIds : [leagueIds];
+  let todosLosEquipos = [];
+
+  for (const id of ids) {
+    try {
+      const res = await fetch(`https://v3.football.api-sports.io/teams?league=${id}&season=${temporada}`, {
+        headers: { 'x-apisports-key': FOOTBALL_API_KEY }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const equipos = (data.response || []).map((item) => ({ nombre: item.team.name, logo: item.team.logo }));
+        todosLosEquipos = todosLosEquipos.concat(equipos);
+      }
+    } catch (e) {
+      console.warn(`Error al descargar escudos de la liga ${id}`);
+    }
+  }
+  return { equipos: todosLosEquipos };
 }
 
 // ===================== MOTOR DE ANÁLISIS ROBUSTO =====================
@@ -258,13 +276,15 @@ async function cargarPartidos(codigoLiga = 'PD') {
   setEstado('Sincronizando pronósticos...');
 
   const sportKey = LIGAS_ODDS[codigoLiga] || LIGAS_ODDS['PD'];
-  const leagueId = LIGAS_FOOTBALL_ID[codigoLiga] || 140;
+  // SIMPA: Ahora pasará un array (ej. [140, 141] para España)
+  const leagueId = LIGAS_FOOTBALL_ID[codigoLiga] || [140];
   const temporada = obtenerAnioTemporada();
 
   try {
     const [cuotas, escudos] = await Promise.all([
       obtenerConCache(`odds:${codigoLiga}`, TTL_CUOTAS_MIN, () => pedirCuotas(sportKey)),
-      obtenerConCache(`escudos:${codigoLiga}:${temporada}`, TTL_ESCUDOS_MIN, () => pedirEscudos(leagueId, temporada))
+      // SIMPA: Cambiado el nombre a escudos_v2 para forzar limpiar tu caché de navegador obsoleta
+      obtenerConCache(`escudos_v2:${codigoLiga}:${temporada}`, TTL_ESCUDOS_MIN, () => pedirEscudos(leagueId, temporada))
         .catch(() => ({ equipos: [] }))
     ]);
     if (id !== cargaId) return;
