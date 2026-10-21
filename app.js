@@ -9,11 +9,10 @@ const LIGAS_ODDS = {
   'CL': 'soccer_uefa_champs_league'
 };
 
-// SIMPA: Añadidas las segundas divisiones para garantizar que encuentra todos los escudos
 const LIGAS_FOOTBALL_ID = {
-  'PD': [140, 141], // La Liga (140) y Segunda División España (141)
-  'PL': [39, 40],   // Premier League (39) y Championship Inglaterra (40)
-  'CL': [2]         // Champions League
+  'PD': [140, 141], // Primera y Segunda División
+  'PL': [39, 40],   // Premier y Championship
+  'CL': [2]
 };
 
 const UMBRAL_VALOR = 0.02;
@@ -22,17 +21,26 @@ const MAX_PARTIDOS = 12;
 const TTL_CUOTAS_MIN = 15;
 const TTL_ESCUDOS_MIN = 720;
 
-// SIMPA: Añadidas las traducciones de nombres para que coincidan entre APIs
 const MAPA_EQUIPOS = {
   'wolverhampton wanderers': 'wolves',
   'bayern munich': 'bayern munchen',
   'red star belgrade': 'crvena zvezda',
   'athletic bilbao': 'athletic club',
-  'celta vigo': 'celta de vigo',
-  'real betis': 'real betis'
+  'celta vigo': 'celta de vigo'
 };
 
 const PALABRAS_RUIDO = new Set(['fc', 'cf', 'ud', 'cd', 'afc', 'sc', 'club', 'de', 'rcd', 'the']);
+
+// Fallbacks manuales garantizados por si el límite de API-Sports se agota
+const ESCUDOS_SEGUROS = {
+  'levante': 'https://media.api-sports.io/football/teams/539.png',
+  'athletic': 'https://media.api-sports.io/football/teams/531.png',
+  'alaves': 'https://media.api-sports.io/football/teams/543.png',
+  'malaga': 'https://media.api-sports.io/football/teams/547.png',
+  'real madrid': 'https://media.api-sports.io/football/teams/541.png',
+  'barcelona': 'https://media.api-sports.io/football/teams/529.png',
+  'atletico madrid': 'https://media.api-sports.io/football/teams/530.png'
+};
 
 // ===================== ESTADO =====================
 
@@ -78,12 +86,24 @@ function construirIndiceEscudos(equipos) {
 
 function buscarEscudo(nombre) {
   const clave = normalizarNombre(nombre);
+  if (!clave) return '';
+
+  // 1. Búsqueda exacta
   const exacto = indiceEscudos.find((e) => e.clave === clave);
   if (exacto) return exacto.logo;
+
+  // 2. Búsqueda por tokens (menos estricta ahora)
   const tokens = clave.split(' ');
   const contenidos = (a, b) => a.every((t) => b.includes(t));
   const candidatos = indiceEscudos.filter((e) => contenidos(tokens, e.tokens) || contenidos(e.tokens, tokens));
-  return candidatos.length === 1 ? candidatos[0].logo : '';
+  if (candidatos.length > 0) return candidatos[0].logo;
+
+  // 3. Sistema de Respaldo por si la API-Sports devolvió array vacío por límite de cuota
+  for (const [key, url] of Object.entries(ESCUDOS_SEGUROS)) {
+    if (clave.includes(key)) return url;
+  }
+
+  return ''; // Si no encuentra nada, devuelve vacío (no mostrará imagen rota)
 }
 
 // ===================== CAPA DE DATOS =====================
@@ -119,7 +139,6 @@ async function pedirCuotas(sportKey) {
   };
 }
 
-// SIMPA: Función modificada para procesar múltiples divisiones a la vez
 async function pedirEscudos(leagueIds, temporada) {
   const ids = Array.isArray(leagueIds) ? leagueIds : [leagueIds];
   let todosLosEquipos = [];
@@ -131,12 +150,21 @@ async function pedirEscudos(leagueIds, temporada) {
       });
       if (res.ok) {
         const data = await res.json();
-        const equipos = (data.response || []).map((item) => ({ nombre: item.team.name, logo: item.team.logo }));
-        todosLosEquipos = todosLosEquipos.concat(equipos);
+        // Evitar procesar si la API devuelve error de límites
+        if (data.errors && Object.keys(data.errors).length > 0) {
+          console.warn("Límite de API-Sports alcanzado o error:", data.errors);
+        } else {
+          const equipos = (data.response || []).map((item) => ({ nombre: item.team.name, logo: item.team.logo }));
+          todosLosEquipos = todosLosEquipos.concat(equipos);
+        }
       }
     } catch (e) {
-      console.warn(`Error al descargar escudos de la liga ${id}`);
+      console.warn(`Falló la descarga de liga ${id}`);
     }
+  }
+  
+  if (todosLosEquipos.length === 0) {
+    throw new Error("No se cargaron escudos. Usando respaldo...");
   }
   return { equipos: todosLosEquipos };
 }
@@ -276,15 +304,14 @@ async function cargarPartidos(codigoLiga = 'PD') {
   setEstado('Sincronizando pronósticos...');
 
   const sportKey = LIGAS_ODDS[codigoLiga] || LIGAS_ODDS['PD'];
-  // SIMPA: Ahora pasará un array (ej. [140, 141] para España)
   const leagueId = LIGAS_FOOTBALL_ID[codigoLiga] || [140];
   const temporada = obtenerAnioTemporada();
 
   try {
     const [cuotas, escudos] = await Promise.all([
       obtenerConCache(`odds:${codigoLiga}`, TTL_CUOTAS_MIN, () => pedirCuotas(sportKey)),
-      // SIMPA: Cambiado el nombre a escudos_v2 para forzar limpiar tu caché de navegador obsoleta
-      obtenerConCache(`escudos_v2:${codigoLiga}:${temporada}`, TTL_ESCUDOS_MIN, () => pedirEscudos(leagueId, temporada))
+      // SIMPA: Llave v3 forzando limpiar la caché corrupta del navegador
+      obtenerConCache(`escudos_v3:${codigoLiga}:${temporada}`, TTL_ESCUDOS_MIN, () => pedirEscudos(leagueId, temporada))
         .catch(() => ({ equipos: [] }))
     ]);
     if (id !== cargaId) return;
@@ -509,52 +536,3 @@ function renderizarPartidos() {
   if (lista.length === 0) {
     container.innerHTML = '<p class="text-slate-400 text-center py-16 text-sm">No hay partidos próximos disponibles para la liga seleccionada.</p>';
     return;
-  }
-
-  container.innerHTML = lista.slice(0, MAX_PARTIDOS).map((p) => tarjetaPartido(p, stake)).join('');
-}
-
-function cambiarLiga(codigo) {
-  if (codigo === ligaActual && partidosAnalizados.length) return;
-  ligaActual = codigo;
-  document.querySelectorAll('.liga-btn').forEach(btn => {
-    btn.classList.remove('btn-primary', 'text-white');
-    btn.classList.add('bg-slate-800/80', 'hover:bg-slate-700', 'text-slate-300', 'border', 'border-slate-700/60');
-  });
-  const btnActivo = document.getElementById(`btn-${codigo}`);
-  if (btnActivo) {
-    btnActivo.classList.remove('bg-slate-800/80', 'hover:bg-slate-700', 'text-slate-300', 'border', 'border-slate-700/60');
-    btnActivo.classList.add('btn-primary', 'text-white');
-  }
-  cargarPartidos(codigo);
-}
-
-function toggleSoloValor() {
-  soloValor = !soloValor;
-  const btn = document.getElementById('btn-solo-valor');
-  if (btn) {
-    btn.setAttribute('aria-pressed', String(soloValor));
-    if (soloValor) {
-      btn.classList.remove('bg-slate-800/90', 'border-slate-700/80', 'text-slate-300');
-      btn.classList.add('bg-amber-600', 'border-amber-500', 'text-white');
-    } else {
-      btn.classList.remove('bg-amber-600', 'border-amber-500', 'text-white');
-      btn.classList.add('bg-slate-800/90', 'border-slate-700/80', 'text-slate-300');
-    }
-  }
-  renderizarPartidos();
-}
-
-function cambiarOrden() {
-  const select = document.getElementById('select-orden');
-  if (select) {
-    ordenActual = select.value;
-    renderizarPartidos();
-  }
-}
-
-function actualizarSimulacion() {
-  renderizarPartidos();
-}
-
-document.addEventListener('DOMContentLoaded', () => cargarPartidos('PD'));
