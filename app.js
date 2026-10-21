@@ -536,3 +536,52 @@ function renderizarPartidos() {
   if (lista.length === 0) {
     container.innerHTML = '<p class="text-slate-400 text-center py-16 text-sm">No hay partidos próximos disponibles para la liga seleccionada.</p>';
     return;
+  }
+
+  container.innerHTML = lista.slice(0, MAX_PARTIDOS).map((p) => tarjetaPartido(p, stake)).join('');
+}
+
+function cambiarLiga(codigo) {
+  if (codigo === ligaActual && partidosAnalizados.length) return;
+  ligaActual = codigo;
+  document.querySelectorAll('.liga-btn').forEach(btn => {
+    btn.classList.remove('btn-primary', 'text-white');
+    btn.classList.add('bg-slate-800/80', 'hover:bg-slate-700', 'text-slate-300', 'border', 'border-slate-700/60');
+  });
+  const btnActivo = document.getElementById(`btn-${codigo}`);
+  if (btnActivo) {
+    btnActivo.classList.remove('bg-slate-800/80', 'hover:bg-slate-700', 'text-slate-300', 'border', 'border-slate-700/60');
+    btnActivo.classList.add('btn-primary', 'text-white');
+  }
+  cargarPartidos(codigo);
+}
+
+function toggleSoloValor() {
+  soloValor = !soloValor;
+  const btn = document.getElementById('btn-solo-valor');
+  if (btn) {
+    btn.setAttribute('aria-pressed', String(soloValor));
+    if (soloValor) {
+      btn.classList.remove('bg-slate-800/90', 'border-slate-700/80', 'text-slate-300');
+      btn.classList.add('bg-amber-600', 'border-amber-500', 'text-white');
+    } else {
+      btn.classList.remove('bg-amber-600', 'border-amber-500', 'text-white');
+      btn.classList.add('bg-slate-800/90', 'border-slate-700/80', 'text-slate-300');
+    }
+  }
+  renderizarPartidos();
+}
+
+function cambiarOrden() {
+  const select = document.getElementById('select-orden');
+  if (select) {
+    ordenActual = select.value;
+    renderizarPartidos();
+  }
+}
+
+function actualizarSimulacion() {
+  renderizarPartidos();
+}
+
+document.addEventListener('DOMContentLoaded', () => cargarPartidos('PD'));
