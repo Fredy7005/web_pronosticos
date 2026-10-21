@@ -101,7 +101,6 @@ async function obtenerConCache(clave, ttlMin, pedir, forzar = false) {
 }
 
 async function pedirCuotas(sportKey) {
-  // SIMPA: Inikkat ti parameter a 'btts' a mangpataud ti 422 error, ken inikkat ti '/' sakbay ti '?'
   const res = await fetch(
     `https://api.the-odds-api.com/v4/sports/${sportKey}/odds?apiKey=${ODDS_API_KEY}&regions=eu&markets=h2h,totals&oddsFormat=decimal&dateFormat=iso`
   );
