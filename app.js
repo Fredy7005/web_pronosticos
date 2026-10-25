@@ -10,6 +10,8 @@ const LIGAS_ODDS = {
   'SA': 'soccer_italy_serie_a',
   'BL': 'soccer_germany_bundesliga',
   'L1': 'soccer_france_ligue_one'
+  'EL': 'soccer_uefa_europa_league', 
+  'ECL': 'soccer_uefa_conference_league'
 };
 
 const UMBRAL_VALOR = 0.02;
