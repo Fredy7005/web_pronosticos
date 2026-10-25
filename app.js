@@ -32,7 +32,7 @@ const UMBRAL_VALOR = 0.02;
 const MAX_PARTIDOS = 15;
 const TTL_CUOTAS_MIN = 30;
 
-// ===================== 🟢 ESCUDOS MANUALES 🟢 =====================
+// ===================== ESCUDOS MANUALES =====================
 
 const ESCUDOS_MANUALES = {
   'alaves': './Logos Equipos/La Liga/alaves.png',
@@ -350,7 +350,6 @@ function tarjetaPartido(p, stake) {
         </div>
       </div>
 
-      <!-- 🟢 BLOQUE DE MERCADOS COMPLETOS (Goles, Ambos Marcan, Córners) -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-slate-950/60 p-3 rounded-xl border border-slate-800 text-xs">
         <div class="flex items-center justify-between sm:justify-start gap-2">
           <span class="text-slate-400">⚽ Goles:</span>
@@ -487,7 +486,6 @@ function renderizarPartidos(origen = 'robot', restantes = null) {
 function toggleVistaHistorial() {
   modoHistorial = !modoHistorial;
   const btnHistorial = document.getElementById('btn-vista-historial');
-  const controlesDerecha = document.getElementById('controles-derecha');
 
   if (modoHistorial) {
     if (btnHistorial) {
@@ -545,5 +543,73 @@ function cambiarOrden() {
 function actualizarSimulacion() {
   renderizarPartidos();
 }
+
+// ===================== AUTENTICACIÓN =====================
+
+function abrirModalAuth(tipo = 'login') {
+  const modal = document.getElementById('modal-auth');
+  if (modal) {
+    modal.classList.remove('hidden');
+    cambiarTabAuth(tipo);
+  }
+}
+
+function cerrarModalAuth() {
+  const modal = document.getElementById('modal-auth');
+  if (modal) modal.classList.add('hidden');
+}
+
+function cambiarTabAuth(tipo) {
+  const tabLogin = document.getElementById('tab-login');
+  const tabRegistro = document.getElementById('tab-registro');
+  const contenido = document.getElementById('auth-contenido');
+
+  if (!tabLogin || !tabRegistro || !contenido) return;
+
+  if (tipo === 'login') {
+    tabLogin.className = "flex-1 pb-3 text-xs font-bold text-emerald-400 border-b-2 border-emerald-500 transition";
+    tabRegistro.className = "flex-1 pb-3 text-xs font-semibold text-slate-400 border-b-2 border-transparent transition";
+    
+    contenido.innerHTML = `
+      <form onsubmit="event.preventDefault(); alert('¡Simulación de inicio de sesión completada!'); cerrarModalAuth();" class="flex flex-col gap-4">
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Correo Electrónico</label>
+          <input type="email" required placeholder="tu@correo.com" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-emerald-500">
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Contraseña</label>
+          <input type="password" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-emerald-500">
+        </div>
+        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-3 rounded-xl transition shadow-lg mt-2">Acceder a SportPredicts</button>
+      </form>
+    `;
+  } else {
+    tabRegistro.className = "flex-1 pb-3 text-xs font-bold text-emerald-400 border-b-2 border-emerald-500 transition";
+    tabLogin.className = "flex-1 pb-3 text-xs font-semibold text-slate-400 border-b-2 border-transparent transition";
+    
+    contenido.innerHTML = `
+      <form onsubmit="event.preventDefault(); alert('¡Registro simulado con éxito! Bienvenido a la comunidad.'); cerrarModalAuth();" class="flex flex-col gap-3">
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Nombre de Usuario</label>
+          <input type="text" required placeholder="TuApodoDeApostador" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-emerald-500">
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Correo Electrónico</label>
+          <input type="email" required placeholder="tu@correo.com" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-emerald-500">
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Contraseña</label>
+          <input type="password" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-emerald-500">
+        </div>
+        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-3 rounded-xl transition shadow-lg mt-2">Crear Cuenta Gratuita</button>
+      </form>
+    `;
+  }
+}
+
+document.addEventListener('click', (e) => {
+  const modalAuth = document.getElementById('modal-auth');
+  if (e.target === modalAuth) cerrarModalAuth();
+});
 
 document.addEventListener('DOMContentLoaded', () => cargarPartidos('PD'));
