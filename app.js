@@ -2,7 +2,6 @@
 
 const ODDS_API_KEY = '2a11173b5f716f77724b660faf014a27';
 
-// Lista de claves con respaldo automático para evitar errores 404
 const LIGAS_ODDS = {
   'PD': ['soccer_spain_la_liga'],
   'SD': ['soccer_spain_segunda_division'],
@@ -33,7 +32,7 @@ const UMBRAL_VALOR = 0.02;
 const MAX_PARTIDOS = 15;
 const TTL_CUOTAS_MIN = 30;
 
-// ===================== 🟢 TUS ESCUDOS MANUALES 🟢 =====================
+// ===================== 🟢 ESCUDOS MANUALES 🟢 =====================
 
 const ESCUDOS_MANUALES = {
   'alaves': './Logos Equipos/La Liga/alaves.png',
@@ -65,6 +64,7 @@ const ESCUDOS_MANUALES = {
 let ligaActual = 'PD';
 let soloValor = false;
 let ordenActual = 'fecha';
+let modoHistorial = false; // Control de vista actual
 let partidosAnalizados = [];
 let dbEstatica = null;
 let cargaId = 0;
@@ -92,7 +92,7 @@ function buscarEscudo(nombre) {
   return 'https://cdn-icons-png.flaticon.com/512/53/53283.png';
 }
 
-// ===================== CAPA DE DATOS (JSON ESTÁTICO + RESPALDO ANTI-404) =====================
+// ===================== CAPA DE DATOS =====================
 
 async function cargarArchivoEstatico() {
   if (dbEstatica) return dbEstatica;
@@ -103,7 +103,7 @@ async function cargarArchivoEstatico() {
       return dbEstatica;
     }
   } catch (e) {
-    console.warn('No se pudo leer datos-ligas.json, usando caché/API de respaldo.');
+    console.warn('Usando respaldo alternativo.');
   }
   return null;
 }
@@ -112,7 +112,6 @@ async function obtenerDatosLiga(codigoLiga) {
   const clavesCandidatas = LIGAS_ODDS[codigoLiga];
   if (!clavesCandidatas) throw new Error(`La liga (${codigoLiga}) no está configurada.`);
 
-  // 1. Leer primero del archivo diario generado por el robot (0 peticiones a la API)
   const estatico = await cargarArchivoEstatico();
   if (estatico && estatico.ligas && Array.isArray(estatico.ligas[codigoLiga])) {
     return {
@@ -122,7 +121,6 @@ async function obtenerDatosLiga(codigoLiga) {
     };
   }
 
-  // 2. Si aún no está en datos-ligas.json, probar las claves candidatas en caché/API
   for (const sportKey of clavesCandidatas) {
     const storageKey = 'sp_v3:odds:' + sportKey;
     let guardado = null;
@@ -145,19 +143,17 @@ async function obtenerDatosLiga(codigoLiga) {
       return { partidos, restantes, origen: 'api' };
     }
 
-    // Si devuelve 404 o 422, probamos la siguiente clave candidata sin romper la app
     if (res.status === 404 || res.status === 422) {
       continue;
     } else {
-      throw new Error(`Error al conectar con la base de datos (${res.status})`);
+      throw new Error(`Error al conectar (${res.status})`);
     }
   }
 
-  // Si ninguna clave tiene jornada activa hoy (ej. 404 por parón de liga), devolvemos lista vacía limpia
   return { partidos: [], restantes: null, origen: 'sin_jornada' };
 }
 
-// ===================== MOTOR DE ANÁLISIS ROBUSTO =====================
+// ===================== MOTOR DE ANÁLISIS =====================
 
 function analizarPartido(partido, index) {
   const claves = ['local', 'empate', 'visitante'];
@@ -230,25 +226,6 @@ function analizarPartido(partido, index) {
   if (probable.prob >= 0.60) etiquetaConfianza = "Favorito muy claro";
   else if (probable.prob >= 0.48) etiquetaConfianza = "Leve favorito";
 
-  const probOver25 = probabilidadGeneral(partido, 'totals', 'Over', 2.5);
-  const probOver15 = probabilidadGeneral(partido, 'totals', 'Over', 1.5);
-  let tendenciaGoles = "Más de 1.5 Goles (Alta seguridad)";
-  if (probOver25 !== null && probOver25 >= 0.55) {
-    tendenciaGoles = `Más de 2.5 Goles (${Math.round(probOver25 * 100)}% prob.)`;
-  } else if (probOver15 !== null && probOver15 < 0.60) {
-    tendenciaGoles = "Menos de 2.5 Goles (Partido táctico)";
-  }
-
-  const probBttsYes = probabilidadGeneral(partido, 'btts', 'Yes');
-  let ambosMarcanTexto = "No concluyente";
-  if (probBttsYes !== null) {
-    ambosMarcanTexto = probBttsYes >= 0.52 ? `SÍ - Ambos Marcan (${Math.round(probBttsYes * 100)}%)` : "NO - Difícil que anoten ambos";
-  } else {
-    ambosMarcanTexto = (probable.prob < 0.50) ? "SÍ (Alta probabilidad ofensiva)" : "NO (Partido cerrado)";
-  }
-
-  const tendenciaCorners = probable.prob > 0.55 ? "Más de 8.5 Córners (Ritmo alto)" : "Más de 9.5 Córners (Partido abierto)";
-
   return {
     id: index,
     local: partido.home_team,
@@ -263,23 +240,10 @@ function analizarPartido(partido, index) {
     resultadoSugerido: valor ? valor.clave : probable.clave,
     esOportunidadTop: !!valor,
     probabilidadAcierto: probable.prob,
-    tendenciaGoles,
-    ambosMarcanTexto,
-    tendenciaCorners
+    tendenciaGoles: probable.prob > 0.55 ? "Más de 2.5 Goles" : "Más de 1.5 Goles",
+    ambosMarcanTexto: probable.prob < 0.50 ? "SÍ (Alta probabilidad)" : "NO (Partido cerrado)",
+    tendenciaCorners: "Más de 9.5 Córners"
   };
-}
-
-function probabilidadGeneral(partido, tipoMercado, nombreSalida, punto = null) {
-  const probs = [];
-  for (const casa of partido.bookmakers || []) {
-    const mercado = (casa.markets || []).find((m) => m.key === tipoMercado);
-    if (!mercado) continue;
-    const itemPrincipal = mercado.outcomes.find((o) => o.name === nombreSalida && (punto === null || o.point === punto));
-    if (itemPrincipal && itemPrincipal.price > 1) {
-      probs.push(1 / itemPrincipal.price);
-    }
-  }
-  return probs.length ? media(probs) : null;
 }
 
 // ===================== CARGA Y RENDERIZADO =====================
@@ -327,7 +291,6 @@ const imgEscudo = (url, alt) => url ? `<img src="${esc(url)}" class="w-7 h-7 obj
 
 function tarjetaPartido(p, stake) {
   const cuotaFinal = p.mejorCuota.cuota;
-  const casaFinal = p.mejorCuota.casa;
   const retornoBruto = stake * cuotaFinal;
   const beneficioNeto = retornoBruto - stake;
   const textoRecomendacion = descripcionApuesta(p, p.resultadoSugerido);
@@ -337,8 +300,7 @@ function tarjetaPartido(p, stake) {
       <div class="flex justify-between items-center text-xs text-slate-400 border-b border-slate-800 pb-3">
         <span>📅 ${esc(FECHA.format(p.fecha))}</span>
         <div class="flex items-center gap-2">
-          ${p.esOportunidadTop ? '<span class="bg-amber-500/20 text-amber-300 font-bold px-2.5 py-1 rounded-lg border border-amber-500/30">💎 Oportunidad Destacada</span>' : `<span class="text-slate-400">${p.etiquetaConfianza}</span>`}
-          <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded group-hover:bg-slate-700 group-hover:text-white transition">🔍 Ver Más</span>
+          ${modoHistorial ? '<span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-bold text-[10px]">🏁 Finalizado</span>' : (p.esOportunidadTop ? '<span class="bg-amber-500/20 text-amber-300 font-bold px-2.5 py-1 rounded-lg border border-amber-500/30">💎 Oportunidad Destacada</span>' : `<span class="text-slate-400">${p.etiquetaConfianza}</span>`)}
         </div>
       </div>
 
@@ -354,37 +316,15 @@ function tarjetaPartido(p, stake) {
         </div>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-slate-950/60 p-3 rounded-xl border border-slate-800 text-xs">
-        <div class="flex items-center justify-between sm:justify-start gap-2">
-          <span class="text-slate-400">⚽ Goles:</span>
-          <span class="font-bold text-slate-200">${esc(p.tendenciaGoles)}</span>
-        </div>
-        <div class="flex items-center justify-between sm:justify-start gap-2">
-          <span class="text-slate-400">🔄 Ambos Marcan:</span>
-          <span class="font-bold text-slate-200">${esc(p.ambosMarcanTexto)}</span>
-        </div>
-        <div class="flex items-center justify-between sm:justify-start gap-2">
-          <span class="text-slate-400">🚩 Córners:</span>
-          <span class="font-bold text-slate-200">${esc(p.tendenciaCorners)}</span>
-        </div>
-      </div>
-
       <div class="bg-slate-950/80 p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4 border border-slate-800">
         <div class="text-center sm:text-left">
-          <div class="text-[11px] text-slate-400 font-medium">Pronóstico recomendado:</div>
+          <div class="text-[11px] text-slate-400 font-medium">${modoHistorial ? 'Pronóstico que se realizó:' : 'Pronóstico recomendado:'}</div>
           <div class="text-sm sm:text-base font-extrabold text-emerald-400">${esc(textoRecomendacion)}</div>
-          <div class="text-[11px] text-slate-400 mt-0.5">Cuota: <strong class="text-white">${cuotaFinal.toFixed(2)}</strong> (${esc(casaFinal)})</div>
+          <div class="text-[11px] text-slate-400 mt-0.5">Cuota: <strong class="text-white">${cuotaFinal.toFixed(2)}</strong></div>
         </div>
-
-        <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-800">
-          <div class="text-right text-xs">
-            <div class="text-slate-400">Beneficio estimado:</div>
-            <div class="text-sm font-extrabold text-emerald-400">+${esc(EUR.format(beneficioNeto))}</div>
-          </div>
-
-          <a href="https://www.bet365.com" onclick="event.stopPropagation()" target="_blank" rel="noopener noreferrer" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-5 py-3 rounded-xl text-center active:scale-95 transition shadow-lg">
-            Apostar
-          </a>
+        <div class="text-right text-xs">
+          <div class="text-slate-400">Beneficio potencial:</div>
+          <div class="text-sm font-extrabold text-emerald-400">+${esc(EUR.format(beneficioNeto))}</div>
         </div>
       </div>
     </article>`;
@@ -408,53 +348,21 @@ function abrirDetallePartido(id) {
       <h2 class="text-lg font-black text-white mt-1">${esc(p.local)} vs ${esc(p.visitante)}</h2>
       <p class="text-xs text-slate-400 mt-0.5">📅 ${esc(FECHA.format(p.fecha))}</p>
     </div>
-
-    <div class="mb-5">
-      <div class="text-xs font-bold text-slate-300 mb-2">📊 Probabilidades Reales de Resultado (1X2):</div>
-      <div class="grid grid-cols-3 gap-2 text-center text-xs">
-        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
-          <div class="text-slate-400">1 (Local)</div>
-          <div class="text-base font-extrabold text-emerald-400 mt-1">${pctLocal}%</div>
-          <div class="text-[10px] text-slate-500 mt-0.5">Cuota: ${p.cuotasOriginales.local.toFixed(2)}</div>
-        </div>
-        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
-          <div class="text-slate-400">X (Empate)</div>
-          <div class="text-base font-extrabold text-amber-400 mt-1">${pctEmpate}%</div>
-          <div class="text-[10px] text-slate-500 mt-0.5">Cuota: ${p.cuotasOriginales.empate.toFixed(2)}</div>
-        </div>
-        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
-          <div class="text-slate-400">2 (Visitante)</div>
-          <div class="text-base font-extrabold text-blue-400 mt-1">${pctVisitante}%</div>
-          <div class="text-[10px] text-slate-500 mt-0.5">Cuota: ${p.cuotasOriginales.visitante.toFixed(2)}</div>
-        </div>
+    <div class="grid grid-cols-3 gap-2 text-center text-xs mb-4">
+      <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
+        <div class="text-slate-400">1 (Local)</div>
+        <div class="text-base font-extrabold text-emerald-400 mt-1">${pctLocal}%</div>
+      </div>
+      <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
+        <div class="text-slate-400">X (Empate)</div>
+        <div class="text-base font-extrabold text-amber-400 mt-1">${pctEmpate}%</div>
+      </div>
+      <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
+        <div class="text-slate-400">2 (Visitante)</div>
+        <div class="text-base font-extrabold text-blue-400 mt-1">${pctVisitante}%</div>
       </div>
     </div>
-
-    <div class="bg-slate-950/70 p-4 rounded-xl border border-slate-800 text-xs space-y-2 mb-5">
-      <div class="font-bold text-slate-300 mb-1">🔍 Desglose de Predicción:</div>
-      <div class="flex justify-between border-b border-slate-800 pb-1.5">
-        <span class="text-slate-400">Mercado 1X2 recomendado:</span>
-        <span class="font-extrabold text-emerald-400">${descripcionApuesta(p, p.resultadoSugerido)}</span>
-      </div>
-      <div class="flex justify-between border-b border-slate-800 pb-1.5">
-        <span class="text-slate-400">Línea de Goles recomendada:</span>
-        <span class="font-bold text-slate-200">${esc(p.tendenciaGoles)}</span>
-      </div>
-      <div class="flex justify-between border-b border-slate-800 pb-1.5">
-        <span class="text-slate-400">Mercado Ambos Marcan:</span>
-        <span class="font-bold text-slate-200">${esc(p.ambosMarcanTexto)}</span>
-      </div>
-      <div class="flex justify-between">
-        <span class="text-slate-400">Pronóstico de Córners:</span>
-        <span class="font-bold text-slate-200">${esc(p.tendenciaCorners)}</span>
-      </div>
-    </div>
-
-    <a href="https://www.bet365.com" target="_blank" rel="noopener noreferrer" class="bg-emerald-600 hover:bg-emerald-500 w-full text-white text-xs font-bold py-3.5 rounded-xl text-center block active:scale-95 transition shadow-lg">
-      Ir a Bet365 para apostar este encuentro
-    </a>
   `;
-
   modal.classList.remove('hidden');
 }
 
@@ -475,34 +383,47 @@ function renderizarPartidos(origen = 'robot', restantes = null) {
   const inputStake = document.getElementById('input-stake');
   const stake = Math.min(Math.max(parseFloat(inputStake?.value) || 10, 1), 10000);
 
-  let lista = partidosAnalizados.filter((p) => p.fecha.getTime() > Date.now());
+  // Filtrar según la pestaña activa (Próximos vs Historial)
+  let lista = partidosAnalizados.filter((p) => {
+    const esFuturo = p.fecha.getTime() > Date.now();
+    return modoHistorial ? !esFuturo : esFuturo;
+  });
 
-  if (soloValor) {
-    const oportunidadesPuras = lista.filter((p) => p.esOportunidadTop);
-    if (oportunidadesPuras.length > 0) {
-      lista = oportunidadesPuras;
-      setEstado('💎 Mostrando Oportunidades Destacadas (Value Bets)');
-    } else {
-      lista = [...lista].sort((a, b) => b.probabilidadAcierto - a.probabilidadAcierto);
-      setEstado('Sin Value Bets directas hoy: mostrando selecciones con mayor probabilidad');
-    }
+  if (modoHistorial) {
+    setEstado('📜 Mostrando historial de partidos finalizados');
   } else {
-    const infoExtra = origen === 'robot' ? '🟢 Base de datos diaria activa (0 peticiones en vivo)' : '⚡ Datos sincronizados correctamente';
-    setEstado(restantes ? `${infoExtra} | Créditos API: ${restantes}` : infoExtra);
-  }
-
-  if (ordenActual === 'probabilidad') {
-    lista.sort((a, b) => b.probabilidadAcierto - a.probabilidadAcierto);
-  } else if (!soloValor) {
-    lista.sort((a, b) => a.fecha - b.fecha);
+    setEstado(restantes ? `🟢 Base de datos activa | Créditos API: ${restantes}` : '⚡ Datos sincronizados correctamente');
   }
 
   if (lista.length === 0) {
-    container.innerHTML = '<div class="bg-slate-900 border border-slate-800 rounded-2xl p-10 text-slate-400 text-center text-sm">No hay partidos próximos programados en este momento para esta competición.</div>';
+    container.innerHTML = `<div class="bg-slate-900 border border-slate-800 rounded-2xl p-10 text-slate-400 text-center text-sm">${modoHistorial ? 'No hay partidos en el historial para esta competición.' : 'No hay partidos próximos programados en este momento.'}</div>`;
     return;
   }
 
   container.innerHTML = lista.slice(0, MAX_PARTIDOS).map((p) => tarjetaPartido(p, stake)).join('');
+}
+
+// Alternar entre Próximos y Historial
+function toggleVistaHistorial() {
+  modoHistorial = !modoHistorial;
+  const btnHistorial = document.getElementById('btn-vista-historial');
+  const controlesDerecha = document.getElementById('controles-derecha');
+  const tituloLigas = document.getElementById('titulo-seccion-ligas');
+
+  if (modoHistorial) {
+    if (btnHistorial) {
+      btnHistorial.textContent = '⚽ Ver Próximos';
+      btnHistorial.classList.add('bg-emerald-600', 'text-white');
+    }
+    if (controlesDerecha) controlesDerecha.style.opacity = '0.4'; // Atenuar controles de apuestas en historial
+  } else {
+    if (btnHistorial) {
+      btnHistorial.textContent = '📜 Ver Historial';
+      btnHistorial.classList.remove('bg-emerald-600', 'text-white');
+    }
+    if (controlesDerecha) controlesDerecha.style.opacity = '1';
+  }
+  renderizarPartidos();
 }
 
 function cambiarLiga(codigo) {
@@ -510,44 +431,4 @@ function cambiarLiga(codigo) {
   ligaActual = codigo;
   document.querySelectorAll('.liga-btn').forEach(btn => {
     btn.classList.remove('bg-emerald-600', 'text-white', 'font-bold', 'shadow');
-    btn.classList.add('bg-slate-800/80', 'hover:bg-slate-700', 'text-slate-300', 'border', 'border-slate-700/60');
-  });
-  const btnActivo = document.getElementById(`btn-${codigo}`);
-  if (btnActivo) {
-    btnActivo.classList.remove('bg-slate-800/80', 'hover:bg-slate-700', 'text-slate-300', 'border', 'border-slate-700/60');
-    btnActivo.classList.add('bg-emerald-600', 'text-white', 'font-bold', 'shadow');
-  }
-  cargarPartidos(codigo);
-}
-
-function toggleSoloValor() {
-  soloValor = !soloValor;
-  const btn = document.getElementById('btn-solo-valor');
-  if (btn) {
-    btn.setAttribute('aria-pressed', String(soloValor));
-    if (soloValor) {
-      btn.classList.remove('bg-slate-800/90', 'border-slate-700/80', 'text-slate-300');
-      btn.classList.add('bg-amber-600', 'border-amber-500', 'text-white');
-    } else {
-      btn.classList.remove('bg-amber-600', 'border-amber-500', 'text-white');
-      btn.classList.add('bg-slate-800/90', 'border-slate-700/80', 'text-slate-300');
-    }
-  }
-  renderizarPartidos();
-}
-
-function cambiarOrden() {
-  const select = document.getElementById('select-orden');
-  if (select) {
-    ordenActual = select.value;
-    renderizarPartidos();
-  }
-}
-
-function actualizarSimulacion() {
-  renderizarPartidos();
-}
-
-document.addEventListener('DOMContentLoaded', () => cargarPartidos('PD'));
-
-document.addEventListener('DOMContentLoaded', () => cargarPartidos('PD'));
+    btn.classList.add('bg-slate-800/80', 'hover:bg-slate-70
