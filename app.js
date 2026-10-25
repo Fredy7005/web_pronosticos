@@ -2,10 +2,14 @@
 
 const ODDS_API_KEY = '2a11173b5f716f77724b660faf014a27';
 
+// Añadidas nuevas ligas europeas
 const LIGAS_ODDS = {
   'PD': 'soccer_spain_la_liga',
   'PL': 'soccer_epl',
-  'CL': 'soccer_uefa_champs_league'
+  'CL': 'soccer_uefa_champs_league',
+  'SA': 'soccer_italy_serie_a',
+  'BL': 'soccer_germany_bundesliga',
+  'L1': 'soccer_france_ligue_1'
 };
 
 const UMBRAL_VALOR = 0.02;
@@ -13,7 +17,6 @@ const MAX_PARTIDOS = 12;
 const TTL_CUOTAS_MIN = 15;
 
 // ===================== 🟢 TUS ESCUDOS MANUALES 🟢 =====================
-// Rutas relativas apuntando a la carpeta de tu repositorio GitHub
 
 const ESCUDOS_MANUALES = {
   // === LA LIGA EA SPORTS ===
@@ -40,7 +43,7 @@ const ESCUDOS_MANUALES = {
   'valencia': './Logos Equipos/La Liga/valencia.png',
   'villarreal': './Logos Equipos/La Liga/villareal.png',
 
-  // === PREMIER LEAGUE (Pendiente de crear carpeta y subir fotos) ===
+  // === OTRAS LIGAS (Se irán rellenando cuando subas sus escudos) ===
   'arsenal': '',
   'manchester city': '',
   'liverpool': '',
@@ -61,8 +64,6 @@ const ESCUDOS_MANUALES = {
   'sunderland': '',
   'hull city': '',
   'coventry city': '',
-
-  // === CHAMPIONS LEAGUE (Pendiente de crear carpeta y subir fotos) ===
   'bayern munich': '',
   'borussia dortmund': '',
   'bayer leverkusen': '',
@@ -99,14 +100,10 @@ const media = (arr) => arr.reduce((s, x) => s + x, 0) / arr.length;
 
 function buscarEscudo(nombre) {
   if (!nombre) return '';
-  // Limpiamos el nombre para que coincida con las claves del diccionario
   const nombreLimpio = nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
 
   for (const [equipo, ruta] of Object.entries(ESCUDOS_MANUALES)) {
-    // Devuelve la ruta local si encuentra el equipo y la ruta no está vacía
     if (nombreLimpio.includes(equipo) && ruta.trim() !== '') {
-      // Como el nombre de la carpeta tiene un espacio ("Logos Equipos"), 
-      // lo codificamos con encodeURI para que el navegador no lo rompa.
       return encodeURI(ruta);
     }
   }
@@ -527,7 +524,7 @@ function cambiarLiga(codigo) {
 
 function toggleSoloValor() {
   soloValor = !soloValor;
-  const btn = document.getElementById('btn-solo-valor');
+  const btn = document.getElementById('btn-solo-valoor');
   if (btn) {
     btn.setAttribute('aria-pressed', String(soloValor));
     if (soloValor) {
