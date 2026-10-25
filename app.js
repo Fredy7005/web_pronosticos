@@ -560,21 +560,11 @@ function actualizarSimulacion() {
   renderizarPartidos();
 }
 
-// ===================== AUTENTICACIÓN REAL CON FIREBASE =====================
+// ===================== AUTENTICACIÓN CON FIREBASE =====================
 
 auth.onAuthStateChanged((user) => {
-  const headerBtns = document.querySelector('header .flex.items-center.flex-wrap.gap-2\\.5');
-  if (!headerBtns) return;
-
-  // Buscar si ya existe el bloque dinámico de sesión
-  let authContainer = document.getElementById('auth-user-container');
-  if (!authContainer) {
-    authContainer = document.createElement('div');
-    authContainer.id = 'auth-user-container';
-    authContainer.className = 'flex items-center gap-2';
-    // Insertarlo antes del indicador de edad (+18)
-    headerBtns.insertBefore(authContainer, headerBtns.lastElementChild);
-  }
+  const authContainer = document.getElementById('auth-user-container');
+  if (!authContainer) return;
 
   if (user) {
     authContainer.innerHTML = `
@@ -583,15 +573,12 @@ auth.onAuthStateChanged((user) => {
         🚪 Salir
       </button>
     `;
-    // Ocultar botones de login/registro de invitados si ya está dentro
-    document.getElementById('btn-login-header')?.remove();
-    document.getElementById('btn-registro-header')?.remove();
   } else {
     authContainer.innerHTML = `
-      <button id="btn-login-header" onclick="abrirModalAuth('login')" class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 text-xs font-bold px-3.5 py-2.5 rounded-xl transition shadow flex items-center gap-1.5">
+      <button onclick="abrirModalAuth('login')" class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 text-xs font-bold px-3.5 py-2.5 rounded-xl transition shadow flex items-center gap-1.5">
         🔑 Iniciar Sesión
       </button>
-      <button id="btn-registro-header" onclick="abrirModalAuth('registro')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl transition shadow flex items-center gap-1.5">
+      <button onclick="abrirModalAuth('registro')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl transition shadow flex items-center gap-1.5">
         📝 Registrarse
       </button>
     `;
@@ -629,7 +616,10 @@ function cambiarTabAuth(tipo) {
           <input type="email" id="login-email" required placeholder="tu@correo.com" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-emerald-500">
         </div>
         <div>
-          <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Contraseña</label>
+          <div class="flex justify-between items-center mb-1">
+            <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Contraseña</label>
+            <button type="button" onclick="recuperarContrasena()" class="text-[11px] text-emerald-400 hover:underline">¿Olvidaste tu contraseña?</button>
+          </div>
           <input type="password" id="login-password" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-emerald-500">
         </div>
         <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-3 rounded-xl transition shadow-lg mt-2">Acceder a SportPredicts</button>
@@ -678,6 +668,24 @@ async function manejarRegistro(e) {
     cerrarModalAuth();
   } catch (err) {
     alert('Error al registrarse: ' + err.message);
+  }
+}
+
+async function recuperarContrasena() {
+  const emailInput = document.getElementById('login-email');
+  const email = emailInput ? emailInput.value.trim() : '';
+
+  if (!email) {
+    alert('Por favor, introduce primero tu correo electrónico en el campo superior para recuperar tu contraseña.');
+    if (emailInput) emailInput.focus();
+    return;
+  }
+
+  try {
+    await auth.sendPasswordResetEmail(email);
+    alert(`Hemos enviado un correo de recuperación a ${email}. Revisa tu bandeja de entrada o spam.`);
+  } catch (err) {
+    alert('Error al enviar el correo de recuperación: ' + err.message);
   }
 }
 
