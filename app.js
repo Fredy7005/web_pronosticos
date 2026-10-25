@@ -9,7 +9,7 @@ const LIGAS_ODDS = {
   'CL': 'soccer_uefa_champs_league',
   'SA': 'soccer_italy_serie_a',
   'BL': 'soccer_germany_bundesliga',
-  'L1': 'soccer_france_ligue_1'
+  'L1': 'soccer_france_ligue_one'
 };
 
 const UMBRAL_VALOR = 0.02;
