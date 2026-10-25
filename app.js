@@ -64,7 +64,7 @@ const ESCUDOS_MANUALES = {
 let ligaActual = 'PD';
 let soloValor = false;
 let ordenActual = 'fecha';
-let modoHistorial = false; // Control de vista actual
+let modoHistorial = false;
 let partidosAnalizados = [];
 let dbEstatica = null;
 let cargaId = 0;
@@ -383,7 +383,6 @@ function renderizarPartidos(origen = 'robot', restantes = null) {
   const inputStake = document.getElementById('input-stake');
   const stake = Math.min(Math.max(parseFloat(inputStake?.value) || 10, 1), 10000);
 
-  // Filtrar según la pestaña activa (Próximos vs Historial)
   let lista = partidosAnalizados.filter((p) => {
     const esFuturo = p.fecha.getTime() > Date.now();
     return modoHistorial ? !esFuturo : esFuturo;
@@ -403,19 +402,17 @@ function renderizarPartidos(origen = 'robot', restantes = null) {
   container.innerHTML = lista.slice(0, MAX_PARTIDOS).map((p) => tarjetaPartido(p, stake)).join('');
 }
 
-// Alternar entre Próximos y Historial
 function toggleVistaHistorial() {
   modoHistorial = !modoHistorial;
   const btnHistorial = document.getElementById('btn-vista-historial');
   const controlesDerecha = document.getElementById('controles-derecha');
-  const tituloLigas = document.getElementById('titulo-seccion-ligas');
 
   if (modoHistorial) {
     if (btnHistorial) {
       btnHistorial.textContent = '⚽ Ver Próximos';
       btnHistorial.classList.add('bg-emerald-600', 'text-white');
     }
-    if (controlesDerecha) controlesDerecha.style.opacity = '0.4'; // Atenuar controles de apuestas en historial
+    if (controlesDerecha) controlesDerecha.style.opacity = '0.4';
   } else {
     if (btnHistorial) {
       btnHistorial.textContent = '📜 Ver Historial';
@@ -431,4 +428,42 @@ function cambiarLiga(codigo) {
   ligaActual = codigo;
   document.querySelectorAll('.liga-btn').forEach(btn => {
     btn.classList.remove('bg-emerald-600', 'text-white', 'font-bold', 'shadow');
-    btn.classList.add('bg-slate-800/80', 'hover:bg-slate-70
+    btn.classList.add('bg-slate-800/80', 'hover:bg-slate-700', 'text-slate-300', 'border', 'border-slate-700/60');
+  });
+  const btnActivo = document.getElementById(`btn-${codigo}`);
+  if (btnActivo) {
+    btnActivo.classList.remove('bg-slate-800/80', 'hover:bg-slate-700', 'text-slate-300', 'border', 'border-slate-700/60');
+    btnActivo.classList.add('bg-emerald-600', 'text-white', 'font-bold', 'shadow');
+  }
+  cargarPartidos(codigo);
+}
+
+function toggleSoloValor() {
+  soloValor = !soloValor;
+  const btn = document.getElementById('btn-solo-valor');
+  if (btn) {
+    btn.setAttribute('aria-pressed', String(soloValor));
+    if (soloValor) {
+      btn.classList.remove('bg-slate-800/90', 'border-slate-700/80', 'text-slate-300');
+      btn.classList.add('bg-amber-600', 'border-amber-500', 'text-white');
+    } else {
+      btn.classList.remove('bg-amber-600', 'border-amber-500', 'text-white');
+      btn.classList.add('bg-slate-800/90', 'border-slate-700/80', 'text-slate-300');
+    }
+  }
+  renderizarPartidos();
+}
+
+function cambiarOrden() {
+  const select = document.getElementById('select-orden');
+  if (select) {
+    ordenActual = select.value;
+    renderizarPartidos();
+  }
+}
+
+function actualizarSimulacion() {
+  renderizarPartidos();
+}
+
+document.addEventListener('DOMContentLoaded', () => cargarPartidos('PD'));
