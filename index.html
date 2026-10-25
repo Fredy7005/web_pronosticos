@@ -24,7 +24,7 @@
                 📜 Ver Historial
             </button>
             
-            <!-- 👤 Botones de Autenticación -->
+            <!-- Botones de Autenticación -->
             <button onclick="abrirModalAuth('login')" class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 text-xs font-bold px-3.5 py-2.5 rounded-xl transition shadow flex items-center gap-1.5">
                 🔑 Iniciar Sesión
             </button>
@@ -109,7 +109,7 @@
         </div>
     </div>
 
-    <!-- 👤 Modal de Autenticación (Login / Registro) -->
+    <!-- Modal de Autenticación -->
     <div id="modal-auth" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex justify-center items-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 relative shadow-2xl">
             <button onclick="cerrarModalAuth()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg font-bold">✕</button>
@@ -119,11 +119,10 @@
                 <button id="tab-registro" onclick="cambiarTabAuth('registro')" class="flex-1 pb-3 text-xs font-semibold text-slate-400 border-b-2 border-transparent transition">📝 Registrarse</button>
             </div>
 
-            <!-- Formulario dinámico -->
             <div id="auth-contenido"></div>
         </div>
     </div>
 
-    <script src="app.js?v=6"></script>
+    <script src="app.js?v=7"></script>
 </body>
 </html>
