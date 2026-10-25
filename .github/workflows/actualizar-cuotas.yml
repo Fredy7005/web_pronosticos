@@ -2,9 +2,8 @@ name: Actualizar Cuotas Diarias Inteligente
 
 on:
   schedule:
-    # Se ejecuta todos los días automáticamente
     - cron: '0 8 * * *'
-  workflow_dispatch: # Te permite ejecutarlo manualmente con un clic cuando quieras
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -24,9 +23,9 @@ jobs:
           const fs = require("fs");
           const API_KEY = process.env.ODDS_API_KEY;
           
-          // Todas las ligas configuradas
           const LIGAS = {
             PD: "soccer_spain_la_liga",
+            SD: "soccer_spain_segunda_division",
             PL: "soccer_epl",
             CL: "soccer_uefa_champs_league",
             SA: "soccer_italy_serie_a",
@@ -40,7 +39,14 @@ jobs:
             MLS: "soccer_usa_mls",
             BR: "soccer_brazil_campeonato",
             MX: "soccer_mexico_ligamx",
-            ARG: "soccer_argentina_primera_division"
+            ARG: "soccer_argentina_primera_division",
+            BEL: "soccer_belgium_first_div",
+            TUR: "soccer_turkey_super_lig",
+            COL: "soccer_colombia_primera_a",
+            URU: "soccer_uruguay_primera_division",
+            JPN: "soccer_japan_j_league",
+            KOR: "soccer_k_league_1",
+            AUS: "soccer_australia_aleague"
           };
 
           (async () => {
@@ -55,7 +61,6 @@ jobs:
                   resultado.restantes = res.headers.get("x-requests-remaining");
                   const data = await res.json();
                   
-                  // Filtro inteligente: solo guardamos la liga si realmente trae partidos programados
                   if (Array.isArray(data) && data.length > 0) {
                     resultado.ligas[codigo] = data;
                     console.log(`✅ ${codigo}: ${data.length} partidos encontrados (Guardados)`);
@@ -71,7 +76,6 @@ jobs:
                 console.error(`❌ Error en ${codigo}:`, e.message);
                 resultado.ligas[codigo] = [];
               }
-              // Pausa de cortesía de 1.2 segundos entre peticiones para proteger la API
               await new Promise(r => setTimeout(r, 1200));
             }
 
@@ -85,5 +89,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add datos-ligas.json
-          git diff --staged --quiet || git commit -m "Actualización automática inteligente de cuotas"
+          git diff --staged --quiet || git commit -m "Actualización inteligente con nuevas ligas"
           git push
