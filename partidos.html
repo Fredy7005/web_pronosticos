@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SportPredicts - Partidos de la Competición</title>
+    <!-- SDKs de Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center">
+
+    <!-- Barra de Navegación Superior -->
+    <header class="w-full bg-slate-900/80 backdrop-blur border-b border-slate-800 px-6 py-3.5 flex justify-between items-center sticky top-0 z-40">
+        <div class="flex items-center gap-6">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
+                <span class="text-xl">⚽</span>
+                <span class="font-black tracking-tight text-emerald-400 text-base">SportPredicts</span>
+            </div>
+            <nav class="hidden md:flex items-center gap-4 text-xs font-semibold text-slate-300">
+                <a href="index.html" class="hover:text-emerald-400 transition">Inicio</a>
+                <a href="index.html" class="hover:text-emerald-400 transition">Competiciones</a>
+            </nav>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <div id="auth-user-container" class="flex items-center gap-2"></div>
+            <span class="bg-slate-800 text-[10px] px-2.5 py-1 rounded-full text-slate-400 font-bold border border-slate-700">+18</span>
+        </div>
+    </header>
+
+    <!-- Contenedor Principal de Partidos -->
+    <main class="w-full max-w-4xl flex flex-col gap-6 p-4 sm:p-6 my-6">
+
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-4">
+            <div class="flex items-center gap-3">
+                <span id="liga-icono" class="text-3xl">⚽</span>
+                <div>
+                    <h1 id="liga-titulo" class="text-xl font-black text-white">Cargando competición...</h1>
+                    <p class="text-xs text-slate-400">Análisis y pronósticos exclusivos de la jornada.</p>
+                </div>
+            </div>
+            <a href="index.html" class="text-xs text-slate-400 hover:text-white transition bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl">← Volver a Competiciones</a>
+        </div>
+
+        <!-- Controles de Filtros y Stake -->
+        <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+            <div class="flex items-center gap-2">
+                <select id="select-orden" onchange="cambiarOrden()" class="bg-slate-950 border border-slate-800 text-xs text-slate-300 rounded-lg px-2.5 py-1.5 outline-none">
+                    <option value="fecha">📅 Por Fecha</option>
+                    <option value="probabilidad">🎯 Por Probabilidad</option>
+                </select>
+                <button id="btn-solo-valor" onclick="toggleSoloValor()" class="bg-slate-950 border border-slate-800 text-slate-300 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition">💎 Top</button>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-xs text-slate-400">Stake:</span>
+                <input type="number" id="input-stake" value="10" min="1" max="10000" oninput="actualizarSimulacion()" class="w-14 bg-slate-950 border border-slate-800 text-xs text-center text-white font-bold rounded-lg py-1 outline-none">
+                <span class="text-xs text-slate-400">€</span>
+            </div>
+        </div>
+
+        <div id="estado" class="text-xs text-slate-400 px-1">Sincronizando pronósticos en directo...</div>
+        <div id="partidos-container" class="flex flex-col gap-4"></div>
+
+    </main>
+
+    <!-- Modal de Detalle de Partido -->
+    <div id="modal-detalle" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex justify-center items-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-6 relative shadow-2xl">
+            <button onclick="cerrarModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg font-bold">✕</button>
+            <div id="modal-contenido"></div>
+        </div>
+    </div>
+
+    <!-- Script para capturar la liga de la URL y arrancar -->
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const codigoLiga = urlParams.get('liga') || 'PD';
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (typeof cambiarLiga === 'function') {
+                cambiarLiga(codigoLiga);
+            }
+        });
+    </script>
+
+    <script src="app.js?v=17"></script>
+</body>
+</html>
