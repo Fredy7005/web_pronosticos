@@ -2,7 +2,6 @@
 
 const ODDS_API_KEY = '2a11173b5f716f77724b660faf014a27';
 
-// Ligas principales y europeas estables para el plan actual
 const LIGAS_ODDS = {
   'PD': 'soccer_spain_la_liga',
   'PL': 'soccer_epl',
@@ -11,7 +10,9 @@ const LIGAS_ODDS = {
   'BL': 'soccer_germany_bundesliga',
   'L1': 'soccer_france_ligue_one',
   'EL': 'soccer_uefa_europa_league',
-  'ECL': 'soccer_uefa_europa_conference_league'
+  'ECL': 'soccer_uefa_europa_conference_league',
+  'MX': 'soccer_mexico_ligamx',
+  'ARG': 'soccer_argentina_primera_division'
 };
 
 const UMBRAL_VALOR = 0.02;
@@ -101,7 +102,7 @@ async function pedirCuotas(sportKey) {
     `https://api.the-odds-api.com/v4/sports/${sportKey}/odds?apiKey=${ODDS_API_KEY}&regions=eu&markets=h2h,totals&oddsFormat=decimal&dateFormat=iso`
   );
   if (res.status === 401) throw new Error('Clave de The Odds API no válida');
-  if (res.status === 429) throw new Error('Límite de peticiones de la API agotado (Espera un momento o cambia de clave)');
+  if (res.status === 429) throw new Error('Límite de peticiones de la API agotado (Espera un momento)');
   if (!res.ok) throw new Error(`Error en la API (${res.status})`);
   return {
     actualizado: new Date().toISOString(),
