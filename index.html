@@ -35,86 +35,410 @@
     </header>
 
     <!-- Contenedor Principal -->
-    <main class="w-full max-w-4xl flex flex-col gap-6 p-4 sm:p-6">
+    <main class="w-full max-w-6xl flex flex-col gap-6 p-4 sm:p-6">
 
         <!-- SECCIÓN INICIO (Vista Limpia de Bienvenida) -->
-        <section id="seccion-inicio" class="flex flex-col gap-6 py-8 text-center">
+        <section id="seccion-inicio" class="flex flex-col gap-6 py-12 text-center">
             <div class="max-w-xl mx-auto flex flex-col gap-3">
                 <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Motor analítico V5</span>
-                <h1 class="text-3xl sm:text-4xl font-black tracking-tight text-white">Análisis deportivo inteligente</h1>
+                <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white">Análisis deportivo inteligente</h1>
                 <p class="text-xs sm:text-sm text-slate-400">Procesamiento estadístico avanzado y probabilidades en tiempo real antes del pitido inicial.</p>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                <div onclick="mostrarSeccion('competiciones')" class="bg-slate-900/80 border border-slate-800 hover:border-emerald-500/50 p-6 rounded-2xl cursor-pointer transition flex flex-col items-center gap-2 group">
-                    <span class="text-2xl">🏆</span>
-                    <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Explorar Competiciones</h3>
-                    <p class="text-xs text-slate-400">Elige una liga para ver los partidos y probabilidades</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 max-w-2xl mx-auto w-full">
+                <div onclick="mostrarSeccion('competiciones')" class="bg-slate-900/80 border border-slate-800 hover:border-emerald-500/50 p-6 rounded-2xl cursor-pointer transition flex flex-col items-center gap-3 group">
+                    <span class="text-3xl">🏆</span>
+                    <h3 class="font-bold text-white text-base group-hover:text-emerald-400 transition">Explorar Competiciones</h3>
+                    <p class="text-xs text-slate-400">Elige un torneo para ver los pronósticos y análisis detallados</p>
                 </div>
-                <div onclick="toggleVistaHistorial(); mostrarSeccion('competiciones');" class="bg-slate-900/80 border border-slate-800 hover:border-emerald-500/50 p-6 rounded-2xl cursor-pointer transition flex flex-col items-center gap-2 group">
-                    <span class="text-2xl">📜</span>
-                    <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Historial de Partidos</h3>
+                <div onclick="toggleVistaHistorial(); mostrarSeccion('competiciones');" class="bg-slate-900/80 border border-slate-800 hover:border-emerald-500/50 p-6 rounded-2xl cursor-pointer transition flex flex-col items-center gap-3 group">
+                    <span class="text-3xl">📜</span>
+                    <h3 class="font-bold text-white text-base group-hover:text-emerald-400 transition">Historial de Partidos</h3>
                     <p class="text-xs text-slate-400">Revisa los pronósticos finalizados y su precisión</p>
                 </div>
             </div>
         </section>
 
-        <!-- SECCIÓN COMPETICIONES (Selector tipo Catálogo con las 23 Ligas) -->
+        <!-- SECCIÓN COMPETICIONES (Estilo Tarjetas Detalladas) -->
         <section id="seccion-competiciones" class="hidden flex flex-col gap-6">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-4">
                 <div>
-                    <h2 class="text-lg font-black text-white">Competiciones Disponibles</h2>
-                    <p class="text-xs text-slate-400">Selecciona un torneo para cargar sus pronósticos</p>
+                    <h2 class="text-xl font-black text-white">🏆 Competiciones</h2>
+                    <p class="text-xs text-slate-400">Selecciona una competición para ver sus partidos, resultados y análisis IA.</p>
                 </div>
-                <button onclick="mostrarSeccion('inicio')" class="text-xs text-slate-400 hover:text-white transition">← Volver al inicio</button>
+                <button onclick="mostrarSeccion('inicio')" class="text-xs text-slate-400 hover:text-white transition bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl">← Volver al inicio</button>
             </div>
 
-            <!-- Catálogo completo de las 23 Ligas -->
-            <div id="ligas-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                <button id="btn-PD" onclick="seleccionarLigaYVer('PD')" class="liga-btn bg-emerald-600 text-white p-3 rounded-xl text-xs font-bold transition text-left flex items-center justify-between shadow"><span>La Liga</span><span>⚽</span></button>
-                <button id="btn-SD" onclick="seleccionarLigaYVer('SD')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Segunda División</span><span>⚽</span></button>
-                <button id="btn-PL" onclick="seleccionarLigaYVer('PL')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Premier League</span><span>⚽</span></button>
-                <button id="btn-CL" onclick="seleccionarLigaYVer('CL')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Champions League</span><span>⭐</span></button>
-                <button id="btn-SA" onclick="seleccionarLigaYVer('SA')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Serie A</span><span>⚽</span></button>
-                <button id="btn-BL" onclick="seleccionarLigaYVer('BL')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Bundesliga</span><span>⚽</span></button>
-                <button id="btn-L1" onclick="seleccionarLigaYVer('L1')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Ligue 1</span><span>⚽</span></button>
-                <button id="btn-EL" onclick="seleccionarLigaYVer('EL')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Europa League</span><span>⚽</span></button>
-                <button id="btn-ECL" onclick="seleccionarLigaYVer('ECL')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Conference League</span><span>⚽</span></button>
-                <button id="btn-ED" onclick="seleccionarLigaYVer('ED')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Eredivisie</span><span>⚽</span></button>
-                <button id="btn-PPL" onclick="seleccionarLigaYVer('PPL')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Primeira Liga</span><span>⚽</span></button>
-                <button id="btn-ELC" onclick="seleccionarLigaYVer('ELC')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Championship</span><span>⚽</span></button>
-                <button id="btn-MLS" onclick="seleccionarLigaYVer('MLS')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>MLS</span><span>⚽</span></button>
-                <button id="btn-BR" onclick="seleccionarLigaYVer('BR')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Brasileirão</span><span>⚽</span></button>
-                <button id="btn-MX" onclick="seleccionarLigaYVer('MX')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Liga MX</span><span>⚽</span></button>
-                <button id="btn-ARG" onclick="seleccionarLigaYVer('ARG')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Argentina</span><span>⚽</span></button>
-                <button id="btn-BEL" onclick="seleccionarLigaYVer('BEL')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Jupiler Pro League</span><span>⚽</span></button>
-                <button id="btn-TUR" onclick="seleccionarLigaYVer('TUR')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Süper Lig</span><span>⚽</span></button>
-                <button id="btn-COL" onclick="seleccionarLigaYVer('COL')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Copa Libertadores</span><span>⚽</span></button>
-                <button id="btn-URU" onclick="seleccionarLigaYVer('URU')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Primera División (Chile)</span><span>⚽</span></button>
-                <button id="btn-JPN" onclick="seleccionarLigaYVer('JPN')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>J1 League (Japón)</span><span>⚽</span></button>
-                <button id="btn-KOR" onclick="seleccionarLigaYVer('KOR')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>K League 1</span><span>⚽</span></button>
-                <button id="btn-AUS" onclick="seleccionarLigaYVer('AUS')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>A-League</span><span>⚽</span></button>
+            <!-- Grid de Tarjetas de Competiciones -->
+            <div id="ligas-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                
+                <!-- La Liga -->
+                <div onclick="seleccionarLigaYVer('PD')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
+                    <div class="flex items-start gap-3">
+                        <span class="text-2xl">🇪🇸</span>
+                        <div>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">La Liga</h3>
+                            <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Análisis IA de La Liga: predicciones, mercados y valor esperado en cada jornada.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs">
+                        <span class="bg-emerald-950/60 text-emerald-400 border border-emerald-900/50 px-2 py-0.5 rounded font-bold text-[10px]">Activa</span>
+                        <span class="text-slate-400 group-hover:text-white font-semibold transition">Ver partidos →</span>
+                    </div>
+                </div>
+
+                <!-- Segunda División -->
+                <div onclick="seleccionarLigaYVer('SD')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
+                    <div class="flex items-start gap-3">
+                        <span class="text-2xl">🇪🇸</span>
+                        <div>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Segunda División</h3>
+                            <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Predicciones y estadísticas avanzadas para la Liga Hypermotion.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs">
+                        <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-bold text-[10px]">Smart</span>
+                        <span class="text-slate-400 group-hover:text-white font-semibold transition">Ver partidos →</span>
+                    </div>
+                </div>
+
+                <!-- Premier League -->
+                <div onclick="seleccionarLigaYVer('PL')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
+                    <div class="flex items-start gap-3">
+                        <span class="text-2xl">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span>
+                        <div>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Premier League</h3>
+                            <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Análisis IA de Premier League: predicciones, mercados y valor esperado.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs">
+                        <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-bold text-[10px]">Top</span>
+                        <span class="text-slate-400 group-hover:text-white font-semibold transition">Ver partidos →</span>
+                    </div>
+                </div>
+
+                <!-- Champions League -->
+                <div onclick="seleccionarLigaYVer('CL')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
+                    <div class="flex items-start gap-3">
+                        <span class="text-2xl">⭐</span>
+                        <div>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Champions League</h3>
+                            <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">La máxima competición europea analizada con modelo V5.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs">
+                        <span class="bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded font-bold text-[10px]">UEFA</span>
+                        <span class="text-slate-400 group-hover:text-white font-semibold transition">Ver partidos →</span>
+                    </div>
+                </div>
+
+                <!-- Serie A -->
+                <div onclick="seleccionarLigaYVer('SA')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
+                    <div class="flex items-start gap-3">
+                        <span class="text-2xl">🇮🇹</span>
+                        <div>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Serie A</h3>
+                            <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Análisis IA de Serie A: predicciones, mercados y valor esperado.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs">
+                        <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-bold text-[10px]">Calcio</span>
+                        <span class="text-slate-400 group-hover:text-white font-semibold transition">Ver partidos →</span>
+                    </div>
+                </div>
+
+                <!-- Bundesliga -->
+                <div onclick="seleccionarLigaYVer('BL')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
+                    <div class="flex items-start gap-3">
+                        <span class="text-2xl">🇩🇪</span>
+                        <div>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Bundesliga</h3>
+                            <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Estadísticas y pronósticos de goles y ganador en Alemania.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs">
+                        <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-bold text-[10px]">Alemania</span>
+                        <span class="text-slate-400 group-hover:text-white font-semibold transition">Ver partidos →</span>
+                    </div>
+                </div>
+
+                <!-- Ligue 1 -->
+                <div onclick="seleccionarLigaYVer('L1')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
+                    <div class="flex items-start gap-3">
+                        <span class="text-2xl">🇫🇷</span>
+                        <div>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Ligue 1</h3>
+                            <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Predicciones y lectura IA del campeonato francés.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs">
+                        <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-bold text-[10px]">Francia</span>
+                        <span class="text-slate-400 group-hover:text-white font-semibold transition">Ver partidos →</span>
+                    </div>
+                </div>
+
+                <!-- Europa League -->
+                <div onclick="seleccionarLigaYVer('EL')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
+                    <div class="flex items-start gap-3">
+                        <span class="text-2xl">🇪🇺</span>
+                        <div>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Europa League</h3>
+                            <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Análisis de los encuentros de la UEFA Europa League.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs">
+                        <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-bold text-[10px]">UEFA</span>
+                        <span class="text-slate-400 group-hover:text-white font-semibold transition">Ver partidos →</span>
+                    </div>
+                </div>
+
+                <!-- Conference League -->
+                <div onclick="seleccionarLigaYVer('ECL')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
+                    <div class="flex items-start gap-3">
+                        <span class="text-2xl">🇪🇺</span>
+                        <div>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Conference League</h3>
+                            <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Pronósticos para la UEFA Conference League.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs">
+                        <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-bold text-[10px]">UEFA</span>
+                        <span class="text-slate-400 group-hover:text-white font-semibold transition">Ver partidos →</span>
+                    </div>
+                </div>
+
+                <!-- Eredivisie -->
+                <div onclick="seleccionarLigaYVer('ED')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
+                    <div class="flex items-start gap-3">
+                        <span class="text-2xl">🇳🇱</span>
+                        <div>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Eredivisie</h3>
+                            <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Fútbol ofensivo y goles en la liga de los Países Bajos.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs">
+                        <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-bold text-[10px]">Holanda</span>
+                        <span class="text-slate-400 group-hover:text-white font-semibold transition">Ver partidos →</span>
+                    </div>
+                </div>
+
+                <!-- Primeira Liga -->
+                <div onclick="seleccionarLigaYVer('PPL')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
+                    <div class="flex items-start gap-3">
+                        <span class="text-2xl">🇵🇹</span>
+                        <div>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Primeira Liga</h3>
+                            <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Análisis de los gigantes de Portugal.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs">
+                        <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-bold text-[10px]">Portugal</span>
+                        <span class="text-slate-400 group-hover:text-white font-semibold transition">Ver partidos →</span>
+                    </div>
+                </div>
+
+                <!-- Championship -->
+                <div onclick="seleccionarLigaYVer('ELC')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
+                    <div class="flex items-start gap-3">
+                        <span class="text-2xl">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span>
+                        <div>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Championship</h3>
+                            <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">La competitiva segunda división de Inglaterra.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs">
+                        <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-bold text-[10px]">Inglaterra</span>
+                        <span class="text-slate-400 group-hover:text-white font-semibold transition">Ver partidos →</span>
+                    </div>
+                </div>
+
+                <!-- MLS -->
+                <div onclick="seleccionarLigaYVer('MLS')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
+                    <div class="flex items-start gap-3">
+                        <span class="text-2xl">🇺🇸</span>
+                        <div>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">MLS</h3>
+                            <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Análisis de la Major League Soccer estadounidense.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs">
+                        <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-bold text-[10px]">USA</span>
+                        <span class="text-slate-400 group-hover:text-white font-semibold transition">Ver partidos →</span>
+                    </div>
+                </div>
+
+                <!-- Brasileirão -->
+                <div onclick="seleccionarLigaYVer('BR')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
+                    <div class="flex items-start gap-3">
+                        <span class="text-2xl">🇧🇷</span>
+                        <div>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Brasileirão</h3>
+                            <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Fútbol sudamericano de máxima intensidad.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs">
+                        <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-bold text-[10px]">Brasil</span>
+                        <span class="text-slate-400 group-hover:text-white font-semibold transition">Ver partidos →</span>
+                    </div>
+                </div>
+
+                <!-- Liga MX -->
+                <div onclick="seleccionarLigaYVer('MX')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
+                    <div class="flex items-start gap-3">
+                        <span class="text-2xl">🇲🇽</span>
+                        <div>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Liga MX</h3>
+                            <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Predicciones y cuotas de la liga mexicana.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs">
+                        <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-bold text-[10px]">México</span>
+                        <span class="text-slate-400 group-hover:text-white font-semibold transition">Ver partidos →</span>
+                    </div>
+                </div>
+
+                <!-- Argentina -->
+                <div onclick="seleccionarLigaYVer('ARG')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
+                    <div class="flex items-start gap-3">
+                        <span class="text-2xl">🇦🇷</span>
+                        <div>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Argentina</h3>
+                            <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Liga Profesional de Fútbol de Argentina.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs">
+                        <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-bold text-[10px]">Argentina</span>
+                        <span class="text-slate-400 group-hover:text-white font-semibold transition">Ver partidos →</span>
+                    </div>
+                </div>
+
+                <!-- Jupiler Pro League -->
+                <div onclick="seleccionarLigaYVer('BEL')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
+                    <div class="flex items-start gap-3">
+                        <span class="text-2xl">🇧🇪</span>
+                        <div>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Jupiler Pro League</h3>
+                            <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Campeonato de primera división de Bélgica.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs">
+                        <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-bold text-[10px]">Bélgica</span>
+                        <span class="text-slate-400 group-hover:text-white font-semibold transition">Ver partidos →</span>
+                    </div>
+                </div>
+
+                <!-- Süper Lig -->
+                <div onclick="seleccionarLigaYVer('TUR')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
+                    <div class="flex items-start gap-3">
+                        <span class="text-2xl">🇹🇷</span>
+                        <div>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Süper Lig</h3>
+                            <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Análisis de la liga de Turquía.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs">
+                        <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-bold text-[10px]">Turquía</span>
+                        <span class="text-slate-400 group-hover:text-white font-semibold transition">Ver partidos →</span>
+                    </div>
+                </div>
+
+                <!-- Copa Libertadores -->
+                <div onclick="seleccionarLigaYVer('COL')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
+                    <div class="flex items-start gap-3">
+                        <span class="text-2xl">🏆</span>
+                        <div>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Copa Libertadores</h3>
+                            <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">La gran competición de clubes sudamericanos.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs">
+                        <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-bold text-[10px]">CONMEBOL</span>
+                        <span class="text-slate-400 group-hover:text-white font-semibold transition">Ver partidos →</span>
+                    </div>
+                </div>
+
+                <!-- Primera División (Chile) -->
+                <div onclick="seleccionarLigaYVer('URU')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
+                    <div class="flex items-start gap-3">
+                        <span class="text-2xl">🇨🇱</span>
+                        <div>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Primera División (Chile)</h3>
+                            <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Estadísticas y pronósticos del fútbol chileno.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs">
+                        <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-bold text-[10px]">Chile</span>
+                        <span class="text-slate-400 group-hover:text-white font-semibold transition">Ver partidos →</span>
+                    </div>
+                </div>
+
+                <!-- J1 League -->
+                <div onclick="seleccionarLigaYVer('JPN')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
+                    <div class="flex items-start gap-3">
+                        <span class="text-2xl">🇯🇵</span>
+                        <div>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">J1 League</h3>
+                            <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Fútbol de élite en Japón.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs">
+                        <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-bold text-[10px]">Japón</span>
+                        <span class="text-slate-400 group-hover:text-white font-semibold transition">Ver partidos →</span>
+                    </div>
+                </div>
+
+                <!-- K League 1 -->
+                <div onclick="seleccionarLigaYVer('KOR')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
+                    <div class="flex items-start gap-3">
+                        <span class="text-2xl">🇰🇷</span>
+                        <div>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">K League 1</h3>
+                            <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Campeonato de Corea del Sur.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs">
+                        <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-bold text-[10px]">Corea</span>
+                        <span class="text-slate-400 group-hover:text-white font-semibold transition">Ver partidos →</span>
+                    </div>
+                </div>
+
+                <!-- A-League -->
+                <div onclick="seleccionarLigaYVer('AUS')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
+                    <div class="flex items-start gap-3">
+                        <span class="text-2xl">🇦🇺</span>
+                        <div>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">A-League</h3>
+                            <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Fútbol de Australia y Nueva Zelanda.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs">
+                        <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-bold text-[10px]">Australia</span>
+                        <span class="text-slate-400 group-hover:text-white font-semibold transition">Ver partidos →</span>
+                    </div>
+                </div>
+
             </div>
 
-            <!-- Controles de Filtros y Stake Minimalistas -->
-            <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-900/60 p-3 rounded-xl border border-slate-800 mt-2">
-                <div class="flex items-center gap-2">
-                    <select id="select-orden" onchange="cambiarOrden()" class="bg-slate-950 border border-slate-800 text-xs text-slate-300 rounded-lg px-2.5 py-1.5 outline-none">
-                        <option value="fecha">📅 Por Fecha</option>
-                        <option value="probabilidad">🎯 Por Probabilidad</option>
-                    </select>
-                    <button id="btn-solo-valor" onclick="toggleSoloValor()" class="bg-slate-950 border border-slate-800 text-slate-300 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition">💎 Top</button>
+            <!-- Controles de Filtros y Stake Minimalistas (aparecen al seleccionar competición o filtrar) -->
+            <div id="panel-resultados-liga" class="hidden flex flex-col gap-4 mt-4">
+                <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+                    <div class="flex items-center gap-2">
+                        <select id="select-orden" onchange="cambiarOrden()" class="bg-slate-950 border border-slate-800 text-xs text-slate-300 rounded-lg px-2.5 py-1.5 outline-none">
+                            <option value="fecha">📅 Por Fecha</option>
+                            <option value="probabilidad">🎯 Por Probabilidad</option>
+                        </select>
+                        <button id="btn-solo-valor" onclick="toggleSoloValor()" class="bg-slate-950 border border-slate-800 text-slate-300 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition">💎 Top</button>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-slate-400">Stake:</span>
+                        <input type="number" id="input-stake" value="10" min="1" max="10000" oninput="actualizarSimulacion()" class="w-14 bg-slate-950 border border-slate-800 text-xs text-center text-white font-bold rounded-lg py-1 outline-none">
+                        <span class="text-xs text-slate-400">€</span>
+                    </div>
                 </div>
-                <div class="flex items-center gap-2">
-                    <span class="text-xs text-slate-400">Stake:</span>
-                    <input type="number" id="input-stake" value="10" min="1" max="10000" oninput="actualizarSimulacion()" class="w-14 bg-slate-950 border border-slate-800 text-xs text-center text-white font-bold rounded-lg py-1 outline-none">
-                    <span class="text-xs text-slate-400">€</span>
-                </div>
-            </div>
 
-            <!-- Estado y Listado de Partidos -->
-            <div id="estado" class="text-xs text-slate-400 px-1">Sincronizando pronósticos...</div>
-            <div id="partidos-container" class="flex flex-col gap-4"></div>
+                <div id="estado" class="text-xs text-slate-400 px-1">Sincronizando pronósticos...</div>
+                <div id="partidos-container" class="flex flex-col gap-4"></div>
+            </div>
         </section>
 
     </main>
@@ -151,14 +475,18 @@
                 document.getElementById('seccion-inicio').classList.remove('hidden');
             } else if (seccion === 'competiciones') {
                 document.getElementById('seccion-competiciones').classList.remove('hidden');
+                // Ocultar partidos hasta que el usuario elija una tarjeta si se desea
             }
         }
 
         function seleccionarLigaYVer(codigo) {
+            document.getElementById('panel-resultados-liga').classList.remove('hidden');
             cambiarLiga(codigo);
+            // Scroll suave hacia los partidos
+            document.getElementById('panel-resultados-liga').scrollIntoView({ behavior: 'smooth' });
         }
     </script>
 
-    <script src="app.js?v=11"></script>
+    <script src="app.js?v=12"></script>
 </body>
 </html>
