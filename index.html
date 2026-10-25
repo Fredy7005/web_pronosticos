@@ -1,101 +1,52 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Pronósticos deportivos claros, cuotas comparadas y apuestas recomendadas sin complicaciones.">
-  <title>SportPredicts - Pronósticos Claros</title>
-
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Custom Stylesheet -->
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SportPredicts - Pronósticos Inteligentes</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="min-h-screen p-3 sm:p-6 md:p-8 pb-16">
-  <div class="max-w-4xl mx-auto">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center p-4">
 
-    <!-- Encabezado Principal -->
-    <header class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 border-b border-slate-700/60 pb-6">
-      <div class="text-center sm:text-left">
-        <h1 class="text-2xl sm:text-3xl font-extrabold flex items-center justify-center sm:justify-start gap-2"><span>⚽</span><span class="text-gradient">SportPredicts</span></h1>
-        <p class="text-xs text-slate-400 mt-1">Pronósticos directos, goles, ambos marcan y córners inteligentes</p>
-      </div>
-      <div class="flex items-center gap-3">
-        <span class="text-xs font-bold text-slate-300 border border-slate-600 rounded-full px-3 py-1.5">+18</span>
-      </div>
+    <!-- Cabecera de la App -->
+    <header class="w-full max-w-5xl flex flex-col items-center my-6">
+        <div class="flex items-center gap-3">
+            <span class="text-3xl">⚽</span>
+            <h1 class="text-3xl font-extrabold tracking-tight">SportPredicts</h1>
+            <span class="bg-slate-800 text-xs px-2 py-1 rounded-full text-slate-300 border border-slate-700">+18</span>
+        </div>
+        <p class="text-slate-400 text-sm mt-1">Pronósticos directos, goles, ambos marcan y córners inteligentes</p>
     </header>
 
-    <!-- Panel de Control y Filtros Simplificados -->
-    <div class="card-glass p-4 rounded-2xl mb-4 flex flex-col md:flex-row justify-between items-center gap-4">
+    <!-- Contenedor Principal -->
+    <main class="w-full max-w-5xl flex flex-col gap-6">
 
-      <!-- Selector de Ligas -->
-      <div class="flex flex-wrap justify-center sm:justify-start gap-2 w-full md:w-auto">
-        <button onclick="cambiarLiga('PD')" id="btn-PD" class="liga-btn btn-primary text-white text-xs font-bold px-4 py-2.5 rounded-xl transition active:scale-95">La Liga</button>
-        <button onclick="cambiarLiga('PL')" id="btn-PL" class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-700/60 transition active:scale-95">Premier League</button>
-        <button onclick="cambiarLiga('CL')" id="btn-CL" class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-700/60 transition active:scale-95">Champions</button>
-        <button onclick="cambiarLiga('SA')" id="btn-SA" class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-700/60 transition active:scale-95">Serie A</button>
-        <button onclick="cambiarLiga('BL')" id="btn-BL" class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-700/60 transition active:scale-95">Bundesliga</button>
-        <button onclick="cambiarLiga('L1')" id="btn-L1" class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-700/60 transition active:scale-95">Ligue 1</button>
-        <button onclick="cambiarLiga('EL')" id="btn-EL" class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-700/60 transition active:scale-95">Europa League</button>
-        <button onclick="cambiarLiga('ECL')" id="btn-ECL" class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-700/60 transition active:scale-95">Conference League</button>
-        <button onclick="cambiarLiga('ED')" id="btn-ED" class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-700/60 transition active:scale-95">Eredivisie</button>
-        <button onclick="cambiarLiga('PPL')" id="btn-PPL" class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-700/60 transition active:scale-95">Primeira Liga</button>
-        <button onclick="cambiarLiga('ELC')" id="btn-ELC" class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-700/60 transition active:scale-95">Championship</button>
-        <button onclick="cambiarLiga('MLS')" id="btn-MLS" class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-700/60 transition active:scale-95">MLS</button>
-        <button onclick="cambiarLiga('BR')" id="btn-BR" class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-700/60 transition active:scale-95">Brasileirão</button>
-        <button onclick="cambiarLiga('MX')" id="btn-MX" class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-700/60 transition active:scale-95">Liga MX</button>
-        <button onclick="cambiarLiga('ARG')" id="btn-ARG" class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-700/60 transition active:scale-95">Argentina</button>
-      </div>
-
-      <!-- Filtros, Ordenación y Simulador -->
-      <div class="flex flex-wrap items-center justify-between sm:justify-end gap-3 w-full md:w-auto">
-
-        <!-- Selector de Ordenación -->
-        <select id="select-orden" onchange="cambiarOrden()" class="bg-slate-800/90 text-slate-300 text-xs font-bold px-3.5 py-2.5 rounded-xl border border-slate-700/80 focus:outline-none focus:border-green-400 transition cursor-pointer">
-          <option value="fecha">📅 Ordenar por Fecha</option>
-          <option value="probabilidad">🔥 Mayor Probabilidad</option>
-        </select>
-
-        <!-- Toggle Solo con valor -->
-        <button onclick="toggleSoloValor()" id="btn-solo-valor" aria-pressed="false" class="bg-slate-800/90 hover:bg-slate-700 text-slate-300 text-xs font-bold px-3.5 py-2.5 rounded-xl border border-slate-700/80 flex items-center gap-2 transition active:scale-95">
-          💎 Oportunidades Top
-        </button>
-
-        <!-- Calculadora de Apuestas -->
-        <div class="flex items-center gap-2 bg-slate-900/90 px-3 py-1.5 rounded-xl border border-slate-700/80">
-          <label for="input-stake" class="text-[11px] text-slate-400 font-semibold">Apostar:</label>
-          <input type="number" id="input-stake" value="10" min="1" max="10000" onchange="actualizarSimulacion()" oninput="actualizarSimulacion()" class="w-14 bg-slate-800 border border-slate-600 text-center text-xs font-bold text-green-400 rounded-lg py-1 focus:outline-none focus:border-green-400">
-          <span class="text-xs text-slate-400 font-bold">€</span>
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- Estado de carga -->
-    <p id="estado" class="text-[11px] text-slate-500 mb-4 px-1" aria-live="polite"></p>
-
-    <!-- Contenedor Principal de Partidos -->
-    <main id="partidos-container" class="grid gap-4">
-      <p class="text-slate-400 text-center py-16 text-sm">Buscando los mejores partidos...</p>
-    </main>
-
-    <!-- Modal para Información Extensa del Partido -->
-    <div id="modal-detalle" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden z-50 flex items-center justify-center p-4">
-      <div class="card-glass bg-slate-900 border border-slate-700 rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl relative">
-        <button onclick="cerrarModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold p-2 transition">✕</button>
-        <div id="modal-contenido"></div>
-      </div>
-    </div>
-
-    <!-- Aviso legal -->
-    <footer class="mt-10 pt-6 border-t border-slate-700/60 text-[11px] text-slate-500 leading-relaxed space-y-2 text-center sm:text-left">
-      <p>Las recomendaciones son análisis estadísticos basados en cuotas de mercado y no garantizan ganancias. Juega con responsabilidad (+18).</p>
-    </footer>
-
-  </div>
-
-  <script src="app.js?v=2"></script>
-</body>
-</html>
+        <!-- Selector de Ligas -->
+        <section class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+            <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Selecciona una Competición</h2>
+            <div id="ligas-container" class="flex flex-wrap gap-2">
+                <button class="liga-btn active bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition" data-liga="PD">La Liga</button>
+                <button class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 px-3 py-1.5 rounded-lg text-xs font-semibold transition" data-liga="SD">Segunda División</button>
+                <button class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 px-3 py-1.5 rounded-lg text-xs font-semibold transition" data-liga="PL">Premier League</button>
+                <button class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 px-3 py-1.5 rounded-lg text-xs font-semibold transition" data-liga="CL">Champions</button>
+                <button class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 px-3 py-1.5 rounded-lg text-xs font-semibold transition" data-liga="SA">Serie A</button>
+                <button class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 px-3 py-1.5 rounded-lg text-xs font-semibold transition" data-liga="BL">Bundesliga</button>
+                <button class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 px-3 py-1.5 rounded-lg text-xs font-semibold transition" data-liga="L1">Ligue 1</button>
+                <button class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 px-3 py-1.5 rounded-lg text-xs font-semibold transition" data-liga="EL">Europa League</button>
+                <button class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 px-3 py-1.5 rounded-lg text-xs font-semibold transition" data-liga="ECL">Conference League</button>
+                <button class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 px-3 py-1.5 rounded-lg text-xs font-semibold transition" data-liga="ED">Eredivisie</button>
+                <button class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 px-3 py-1.5 rounded-lg text-xs font-semibold transition" data-liga="PPL">Primeira Liga</button>
+                <button class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 px-3 py-1.5 rounded-lg text-xs font-semibold transition" data-liga="ELC">Championship</button>
+                <button class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 px-3 py-1.5 rounded-lg text-xs font-semibold transition" data-liga="MLS">MLS</button>
+                <button class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 px-3 py-1.5 rounded-lg text-xs font-semibold transition" data-liga="BR">Brasileirão</button>
+                <button class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 px-3 py-1.5 rounded-lg text-xs font-semibold transition" data-liga="MX">Liga MX</button>
+                <button class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 px-3 py-1.5 rounded-lg text-xs font-semibold transition" data-liga="ARG">Argentina</button>
+                <button class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 px-3 py-1.5 rounded-lg text-xs font-semibold transition" data-liga="BEL">Jupiler Pro League</button>
+                <button class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 px-3 py-1.5 rounded-lg text-xs font-semibold transition" data-liga="TUR">Süper Lig</button>
+                <button class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 px-3 py-1.5 rounded-lg text-xs font-semibold transition" data-liga="COL">Primera A (Colombia)</button>
+                <button class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 px-3 py-1.5 rounded-lg text-xs font-semibold transition" data-liga="URU">Primera División (Uruguay)</button>
+                <button class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 px-3 py-1.5 rounded-lg text-xs font-semibold transition" data-liga="JPN">J1 League (Japón)</button>
+                <button class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 px-3 py-1.5 rounded-lg text-xs font-semibold transition" data-liga="KOR">K League 1 (Corea del Sur)</button>
+                <button class="liga-btn bg-slate-800/80 hover:
