@@ -23,7 +23,7 @@
             <nav class="hidden md:flex items-center gap-4 text-xs font-semibold text-slate-300">
                 <button onclick="mostrarSeccion('inicio')" class="hover:text-emerald-400 transition">Inicio</button>
                 <button onclick="mostrarSeccion('competiciones')" class="hover:text-emerald-400 transition">Competiciones</button>
-                <button onclick="toggleVistaHistorial()" id="btn-vista-historial" class="hover:text-emerald-400 transition">Historial</button>
+                <button onclick="toggleVistaHistorial(); mostrarSeccion('competiciones');" id="btn-vista-historial" class="hover:text-emerald-400 transition">Historial</button>
             </nav>
         </div>
 
@@ -59,7 +59,7 @@
             </div>
         </section>
 
-        <!-- SECCIÓN COMPETICIONES (Selector tipo Catálogo) -->
+        <!-- SECCIÓN COMPETICIONES (Selector tipo Catálogo con las 23 Ligas) -->
         <section id="seccion-competiciones" class="hidden flex flex-col gap-6">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-4">
                 <div>
@@ -69,16 +69,31 @@
                 <button onclick="mostrarSeccion('inicio')" class="text-xs text-slate-400 hover:text-white transition">← Volver al inicio</button>
             </div>
 
-            <!-- Catálogo de Ligas limpio en Grid -->
-            <div id="ligas-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
-                <button onclick="seleccionarLigaYVer('PD')" class="liga-btn bg-emerald-600 text-white p-3 rounded-xl text-xs font-bold transition text-left flex items-center justify-between shadow"><span>La Liga</span><span>⚽</span></button>
-                <button onclick="seleccionarLigaYVer('SD')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Segunda División</span><span>⚽</span></button>
-                <button onclick="seleccionarLigaYVer('PL')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Premier League</span><span>⚽</span></button>
-                <button onclick="seleccionarLigaYVer('CL')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Champions League</span><span>⭐</span></button>
-                <button onclick="seleccionarLigaYVer('SA')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Serie A</span><span>⚽</span></button>
-                <button onclick="seleccionarLigaYVer('BL')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Bundesliga</span><span>⚽</span></button>
-                <button onclick="seleccionarLigaYVer('L1')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Ligue 1</span><span>⚽</span></button>
-                <button onclick="seleccionarLigaYVer('EL')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Europa League</span><span>⚽</span></button>
+            <!-- Catálogo completo de las 23 Ligas -->
+            <div id="ligas-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                <button id="btn-PD" onclick="seleccionarLigaYVer('PD')" class="liga-btn bg-emerald-600 text-white p-3 rounded-xl text-xs font-bold transition text-left flex items-center justify-between shadow"><span>La Liga</span><span>⚽</span></button>
+                <button id="btn-SD" onclick="seleccionarLigaYVer('SD')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Segunda División</span><span>⚽</span></button>
+                <button id="btn-PL" onclick="seleccionarLigaYVer('PL')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Premier League</span><span>⚽</span></button>
+                <button id="btn-CL" onclick="seleccionarLigaYVer('CL')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Champions League</span><span>⭐</span></button>
+                <button id="btn-SA" onclick="seleccionarLigaYVer('SA')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Serie A</span><span>⚽</span></button>
+                <button id="btn-BL" onclick="seleccionarLigaYVer('BL')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Bundesliga</span><span>⚽</span></button>
+                <button id="btn-L1" onclick="seleccionarLigaYVer('L1')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Ligue 1</span><span>⚽</span></button>
+                <button id="btn-EL" onclick="seleccionarLigaYVer('EL')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Europa League</span><span>⚽</span></button>
+                <button id="btn-ECL" onclick="seleccionarLigaYVer('ECL')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Conference League</span><span>⚽</span></button>
+                <button id="btn-ED" onclick="seleccionarLigaYVer('ED')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Eredivisie</span><span>⚽</span></button>
+                <button id="btn-PPL" onclick="seleccionarLigaYVer('PPL')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Primeira Liga</span><span>⚽</span></button>
+                <button id="btn-ELC" onclick="seleccionarLigaYVer('ELC')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Championship</span><span>⚽</span></button>
+                <button id="btn-MLS" onclick="seleccionarLigaYVer('MLS')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>MLS</span><span>⚽</span></button>
+                <button id="btn-BR" onclick="seleccionarLigaYVer('BR')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Brasileirão</span><span>⚽</span></button>
+                <button id="btn-MX" onclick="seleccionarLigaYVer('MX')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Liga MX</span><span>⚽</span></button>
+                <button id="btn-ARG" onclick="seleccionarLigaYVer('ARG')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Argentina</span><span>⚽</span></button>
+                <button id="btn-BEL" onclick="seleccionarLigaYVer('BEL')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Jupiler Pro League</span><span>⚽</span></button>
+                <button id="btn-TUR" onclick="seleccionarLigaYVer('TUR')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Süper Lig</span><span>⚽</span></button>
+                <button id="btn-COL" onclick="seleccionarLigaYVer('COL')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Copa Libertadores</span><span>⚽</span></button>
+                <button id="btn-URU" onclick="seleccionarLigaYVer('URU')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>Primera División (Chile)</span><span>⚽</span></button>
+                <button id="btn-JPN" onclick="seleccionarLigaYVer('JPN')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>J1 League (Japón)</span><span>⚽</span></button>
+                <button id="btn-KOR" onclick="seleccionarLigaYVer('KOR')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>K League 1</span><span>⚽</span></button>
+                <button id="btn-AUS" onclick="seleccionarLigaYVer('AUS')" class="liga-btn bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-3 rounded-xl text-xs font-semibold transition text-left flex items-center justify-between"><span>A-League</span><span>⚽</span></button>
             </div>
 
             <!-- Controles de Filtros y Stake Minimalistas -->
@@ -103,6 +118,14 @@
         </section>
 
     </main>
+
+    <!-- Modal de Detalle de Partido -->
+    <div id="modal-detalle" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex justify-center items-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-6 relative shadow-2xl">
+            <button onclick="cerrarModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg font-bold">✕</button>
+            <div id="modal-contenido"></div>
+        </div>
+    </div>
 
     <!-- Modal de Autenticación -->
     <div id="modal-auth" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex justify-center items-center p-4">
@@ -136,6 +159,6 @@
         }
     </script>
 
-    <script src="app.js?v=10"></script>
+    <script src="app.js?v=11"></script>
 </body>
 </html>
