@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SportPredicts - Pronósticos Inteligentes</title>
+    <!-- SDKs de Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -24,11 +28,11 @@
                 📜 Ver Historial
             </button>
             
-            <!-- Botones de Autenticación -->
-            <button onclick="abrirModalAuth('login')" class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 text-xs font-bold px-3.5 py-2.5 rounded-xl transition shadow flex items-center gap-1.5">
+            <!-- Botones de Autenticación por defecto (se gestionan dinámicamente desde app.js) -->
+            <button id="btn-login-header" onclick="abrirModalAuth('login')" class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 text-xs font-bold px-3.5 py-2.5 rounded-xl transition shadow flex items-center gap-1.5">
                 🔑 Iniciar Sesión
             </button>
-            <button onclick="abrirModalAuth('registro')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl transition shadow flex items-center gap-1.5">
+            <button id="btn-registro-header" onclick="abrirModalAuth('registro')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl transition shadow flex items-center gap-1.5">
                 📝 Registrarse
             </button>
 
@@ -123,6 +127,6 @@
         </div>
     </div>
 
-    <script src="app.js?v=7"></script>
+    <script src="app.js?v=8"></script>
 </body>
 </html>
