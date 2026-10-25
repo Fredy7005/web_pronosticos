@@ -10,7 +10,7 @@
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center p-4">
 
     <!-- Cabecera -->
-    <header class="w-full max-w-5xl flex justify-between items-center my-6">
+    <header class="w-full max-w-5xl flex flex-col sm:flex-row justify-between items-center my-6 gap-4">
         <div>
             <div class="flex items-center gap-3">
                 <span class="text-3xl">⚽</span>
@@ -18,10 +18,20 @@
             </div>
             <p class="text-slate-400 text-xs sm:text-sm mt-1">Pronósticos directos, goles, ambos marcan y córners inteligentes</p>
         </div>
-        <div class="flex items-center gap-3">
+        <div class="flex items-center flex-wrap gap-2.5">
+            <!-- Botón de Historial -->
             <button id="btn-vista-historial" onclick="toggleVistaHistorial()" class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 text-xs font-bold px-4 py-2.5 rounded-xl transition shadow flex items-center gap-2">
                 📜 Ver Historial
             </button>
+            
+            <!-- 👤 Botones de Autenticación -->
+            <button onclick="abrirModalAuth('login')" class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 text-xs font-bold px-3.5 py-2.5 rounded-xl transition shadow flex items-center gap-1.5">
+                🔑 Iniciar Sesión
+            </button>
+            <button onclick="abrirModalAuth('registro')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl transition shadow flex items-center gap-1.5">
+                📝 Registrarse
+            </button>
+
             <span class="bg-slate-900 text-xs px-3 py-1.5 rounded-full text-slate-300 border border-slate-800 font-bold">+18</span>
         </div>
     </header>
@@ -91,7 +101,7 @@
 
     </main>
 
-    <!-- Modal de Detalle -->
+    <!-- Modal de Detalle de Partido -->
     <div id="modal-detalle" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex justify-center items-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-6 relative shadow-2xl">
             <button onclick="cerrarModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg font-bold">✕</button>
@@ -99,6 +109,21 @@
         </div>
     </div>
 
-    <script src="app.js?v=5"></script>
+    <!-- 👤 Modal de Autenticación (Login / Registro) -->
+    <div id="modal-auth" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex justify-center items-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 relative shadow-2xl">
+            <button onclick="cerrarModalAuth()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg font-bold">✕</button>
+            
+            <div class="flex border-b border-slate-800 mb-5">
+                <button id="tab-login" onclick="cambiarTabAuth('login')" class="flex-1 pb-3 text-xs font-bold text-emerald-400 border-b-2 border-emerald-500 transition">🔑 Iniciar Sesión</button>
+                <button id="tab-registro" onclick="cambiarTabAuth('registro')" class="flex-1 pb-3 text-xs font-semibold text-slate-400 border-b-2 border-transparent transition">📝 Registrarse</button>
+            </div>
+
+            <!-- Formulario dinámico -->
+            <div id="auth-contenido"></div>
+        </div>
+    </div>
+
+    <script src="app.js?v=6"></script>
 </body>
 </html>
