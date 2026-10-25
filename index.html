@@ -59,7 +59,7 @@
             </div>
         </section>
 
-        <!-- SECCIÓN COMPETICIONES -->
+        <!-- SECCIÓN COMPETICIONES (Con Logos Locales y Emojis) -->
         <section id="seccion-competiciones" class="hidden flex flex-col gap-6">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-4">
                 <div>
@@ -69,15 +69,15 @@
                 <button onclick="mostrarSeccion('inicio')" class="text-xs text-slate-400 hover:text-white transition bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl">← Volver al inicio</button>
             </div>
 
-            <!-- Grid de Tarjetas de Competiciones -->
+            <!-- Grid de Tarjetas con Logotipos Oficiales -->
             <div id="ligas-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 
                 <!-- La Liga -->
                 <div onclick="seleccionarLigaYVer('PD')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
                     <div class="flex items-start gap-3">
-                        <span class="text-2xl">⚽</span>
+                        <img src="Logos Competiciones/laliga.png" alt="La Liga" class="w-9 h-9 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                         <div>
-                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">La Liga</h3>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition flex items-center gap-1.5">La Liga <span class="text-xs">🇪🇸</span></h3>
                             <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Análisis IA de La Liga: predicciones, mercados y valor esperado en cada jornada.</p>
                         </div>
                     </div>
@@ -90,9 +90,9 @@
                 <!-- Segunda División -->
                 <div onclick="seleccionarLigaYVer('SD')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
                     <div class="flex items-start gap-3">
-                        <span class="text-2xl">⚽</span>
+                        <img src="Logos Competiciones/laliga2.png" alt="Segunda División" class="w-9 h-9 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                         <div>
-                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Segunda División</h3>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition flex items-center gap-1.5">Segunda División <span class="text-xs">🇪🇸</span></h3>
                             <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Predicciones y estadísticas avanzadas para la Liga Hypermotion.</p>
                         </div>
                     </div>
@@ -105,9 +105,9 @@
                 <!-- Premier League -->
                 <div onclick="seleccionarLigaYVer('PL')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
                     <div class="flex items-start gap-3">
-                        <span class="text-2xl">⚽</span>
+                        <img src="Logos Competiciones/premier.png" alt="Premier League" class="w-9 h-9 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                         <div>
-                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Premier League</h3>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition flex items-center gap-1.5">Premier League <span class="text-xs">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span></h3>
                             <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Análisis IA de Premier League: predicciones, mercados y valor esperado.</p>
                         </div>
                     </div>
@@ -120,9 +120,9 @@
                 <!-- Champions League -->
                 <div onclick="seleccionarLigaYVer('CL')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
                     <div class="flex items-start gap-3">
-                        <span class="text-2xl">⭐</span>
+                        <img src="Logos Competiciones/champions.png" alt="Champions League" class="w-9 h-9 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                         <div>
-                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Champions League</h3>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition flex items-center gap-1.5">Champions League <span class="text-xs">⭐</span></h3>
                             <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">La máxima competición europea analizada con modelo V5.</p>
                         </div>
                     </div>
@@ -135,9 +135,9 @@
                 <!-- Serie A -->
                 <div onclick="seleccionarLigaYVer('SA')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
                     <div class="flex items-start gap-3">
-                        <span class="text-2xl">⚽</span>
+                        <img src="Logos Competiciones/serie_a.png" alt="Serie A" class="w-9 h-9 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                         <div>
-                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Serie A</h3>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition flex items-center gap-1.5">Serie A <span class="text-xs">🇮🇹</span></h3>
                             <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Análisis IA de Serie A: predicciones, mercados y valor esperado.</p>
                         </div>
                     </div>
@@ -150,9 +150,9 @@
                 <!-- Bundesliga -->
                 <div onclick="seleccionarLigaYVer('BL')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
                     <div class="flex items-start gap-3">
-                        <span class="text-2xl">⚽</span>
+                        <img src="Logos Competiciones/bundesliga.png" alt="Bundesliga" class="w-9 h-9 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                         <div>
-                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Bundesliga</h3>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition flex items-center gap-1.5">Bundesliga <span class="text-xs">🇩🇪</span></h3>
                             <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Estadísticas y pronósticos de goles y ganador en Alemania.</p>
                         </div>
                     </div>
@@ -165,9 +165,9 @@
                 <!-- Ligue 1 -->
                 <div onclick="seleccionarLigaYVer('L1')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
                     <div class="flex items-start gap-3">
-                        <span class="text-2xl">⚽</span>
+                        <img src="Logos Competiciones/ligue1.png" alt="Ligue 1" class="w-9 h-9 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                         <div>
-                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Ligue 1</h3>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition flex items-center gap-1.5">Ligue 1 <span class="text-xs">🇫🇷</span></h3>
                             <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Predicciones y lectura IA del campeonato francés.</p>
                         </div>
                     </div>
@@ -180,9 +180,9 @@
                 <!-- Europa League -->
                 <div onclick="seleccionarLigaYVer('EL')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
                     <div class="flex items-start gap-3">
-                        <span class="text-2xl">🇪🇺</span>
+                        <img src="Logos Competiciones/europa.png" alt="Europa League" class="w-9 h-9 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                         <div>
-                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Europa League</h3>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition flex items-center gap-1.5">Europa League <span class="text-xs">🇪🇺</span></h3>
                             <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Análisis de los encuentros de la UEFA Europa League.</p>
                         </div>
                     </div>
@@ -195,9 +195,9 @@
                 <!-- Conference League -->
                 <div onclick="seleccionarLigaYVer('ECL')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
                     <div class="flex items-start gap-3">
-                        <span class="text-2xl">🇪🇺</span>
+                        <img src="Logos Competiciones/conference.png" alt="Conference League" class="w-9 h-9 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                         <div>
-                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Conference League</h3>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition flex items-center gap-1.5">Conference League <span class="text-xs">🇪🇺</span></h3>
                             <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Pronósticos para la UEFA Conference League.</p>
                         </div>
                     </div>
@@ -210,9 +210,9 @@
                 <!-- Eredivisie -->
                 <div onclick="seleccionarLigaYVer('ED')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
                     <div class="flex items-start gap-3">
-                        <span class="text-2xl">⚽</span>
+                        <img src="Logos Competiciones/eredivisie.png" alt="Eredivisie" class="w-9 h-9 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                         <div>
-                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Eredivisie</h3>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition flex items-center gap-1.5">Eredivisie <span class="text-xs">🇳🇱</span></h3>
                             <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Fútbol ofensivo y goles en la liga de los Países Bajos.</p>
                         </div>
                     </div>
@@ -225,9 +225,9 @@
                 <!-- Primeira Liga -->
                 <div onclick="seleccionarLigaYVer('PPL')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
                     <div class="flex items-start gap-3">
-                        <span class="text-2xl">⚽</span>
+                        <img src="Logos Competiciones/primeiraliga.png" alt="Primeira Liga" class="w-9 h-9 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                         <div>
-                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Primeira Liga</h3>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition flex items-center gap-1.5">Primeira Liga <span class="text-xs">🇵🇹</span></h3>
                             <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Análisis de los gigantes de Portugal.</p>
                         </div>
                     </div>
@@ -240,9 +240,9 @@
                 <!-- Championship -->
                 <div onclick="seleccionarLigaYVer('ELC')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
                     <div class="flex items-start gap-3">
-                        <span class="text-2xl">⚽</span>
+                        <img src="Logos Competiciones/championship.png" alt="Championship" class="w-9 h-9 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                         <div>
-                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Championship</h3>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition flex items-center gap-1.5">Championship <span class="text-xs">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span></h3>
                             <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">La competitiva segunda división de Inglaterra.</p>
                         </div>
                     </div>
@@ -255,9 +255,9 @@
                 <!-- MLS -->
                 <div onclick="seleccionarLigaYVer('MLS')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
                     <div class="flex items-start gap-3">
-                        <span class="text-2xl">⚽</span>
+                        <img src="Logos Competiciones/mls.png" alt="MLS" class="w-9 h-9 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                         <div>
-                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">MLS</h3>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition flex items-center gap-1.5">MLS <span class="text-xs">🇺🇸</span></h3>
                             <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Análisis de la Major League Soccer estadounidense.</p>
                         </div>
                     </div>
@@ -270,9 +270,9 @@
                 <!-- Brasileirão -->
                 <div onclick="seleccionarLigaYVer('BR')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
                     <div class="flex items-start gap-3">
-                        <span class="text-2xl">⚽</span>
+                        <img src="Logos Competiciones/brasil.png" alt="Brasileirão" class="w-9 h-9 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                         <div>
-                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Brasileirão</h3>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition flex items-center gap-1.5">Brasileirão <span class="text-xs">🇧🇷</span></h3>
                             <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Fútbol sudamericano de máxima intensidad.</p>
                         </div>
                     </div>
@@ -285,9 +285,9 @@
                 <!-- Liga MX -->
                 <div onclick="seleccionarLigaYVer('MX')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
                     <div class="flex items-start gap-3">
-                        <span class="text-2xl">⚽</span>
+                        <img src="Logos Competiciones/mx.png" alt="Liga MX" class="w-9 h-9 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                         <div>
-                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Liga MX</h3>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition flex items-center gap-1.5">Liga MX <span class="text-xs">🇲🇽</span></h3>
                             <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Predicciones y cuotas de la liga mexicana.</p>
                         </div>
                     </div>
@@ -300,9 +300,9 @@
                 <!-- Argentina -->
                 <div onclick="seleccionarLigaYVer('ARG')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
                     <div class="flex items-start gap-3">
-                        <span class="text-2xl">⚽</span>
+                        <img src="Logos Competiciones/argentina.png" alt="Argentina" class="w-9 h-9 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                         <div>
-                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Argentina</h3>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition flex items-center gap-1.5">Argentina <span class="text-xs">🇦🇷</span></h3>
                             <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Liga Profesional de Fútbol de Argentina.</p>
                         </div>
                     </div>
@@ -315,9 +315,9 @@
                 <!-- Jupiler Pro League -->
                 <div onclick="seleccionarLigaYVer('BEL')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
                     <div class="flex items-start gap-3">
-                        <span class="text-2xl">⚽</span>
+                        <img src="Logos Competiciones/jupiler.png" alt="Jupiler Pro League" class="w-9 h-9 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                         <div>
-                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Jupiler Pro League</h3>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition flex items-center gap-1.5">Jupiler Pro League <span class="text-xs">🇧🇪</span></h3>
                             <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Campeonato de primera división de Bélgica.</p>
                         </div>
                     </div>
@@ -330,9 +330,9 @@
                 <!-- Süper Lig -->
                 <div onclick="seleccionarLigaYVer('TUR')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
                     <div class="flex items-start gap-3">
-                        <span class="text-2xl">⚽</span>
+                        <img src="Logos Competiciones/superlig.png" alt="Süper Lig" class="w-9 h-9 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                         <div>
-                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Süper Lig</h3>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition flex items-center gap-1.5">Süper Lig <span class="text-xs">🇹🇷</span></h3>
                             <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Análisis de la liga de Turquía.</p>
                         </div>
                     </div>
@@ -345,9 +345,9 @@
                 <!-- Copa Libertadores -->
                 <div onclick="seleccionarLigaYVer('COL')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
                     <div class="flex items-start gap-3">
-                        <span class="text-2xl">🏆</span>
+                        <img src="Logos Competiciones/libertadores.png" alt="Copa Libertadores" class="w-9 h-9 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                         <div>
-                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Copa Libertadores</h3>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition flex items-center gap-1.5">Copa Libertadores <span class="text-xs">🏆</span></h3>
                             <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">La gran competición de clubes sudamericanos.</p>
                         </div>
                     </div>
@@ -360,9 +360,9 @@
                 <!-- Primera División (Chile) -->
                 <div onclick="seleccionarLigaYVer('URU')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
                     <div class="flex items-start gap-3">
-                        <span class="text-2xl">⚽</span>
+                        <img src="Logos Competiciones/ligachile.png" alt="Primera División (Chile)" class="w-9 h-9 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                         <div>
-                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Primera División (Chile)</h3>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition flex items-center gap-1.5">Primera División (Chile) <span class="text-xs">🇨🇱</span></h3>
                             <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Estadísticas y pronósticos del fútbol chileno.</p>
                         </div>
                     </div>
@@ -375,9 +375,9 @@
                 <!-- J1 League -->
                 <div onclick="seleccionarLigaYVer('JPN')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
                     <div class="flex items-start gap-3">
-                        <span class="text-2xl">⚽</span>
+                        <img src="Logos Competiciones/jleague.png" alt="J1 League" class="w-9 h-9 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                         <div>
-                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">J1 League</h3>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition flex items-center gap-1.5">J1 League <span class="text-xs">🇯🇵</span></h3>
                             <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Fútbol de élite en Japón.</p>
                         </div>
                     </div>
@@ -390,9 +390,9 @@
                 <!-- K League 1 -->
                 <div onclick="seleccionarLigaYVer('KOR')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
                     <div class="flex items-start gap-3">
-                        <span class="text-2xl">⚽</span>
+                        <img src="Logos Competiciones/kleague.png" alt="K League 1" class="w-9 h-9 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                         <div>
-                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">K League 1</h3>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition flex items-center gap-1.5">K League 1 <span class="text-xs">🇰🇷</span></h3>
                             <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Campeonato de Corea del Sur.</p>
                         </div>
                     </div>
@@ -405,9 +405,9 @@
                 <!-- A-League -->
                 <div onclick="seleccionarLigaYVer('AUS')" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-4 group">
                     <div class="flex items-start gap-3">
-                        <span class="text-2xl">⚽</span>
+                        <img src="Logos Competiciones/a_league.png" alt="A-League" class="w-9 h-9 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                         <div>
-                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">A-League</h3>
+                            <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition flex items-center gap-1.5">A-League <span class="text-xs">🇦🇺</span></h3>
                             <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Fútbol de Australia y Nueva Zelanda.</p>
                         </div>
                     </div>
@@ -419,7 +419,7 @@
 
             </div>
 
-            <!-- Controles de Filtros y Stake Minimalistas -->
+            <!-- Controles de Filtros y Partidos -->
             <div id="panel-resultados-liga" class="hidden flex flex-col gap-4 mt-4">
                 <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-900/60 p-3 rounded-xl border border-slate-800">
                     <div class="flex items-center gap-2">
@@ -485,6 +485,6 @@
         }
     </script>
 
-    <script src="app.js?v=13"></script>
+    <script src="app.js?v=14"></script>
 </body>
 </html>
