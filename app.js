@@ -2,15 +2,14 @@
 
 const ODDS_API_KEY = '2a11173b5f716f77724b660faf014a27';
 
-// Añadidas nuevas ligas europeas
 const LIGAS_ODDS = {
   'PD': 'soccer_spain_la_liga',
   'PL': 'soccer_epl',
   'CL': 'soccer_uefa_champs_league',
   'SA': 'soccer_italy_serie_a',
   'BL': 'soccer_germany_bundesliga',
-  'L1': 'soccer_france_ligue_one'
-  'EL': 'soccer_uefa_europa_league', 
+  'L1': 'soccer_france_ligue_one',
+  'EL': 'soccer_uefa_europa_league',
   'ECL': 'soccer_uefa_conference_league'
 };
 
@@ -45,7 +44,7 @@ const ESCUDOS_MANUALES = {
   'valencia': './Logos Equipos/La Liga/valencia.png',
   'villarreal': './Logos Equipos/La Liga/villareal.png',
 
-  // === OTRAS LIGAS (Se irán rellenando cuando subas sus escudos) ===
+  // === OTRAS LIGAS ===
   'arsenal': '',
   'manchester city': '',
   'liverpool': '',
@@ -526,7 +525,7 @@ function cambiarLiga(codigo) {
 
 function toggleSoloValor() {
   soloValor = !soloValor;
-  const btn = document.getElementById('btn-solo-valoor');
+  const btn = document.getElementById('btn-solo-valor');
   if (btn) {
     btn.setAttribute('aria-pressed', String(soloValor));
     if (soloValor) {
