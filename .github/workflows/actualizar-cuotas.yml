@@ -23,36 +23,59 @@ jobs:
           const fs = require("fs");
           const API_KEY = process.env.ODDS_API_KEY;
           
+          // Posibles claves por liga (con alternativas oficiales de The Odds API)
           const LIGAS = {
-            PD: "soccer_spain_la_liga",
-            SD: "soccer_spain_segunda_division",
-            PL: "soccer_epl",
-            CL: "soccer_uefa_champs_league",
-            SA: "soccer_italy_serie_a",
-            BL: "soccer_germany_bundesliga",
-            L1: "soccer_france_ligue_one",
-            EL: "soccer_uefa_europa_league",
-            ECL: "soccer_uefa_europa_conference_league",
-            ED: "soccer_netherlands_eredivisie",
-            PPL: "soccer_portugal_primeira_liga",
-            ELC: "soccer_efl_champ",
-            MLS: "soccer_usa_mls",
-            BR: "soccer_brazil_campeonato",
-            MX: "soccer_mexico_ligamx",
-            ARG: "soccer_argentina_primera_division",
-            BEL: "soccer_belgium_first_div",
-            TUR: "soccer_turkey_super_lig",
-            COL: "soccer_colombia_primera_a",
-            URU: "soccer_uruguay_primera_division",
-            JPN: "soccer_japan_j_league",
-            KOR: "soccer_k_league_1",
-            AUS: "soccer_australia_aleague"
+            PD: ["soccer_spain_la_liga"],
+            SD: ["soccer_spain_segunda_division"],
+            PL: ["soccer_epl"],
+            CL: ["soccer_uefa_champs_league"],
+            SA: ["soccer_italy_serie_a"],
+            BL: ["soccer_germany_bundesliga"],
+            L1: ["soccer_france_ligue_one"],
+            EL: ["soccer_uefa_europa_league"],
+            ECL: ["soccer_uefa_europa_conference_league"],
+            ED: ["soccer_netherlands_eredivisie"],
+            PPL: ["soccer_portugal_primeira_liga"],
+            ELC: ["soccer_efl_champ"],
+            MLS: ["soccer_usa_mls"],
+            BR: ["soccer_brazil_campeonato"],
+            MX: ["soccer_mexico_ligamx"],
+            ARG: ["soccer_argentina_primera_division"],
+            BEL: ["soccer_belgium_first_div"],
+            TUR: ["soccer_turkey_super_league", "soccer_turkey_super_lig"],
+            COL: ["soccer_colombia_primera_a", "soccer_conmebol_copa_libertadores"],
+            URU: ["soccer_uruguay_primera_division", "soccer_chile_campeonato"],
+            JPN: ["soccer_japan_j_league"],
+            KOR: ["soccer_korea_kleague1", "soccer_k_league_1"],
+            AUS: ["soccer_australia_aleague"]
           };
 
           (async () => {
             const resultado = { actualizado: new Date().toISOString(), restantes: null, ligas: {} };
             
-            for (const [codigo, sportKey] of Object.entries(LIGAS)) {
+            // 1. Obtener catálogo activo hoy (Coste: 0 peticiones en The Odds API)
+            let activas = new Set();
+            try {
+              const resCatalogo = await fetch(`https://api.the-odds-api.com/v4/sports?apiKey=${API_KEY}`);
+              if (resCatalogo.ok) {
+                const listaDeportes = await resCatalogo.json();
+                listaDeportes.forEach(d => activas.add(d.key));
+                console.log(`📋 Catálogo verificado: ${activas.size} competiciones activas hoy.`);
+              }
+            } catch (e) {
+              console.warn("⚠️ No se pudo pre-verificar el catálogo:", e.message);
+            }
+
+            // 2. Descargar solo las que estén activas
+            for (const [codigo, posiblesClaves] of Object.entries(LIGAS)) {
+              const sportKey = posiblesClaves.find(k => activas.has(k)) || posiblesClaves[0];
+
+              if (activas.size > 0 && !activas.has(sportKey)) {
+                resultado.ligas[codigo] = [];
+                console.log(`⏭️ ${codigo} (${sportKey}): Sin jornada activa hoy (0 créditos gastados)`);
+                continue;
+              }
+
               try {
                 const url = `https://api.the-odds-api.com/v4/sports/${sportKey}/odds?apiKey=${API_KEY}&regions=eu&markets=h2h,totals&oddsFormat=decimal&dateFormat=iso`;
                 const res = await fetch(url);
@@ -60,23 +83,17 @@ jobs:
                 if (res.ok) {
                   resultado.restantes = res.headers.get("x-requests-remaining");
                   const data = await res.json();
-                  
-                  if (Array.isArray(data) && data.length > 0) {
-                    resultado.ligas[codigo] = data;
-                    console.log(`✅ ${codigo}: ${data.length} partidos encontrados (Guardados)`);
-                  } else {
-                    resultado.ligas[codigo] = [];
-                    console.log(`⚠️ ${codigo}: Sin partidos próximos (Ahorro de datos)`);
-                  }
+                  resultado.ligas[codigo] = Array.isArray(data) ? data : [];
+                  console.log(`✅ ${codigo} (${sportKey}): ${resultado.ligas[codigo].length} partidos guardados`);
                 } else {
-                  console.log(`❌ ${codigo} devolvió error HTTP ${res.status}`);
+                  console.log(`⚠️ ${codigo} (${sportKey}) sin datos activos (HTTP ${res.status})`);
                   resultado.ligas[codigo] = [];
                 }
               } catch (e) {
                 console.error(`❌ Error en ${codigo}:`, e.message);
                 resultado.ligas[codigo] = [];
               }
-              await new Promise(r => setTimeout(r, 1200));
+              await new Promise(r => setTimeout(r, 1000));
             }
 
             fs.writeFileSync("datos-ligas.json", JSON.stringify(resultado));
@@ -89,5 +106,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add datos-ligas.json
-          git diff --staged --quiet || git commit -m "Actualización inteligente con nuevas ligas"
+          git diff --staged --quiet || git commit -m "Actualización inteligente con claves corregidas"
           git push
