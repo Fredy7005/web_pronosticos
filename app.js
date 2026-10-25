@@ -2,30 +2,31 @@
 
 const ODDS_API_KEY = '2a11173b5f716f77724b660faf014a27';
 
+// Lista de claves con respaldo automático para evitar errores 404
 const LIGAS_ODDS = {
-  'PD': 'soccer_spain_la_liga',
-  'SD': 'soccer_spain_segunda_division',
-  'PL': 'soccer_epl',
-  'CL': 'soccer_uefa_champs_league',
-  'SA': 'soccer_italy_serie_a',
-  'BL': 'soccer_germany_bundesliga',
-  'L1': 'soccer_france_ligue_one',
-  'EL': 'soccer_uefa_europa_league',
-  'ECL': 'soccer_uefa_europa_conference_league',
-  'ED': 'soccer_netherlands_eredivisie',
-  'PPL': 'soccer_portugal_primeira_liga',
-  'ELC': 'soccer_efl_champ',
-  'MLS': 'soccer_usa_mls',
-  'BR': 'soccer_brazil_campeonato',
-  'MX': 'soccer_mexico_ligamx',
-  'ARG': 'soccer_argentina_primera_division',
-  'BEL': 'soccer_belgium_first_div',
-  'TUR': 'soccer_turkey_super_lig',
-  'COL': 'soccer_colombia_primera_a',
-  'URU': 'soccer_uruguay_primera_division',
-  'JPN': 'soccer_japan_j_league',
-  'KOR': 'soccer_k_league_1',
-  'AUS': 'soccer_australia_aleague'
+  'PD': ['soccer_spain_la_liga'],
+  'SD': ['soccer_spain_segunda_division'],
+  'PL': ['soccer_epl'],
+  'CL': ['soccer_uefa_champs_league'],
+  'SA': ['soccer_italy_serie_a'],
+  'BL': ['soccer_germany_bundesliga'],
+  'L1': ['soccer_france_ligue_one'],
+  'EL': ['soccer_uefa_europa_league'],
+  'ECL': ['soccer_uefa_europa_conference_league'],
+  'ED': ['soccer_netherlands_eredivisie'],
+  'PPL': ['soccer_portugal_primeira_liga'],
+  'ELC': ['soccer_efl_champ'],
+  'MLS': ['soccer_usa_mls'],
+  'BR': ['soccer_brazil_campeonato'],
+  'MX': ['soccer_mexico_ligamx'],
+  'ARG': ['soccer_argentina_primera_division'],
+  'BEL': ['soccer_belgium_first_div'],
+  'TUR': ['soccer_turkey_super_league', 'soccer_turkey_super_lig'],
+  'COL': ['soccer_colombia_primera_a', 'soccer_conmebol_copa_libertadores'],
+  'URU': ['soccer_uruguay_primera_division', 'soccer_chile_campeonato'],
+  'JPN': ['soccer_japan_j_league'],
+  'KOR': ['soccer_korea_kleague1', 'soccer_k_league_1'],
+  'AUS': ['soccer_australia_aleague']
 };
 
 const UMBRAL_VALOR = 0.02;
@@ -91,7 +92,7 @@ function buscarEscudo(nombre) {
   return 'https://cdn-icons-png.flaticon.com/512/53/53283.png';
 }
 
-// ===================== CAPA DE DATOS (JSON ESTÁTICO + CACHÉ DE RESPALDO) =====================
+// ===================== CAPA DE DATOS (JSON ESTÁTICO + RESPALDO ANTI-404) =====================
 
 async function cargarArchivoEstatico() {
   if (dbEstatica) return dbEstatica;
@@ -108,10 +109,10 @@ async function cargarArchivoEstatico() {
 }
 
 async function obtenerDatosLiga(codigoLiga) {
-  const sportKey = LIGAS_ODDS[codigoLiga];
-  if (!sportKey) throw new Error(`La liga (${codigoLiga}) no está configurada.`);
+  const clavesCandidatas = LIGAS_ODDS[codigoLiga];
+  if (!clavesCandidatas) throw new Error(`La liga (${codigoLiga}) no está configurada.`);
 
-  // 1. Intentar leer primero del archivo diario generado por el robot (0 peticiones a la API)
+  // 1. Leer primero del archivo diario generado por el robot (0 peticiones a la API)
   const estatico = await cargarArchivoEstatico();
   if (estatico && estatico.ligas && Array.isArray(estatico.ligas[codigoLiga])) {
     return {
@@ -121,27 +122,39 @@ async function obtenerDatosLiga(codigoLiga) {
     };
   }
 
-  // 2. Respaldo en caché del navegador o API si el robot aún no ha corrido para esa liga nueva
-  const storageKey = 'sp_v2:odds:' + sportKey;
-  let guardado = null;
-  try { guardado = JSON.parse(localStorage.getItem(storageKey)); } catch {}
+  // 2. Si aún no está en datos-ligas.json, probar las claves candidatas en caché/API
+  for (const sportKey of clavesCandidatas) {
+    const storageKey = 'sp_v3:odds:' + sportKey;
+    let guardado = null;
+    try { guardado = JSON.parse(localStorage.getItem(storageKey)); } catch {}
 
-  if (guardado && Date.now() - guardado.t < TTL_CUOTAS_MIN * 60000) {
-    return { partidos: guardado.datos.partidos, restantes: guardado.datos.restantes, origen: 'cache' };
+    if (guardado && Date.now() - guardado.t < TTL_CUOTAS_MIN * 60000) {
+      return { partidos: guardado.datos.partidos, restantes: guardado.datos.restantes, origen: 'cache' };
+    }
+
+    const res = await fetch(
+      `https://api.the-odds-api.com/v4/sports/${sportKey}/odds?apiKey=${ODDS_API_KEY}&regions=eu&markets=h2h,totals&oddsFormat=decimal&dateFormat=iso`
+    );
+
+    if (res.ok) {
+      const partidos = await res.json();
+      const restantes = res.headers.get('x-requests-remaining');
+      try {
+        localStorage.setItem(storageKey, JSON.stringify({ t: Date.now(), datos: { partidos, restantes } }));
+      } catch {}
+      return { partidos, restantes, origen: 'api' };
+    }
+
+    // Si devuelve 404 o 422, probamos la siguiente clave candidata sin romper la app
+    if (res.status === 404 || res.status === 422) {
+      continue;
+    } else {
+      throw new Error(`Error al conectar con la base de datos (${res.status})`);
+    }
   }
 
-  const res = await fetch(
-    `https://api.the-odds-api.com/v4/sports/${sportKey}/odds?apiKey=${ODDS_API_KEY}&regions=eu&markets=h2h,totals&oddsFormat=decimal&dateFormat=iso`
-  );
-  if (!res.ok) throw new Error(`Error al conectar con la base de datos (${res.status})`);
-
-  const partidos = await res.json();
-  const restantes = res.headers.get('x-requests-remaining');
-  try {
-    localStorage.setItem(storageKey, JSON.stringify({ t: Date.now(), datos: { partidos, restantes } }));
-  } catch {}
-
-  return { partidos, restantes, origen: 'api' };
+  // Si ninguna clave tiene jornada activa hoy (ej. 404 por parón de liga), devolvemos lista vacía limpia
+  return { partidos: [], restantes: null, origen: 'sin_jornada' };
 }
 
 // ===================== MOTOR DE ANÁLISIS ROBUSTO =====================
@@ -534,5 +547,7 @@ function cambiarOrden() {
 function actualizarSimulacion() {
   renderizarPartidos();
 }
+
+document.addEventListener('DOMContentLoaded', () => cargarPartidos('PD'));
 
 document.addEventListener('DOMContentLoaded', () => cargarPartidos('PD'));
