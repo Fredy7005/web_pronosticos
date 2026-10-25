@@ -10,7 +10,12 @@ const LIGAS_ODDS = {
   'BL': 'soccer_germany_bundesliga',
   'L1': 'soccer_france_ligue_one',
   'EL': 'soccer_uefa_europa_league',
-  'ECL': 'soccer_uefa_europa_conference_league'
+  'ECL': 'soccer_uefa_europa_conference_league',
+  'ED': 'soccer_netherlands_eredivisie',     // Eredivisie (Países Bajos)
+  'PPL': 'soccer_portugal_primeira_liga',  // Primeira Liga (Portugal)
+  'ELC': 'soccer_efl_champ',               // Championship (Inglaterra 2ª)
+  'MLS': 'soccer_usa_mls',                 // MLS (EE. UU.)
+  'BR': 'soccer_brazil_campeonato'         // Brasileirão (Brasil)
 };
 
 const UMBRAL_VALOR = 0.02;
