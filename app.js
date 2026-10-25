@@ -153,7 +153,7 @@ async function obtenerDatosLiga(codigoLiga) {
   return { partidos: [], restantes: null, origen: 'sin_jornada' };
 }
 
-// ===================== MOTOR DE ANÁLISIS =====================
+// ===================== MOTOR DE ANÁLISIS ROBUSTO =====================
 
 function analizarPartido(partido, index) {
   const claves = ['local', 'empate', 'visitante'];
@@ -226,6 +226,25 @@ function analizarPartido(partido, index) {
   if (probable.prob >= 0.60) etiquetaConfianza = "Favorito muy claro";
   else if (probable.prob >= 0.48) etiquetaConfianza = "Leve favorito";
 
+  const probOver25 = probabilidadGeneral(partido, 'totals', 'Over', 2.5);
+  const probOver15 = probabilidadGeneral(partido, 'totals', 'Over', 1.5);
+  let tendenciaGoles = "Más de 1.5 Goles (Alta seguridad)";
+  if (probOver25 !== null && probOver25 >= 0.55) {
+    tendenciaGoles = `Más de 2.5 Goles (${Math.round(probOver25 * 100)}% prob.)`;
+  } else if (probOver15 !== null && probOver15 < 0.60) {
+    tendenciaGoles = "Menos de 2.5 Goles (Partido táctico)";
+  }
+
+  const probBttsYes = probabilidadGeneral(partido, 'btts', 'Yes');
+  let ambosMarcanTexto = "No concluyente";
+  if (probBttsYes !== null) {
+    ambosMarcanTexto = probBttsYes >= 0.52 ? `SÍ - Ambos Marcan (${Math.round(probBttsYes * 100)}%)` : "NO - Difícil que anoten ambos";
+  } else {
+    ambosMarcanTexto = (probable.prob < 0.50) ? "SÍ (Alta probabilidad ofensiva)" : "NO (Partido cerrado)";
+  }
+
+  const tendenciaCorners = probable.prob > 0.55 ? "Más de 8.5 Córners (Ritmo alto)" : "Más de 9.5 Córners (Partido abierto)";
+
   return {
     id: index,
     local: partido.home_team,
@@ -240,10 +259,23 @@ function analizarPartido(partido, index) {
     resultadoSugerido: valor ? valor.clave : probable.clave,
     esOportunidadTop: !!valor,
     probabilidadAcierto: probable.prob,
-    tendenciaGoles: probable.prob > 0.55 ? "Más de 2.5 Goles" : "Más de 1.5 Goles",
-    ambosMarcanTexto: probable.prob < 0.50 ? "SÍ (Alta probabilidad)" : "NO (Partido cerrado)",
-    tendenciaCorners: "Más de 9.5 Córners"
+    tendenciaGoles,
+    ambosMarcanTexto,
+    tendenciaCorners
   };
+}
+
+function probabilidadGeneral(partido, tipoMercado, nombreSalida, punto = null) {
+  const probs = [];
+  for (const casa of partido.bookmakers || []) {
+    const mercado = (casa.markets || []).find((m) => m.key === tipoMercado);
+    if (!mercado) continue;
+    const itemPrincipal = mercado.outcomes.find((o) => o.name === nombreSalida && (punto === null || o.point === punto));
+    if (itemPrincipal && itemPrincipal.price > 1) {
+      probs.push(1 / itemPrincipal.price);
+    }
+  }
+  return probs.length ? media(probs) : null;
 }
 
 // ===================== CARGA Y RENDERIZADO =====================
@@ -291,6 +323,7 @@ const imgEscudo = (url, alt) => url ? `<img src="${esc(url)}" class="w-7 h-7 obj
 
 function tarjetaPartido(p, stake) {
   const cuotaFinal = p.mejorCuota.cuota;
+  const casaFinal = p.mejorCuota.casa;
   const retornoBruto = stake * cuotaFinal;
   const beneficioNeto = retornoBruto - stake;
   const textoRecomendacion = descripcionApuesta(p, p.resultadoSugerido);
@@ -301,6 +334,7 @@ function tarjetaPartido(p, stake) {
         <span>📅 ${esc(FECHA.format(p.fecha))}</span>
         <div class="flex items-center gap-2">
           ${modoHistorial ? '<span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-bold text-[10px]">🏁 Finalizado</span>' : (p.esOportunidadTop ? '<span class="bg-amber-500/20 text-amber-300 font-bold px-2.5 py-1 rounded-lg border border-amber-500/30">💎 Oportunidad Destacada</span>' : `<span class="text-slate-400">${p.etiquetaConfianza}</span>`)}
+          <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded group-hover:bg-slate-700 group-hover:text-white transition">🔍 Ver Más</span>
         </div>
       </div>
 
@@ -316,15 +350,35 @@ function tarjetaPartido(p, stake) {
         </div>
       </div>
 
+      <!-- 🟢 BLOQUE DE MERCADOS COMPLETOS (Goles, Ambos Marcan, Córners) -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-slate-950/60 p-3 rounded-xl border border-slate-800 text-xs">
+        <div class="flex items-center justify-between sm:justify-start gap-2">
+          <span class="text-slate-400">⚽ Goles:</span>
+          <span class="font-bold text-slate-200">${esc(p.tendenciaGoles)}</span>
+        </div>
+        <div class="flex items-center justify-between sm:justify-start gap-2">
+          <span class="text-slate-400">🔄 Ambos Marcan:</span>
+          <span class="font-bold text-slate-200">${esc(p.ambosMarcanTexto)}</span>
+        </div>
+        <div class="flex items-center justify-between sm:justify-start gap-2">
+          <span class="text-slate-400">🚩 Córners:</span>
+          <span class="font-bold text-slate-200">${esc(p.tendenciaCorners)}</span>
+        </div>
+      </div>
+
       <div class="bg-slate-950/80 p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4 border border-slate-800">
         <div class="text-center sm:text-left">
           <div class="text-[11px] text-slate-400 font-medium">${modoHistorial ? 'Pronóstico que se realizó:' : 'Pronóstico recomendado:'}</div>
           <div class="text-sm sm:text-base font-extrabold text-emerald-400">${esc(textoRecomendacion)}</div>
-          <div class="text-[11px] text-slate-400 mt-0.5">Cuota: <strong class="text-white">${cuotaFinal.toFixed(2)}</strong></div>
+          <div class="text-[11px] text-slate-400 mt-0.5">Cuota: <strong class="text-white">${cuotaFinal.toFixed(2)}</strong> (${esc(casaFinal)})</div>
         </div>
-        <div class="text-right text-xs">
-          <div class="text-slate-400">Beneficio potencial:</div>
-          <div class="text-sm font-extrabold text-emerald-400">+${esc(EUR.format(beneficioNeto))}</div>
+
+        <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-800">
+          <div class="text-right text-xs">
+            <div class="text-slate-400">${modoHistorial ? 'Beneficio registrado:' : 'Beneficio estimado:'}</div>
+            <div class="text-sm font-extrabold text-emerald-400">+${esc(EUR.format(beneficioNeto))}</div>
+          </div>
+          ${modoHistorial ? '' : `<a href="https://www.bet365.com" onclick="event.stopPropagation()" target="_blank" rel="noopener noreferrer" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-5 py-3 rounded-xl text-center active:scale-95 transition shadow-lg">Apostar</a>`}
         </div>
       </div>
     </article>`;
@@ -348,21 +402,49 @@ function abrirDetallePartido(id) {
       <h2 class="text-lg font-black text-white mt-1">${esc(p.local)} vs ${esc(p.visitante)}</h2>
       <p class="text-xs text-slate-400 mt-0.5">📅 ${esc(FECHA.format(p.fecha))}</p>
     </div>
-    <div class="grid grid-cols-3 gap-2 text-center text-xs mb-4">
-      <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
-        <div class="text-slate-400">1 (Local)</div>
-        <div class="text-base font-extrabold text-emerald-400 mt-1">${pctLocal}%</div>
+
+    <div class="mb-5">
+      <div class="text-xs font-bold text-slate-300 mb-2">📊 Probabilidades Reales de Resultado (1X2):</div>
+      <div class="grid grid-cols-3 gap-2 text-center text-xs">
+        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
+          <div class="text-slate-400">1 (Local)</div>
+          <div class="text-base font-extrabold text-emerald-400 mt-1">${pctLocal}%</div>
+          <div class="text-[10px] text-slate-500 mt-0.5">Cuota: ${p.cuotasOriginales.local.toFixed(2)}</div>
+        </div>
+        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
+          <div class="text-slate-400">X (Empate)</div>
+          <div class="text-base font-extrabold text-amber-400 mt-1">${pctEmpate}%</div>
+          <div class="text-[10px] text-slate-500 mt-0.5">Cuota: ${p.cuotasOriginales.empate.toFixed(2)}</div>
+        </div>
+        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
+          <div class="text-slate-400">2 (Visitante)</div>
+          <div class="text-base font-extrabold text-blue-400 mt-1">${pctVisitante}%</div>
+          <div class="text-[10px] text-slate-500 mt-0.5">Cuota: ${p.cuotasOriginales.visitante.toFixed(2)}</div>
+        </div>
       </div>
-      <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
-        <div class="text-slate-400">X (Empate)</div>
-        <div class="text-base font-extrabold text-amber-400 mt-1">${pctEmpate}%</div>
+    </div>
+
+    <div class="bg-slate-950/70 p-4 rounded-xl border border-slate-800 text-xs space-y-2 mb-5">
+      <div class="font-bold text-slate-300 mb-1">🔍 Desglose de Predicción:</div>
+      <div class="flex justify-between border-b border-slate-800 pb-1.5">
+        <span class="text-slate-400">Mercado 1X2 recomendado:</span>
+        <span class="font-extrabold text-emerald-400">${descripcionApuesta(p, p.resultadoSugerido)}</span>
       </div>
-      <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
-        <div class="text-slate-400">2 (Visitante)</div>
-        <div class="text-base font-extrabold text-blue-400 mt-1">${pctVisitante}%</div>
+      <div class="flex justify-between border-b border-slate-800 pb-1.5">
+        <span class="text-slate-400">Línea de Goles recomendada:</span>
+        <span class="font-bold text-slate-200">${esc(p.tendenciaGoles)}</span>
+      </div>
+      <div class="flex justify-between border-b border-slate-800 pb-1.5">
+        <span class="text-slate-400">Mercado Ambos Marcan:</span>
+        <span class="font-bold text-slate-200">${esc(p.ambosMarcanTexto)}</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-slate-400">Pronóstico de Córners:</span>
+        <span class="font-bold text-slate-200">${esc(p.tendenciaCorners)}</span>
       </div>
     </div>
   `;
+
   modal.classList.remove('hidden');
 }
 
@@ -389,7 +471,7 @@ function renderizarPartidos(origen = 'robot', restantes = null) {
   });
 
   if (modoHistorial) {
-    setEstado('📜 Mostrando historial de partidos finalizados');
+    setEstado('📜 Mostrando historial de partidos finalizados con todos sus pronósticos');
   } else {
     setEstado(restantes ? `🟢 Base de datos activa | Créditos API: ${restantes}` : '⚡ Datos sincronizados correctamente');
   }
@@ -412,13 +494,11 @@ function toggleVistaHistorial() {
       btnHistorial.textContent = '⚽ Ver Próximos';
       btnHistorial.classList.add('bg-emerald-600', 'text-white');
     }
-    if (controlesDerecha) controlesDerecha.style.opacity = '0.4';
   } else {
     if (btnHistorial) {
       btnHistorial.textContent = '📜 Ver Historial';
       btnHistorial.classList.remove('bg-emerald-600', 'text-white');
     }
-    if (controlesDerecha) controlesDerecha.style.opacity = '1';
   }
   renderizarPartidos();
 }
