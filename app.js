@@ -1,4 +1,20 @@
-// ===================== CONFIGURACIÓN =====================
+// ===================== CONFIGURACIÓN DE FIREBASE =====================
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCqDo0GzIzXT-E3VPAkJVGg6wHiBBFb-Ac",
+  authDomain: "sportpredicts.firebaseapp.com",
+  projectId: "sportpredicts",
+  storageBucket: "sportpredicts.firebasestorage.app",
+  messagingSenderId: "147554075482",
+  appId: "1:147554075482:web:2b2827b8699b8c37b0e963",
+  measurementId: "G-CL8NTKKTNP"
+};
+
+// Inicializar Firebase
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+// ===================== CONFIGURACIÓN GENERAL =====================
 
 const ODDS_API_KEY = '2a11173b5f716f77724b660faf014a27';
 
@@ -153,7 +169,7 @@ async function obtenerDatosLiga(codigoLiga) {
   return { partidos: [], restantes: null, origen: 'sin_jornada' };
 }
 
-// ===================== MOTOR DE ANÁLISIS ROBUSTO =====================
+// ===================== MOTOR DE ANÁLISIS =====================
 
 function analizarPartido(partido, index) {
   const claves = ['local', 'empate', 'visitante'];
@@ -278,7 +294,7 @@ function probabilidadGeneral(partido, tipoMercado, nombreSalida, punto = null) {
   return probs.length ? media(probs) : null;
 }
 
-// ===================== CARGA Y RENDERIZADO =====================
+// ===================== RENDERIZADO =====================
 
 async function cargarPartidos(codigoLiga = 'PD') {
   const id = ++cargaId;
@@ -544,7 +560,43 @@ function actualizarSimulacion() {
   renderizarPartidos();
 }
 
-// ===================== AUTENTICACIÓN =====================
+// ===================== AUTENTICACIÓN REAL CON FIREBASE =====================
+
+auth.onAuthStateChanged((user) => {
+  const headerBtns = document.querySelector('header .flex.items-center.flex-wrap.gap-2\\.5');
+  if (!headerBtns) return;
+
+  // Buscar si ya existe el bloque dinámico de sesión
+  let authContainer = document.getElementById('auth-user-container');
+  if (!authContainer) {
+    authContainer = document.createElement('div');
+    authContainer.id = 'auth-user-container';
+    authContainer.className = 'flex items-center gap-2';
+    // Insertarlo antes del indicador de edad (+18)
+    headerBtns.insertBefore(authContainer, headerBtns.lastElementChild);
+  }
+
+  if (user) {
+    authContainer.innerHTML = `
+      <span class="text-xs text-emerald-400 font-bold hidden md:inline">👤 ${esc(user.email)}</span>
+      <button onclick="cerrarSesionFirebase()" class="bg-slate-900 hover:bg-red-950/60 text-slate-300 hover:text-red-400 border border-slate-700 hover:border-red-900 text-xs font-bold px-3.5 py-2.5 rounded-xl transition shadow">
+        🚪 Salir
+      </button>
+    `;
+    // Ocultar botones de login/registro de invitados si ya está dentro
+    document.getElementById('btn-login-header')?.remove();
+    document.getElementById('btn-registro-header')?.remove();
+  } else {
+    authContainer.innerHTML = `
+      <button id="btn-login-header" onclick="abrirModalAuth('login')" class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 text-xs font-bold px-3.5 py-2.5 rounded-xl transition shadow flex items-center gap-1.5">
+        🔑 Iniciar Sesión
+      </button>
+      <button id="btn-registro-header" onclick="abrirModalAuth('registro')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl transition shadow flex items-center gap-1.5">
+        📝 Registrarse
+      </button>
+    `;
+  }
+});
 
 function abrirModalAuth(tipo = 'login') {
   const modal = document.getElementById('modal-auth');
@@ -571,14 +623,14 @@ function cambiarTabAuth(tipo) {
     tabRegistro.className = "flex-1 pb-3 text-xs font-semibold text-slate-400 border-b-2 border-transparent transition";
     
     contenido.innerHTML = `
-      <form onsubmit="event.preventDefault(); alert('¡Simulación de inicio de sesión completada!'); cerrarModalAuth();" class="flex flex-col gap-4">
+      <form onsubmit="manejarLogin(event)" class="flex flex-col gap-4">
         <div>
           <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Correo Electrónico</label>
-          <input type="email" required placeholder="tu@correo.com" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-emerald-500">
+          <input type="email" id="login-email" required placeholder="tu@correo.com" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-emerald-500">
         </div>
         <div>
           <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Contraseña</label>
-          <input type="password" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-emerald-500">
+          <input type="password" id="login-password" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-emerald-500">
         </div>
         <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-3 rounded-xl transition shadow-lg mt-2">Acceder a SportPredicts</button>
       </form>
@@ -588,22 +640,53 @@ function cambiarTabAuth(tipo) {
     tabLogin.className = "flex-1 pb-3 text-xs font-semibold text-slate-400 border-b-2 border-transparent transition";
     
     contenido.innerHTML = `
-      <form onsubmit="event.preventDefault(); alert('¡Registro simulado con éxito! Bienvenido a la comunidad.'); cerrarModalAuth();" class="flex flex-col gap-3">
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Nombre de Usuario</label>
-          <input type="text" required placeholder="TuApodoDeApostador" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-emerald-500">
-        </div>
+      <form onsubmit="manejarRegistro(event)" class="flex flex-col gap-3">
         <div>
           <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Correo Electrónico</label>
-          <input type="email" required placeholder="tu@correo.com" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-emerald-500">
+          <input type="email" id="reg-email" required placeholder="tu@correo.com" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-emerald-500">
         </div>
         <div>
-          <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Contraseña</label>
-          <input type="password" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-emerald-500">
+          <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Contraseña (mínimo 6 caracteres)</label>
+          <input type="password" id="reg-password" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-emerald-500">
         </div>
         <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-3 rounded-xl transition shadow-lg mt-2">Crear Cuenta Gratuita</button>
       </form>
     `;
+  }
+}
+
+async function manejarLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById('login-email').value;
+  const pass = document.getElementById('login-password').value;
+  try {
+    await auth.signInWithEmailAndPassword(email, pass);
+    alert('¡Sesión iniciada con éxito!');
+    cerrarModalAuth();
+  } catch (err) {
+    alert('Error al iniciar sesión: ' + err.message);
+  }
+}
+
+async function manejarRegistro(e) {
+  e.preventDefault();
+  const email = document.getElementById('reg-email').value;
+  const pass = document.getElementById('reg-password').value;
+  try {
+    await auth.createUserWithEmailAndPassword(email, pass);
+    alert('¡Cuenta creada e iniciada con éxito!');
+    cerrarModalAuth();
+  } catch (err) {
+    alert('Error al registrarse: ' + err.message);
+  }
+}
+
+async function cerrarSesionFirebase() {
+  try {
+    await auth.signOut();
+    alert('Has cerrado sesión correctamente.');
+  } catch (err) {
+    console.error(err);
   }
 }
 
