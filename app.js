@@ -11,6 +11,11 @@ const LIGAS_ODDS = {
   'L1': 'soccer_france_ligue_one',
   'EL': 'soccer_uefa_europa_league',
   'ECL': 'soccer_uefa_europa_conference_league',
+  'ED': 'soccer_netherlands_eredivisie',
+  'PPL': 'soccer_portugal_primeira_liga',
+  'ELC': 'soccer_efl_champ',
+  'MLS': 'soccer_usa_mls',
+  'BR': 'soccer_brazil_campeonato',
   'MX': 'soccer_mexico_ligamx',
   'ARG': 'soccer_argentina_primera_division'
 };
@@ -22,6 +27,7 @@ const TTL_CUOTAS_MIN = 15;
 // ===================== 🟢 TUS ESCUDOS MANUALES 🟢 =====================
 
 const ESCUDOS_MANUALES = {
+  // === LA LIGA EA SPORTS ===
   'alaves': './Logos Equipos/La Liga/alaves.png',
   'athletic bilbao': './Logos Equipos/La Liga/athletic_club.png',
   'athletic club': './Logos Equipos/La Liga/athletic_club.png',
@@ -43,7 +49,41 @@ const ESCUDOS_MANUALES = {
   'real sociedad': './Logos Equipos/La Liga/real_sociedad.png',
   'sevilla': './Logos Equipos/La Liga/sevilla.png',
   'valencia': './Logos Equipos/La Liga/valencia.png',
-  'villarreal': './Logos Equipos/La Liga/villareal.png'
+  'villarreal': './Logos Equipos/La Liga/villareal.png',
+
+  // === OTRAS LIGAS ===
+  'arsenal': '',
+  'manchester city': '',
+  'liverpool': '',
+  'chelsea': '',
+  'manchester united': '',
+  'tottenham': '',
+  'newcastle': '',
+  'aston villa': '',
+  'brighton': '',
+  'everton': '',
+  'crystal palace': '',
+  'brentford': '',
+  'nottingham forest': '',
+  'bournemouth': '',
+  'fulham': '',
+  'leeds united': '',
+  'ipswich town': '',
+  'sunderland': '',
+  'hull city': '',
+  'coventry city': '',
+  'bayern munich': '',
+  'borussia dortmund': '',
+  'bayer leverkusen': '',
+  'psg': '',
+  'paris saint germain': '',
+  'juventus': '',
+  'inter': '',
+  'ac milan': '',
+  'napoli': '',
+  'benfica': '',
+  'sporting cp': '',
+  'porto': ''
 };
 
 // ===================== ESTADO =====================
@@ -81,15 +121,16 @@ function buscarEscudo(nombre) {
 // ===================== CAPA DE DATOS =====================
 
 async function obtenerConCache(clave, ttlMin, pedir, forzar = false) {
+  const storageKey = 'sp_v2:' + clave;
   let guardado = null;
-  try { guardado = JSON.parse(localStorage.getItem('sp:' + clave)); } catch { /* sin caché */ }
+  try { guardado = JSON.parse(localStorage.getItem(storageKey)); } catch { /* sin caché */ }
 
   if (!forzar && guardado && Date.now() - guardado.t < ttlMin * 60000) {
     return { ...guardado.datos, desdeCache: true };
   }
   try {
     const datos = await pedir();
-    try { localStorage.setItem('sp:' + clave, JSON.stringify({ t: Date.now(), datos })); } catch { /* lleno */ }
+    try { localStorage.setItem(storageKey, JSON.stringify({ t: Date.now(), datos })); } catch { /* lleno */ }
     return datos;
   } catch (error) {
     if (guardado) return { ...guardado.datos, desdeCache: true, obsoleto: true };
@@ -245,10 +286,14 @@ async function cargarPartidos(codigoLiga = 'PD') {
   mostrarEsqueleto();
   setEstado('Sincronizando pronósticos...');
 
-  const sportKey = LIGAS_ODDS[codigoLiga] || LIGAS_ODDS['PD'];
+  const sportKey = LIGAS_ODDS[codigoLiga];
+  if (!sportKey) {
+    mostrarError(`La liga seleccionada (${codigoLiga}) no está configurada.`);
+    return;
+  }
 
   try {
-    const cuotas = await obtenerConCache(`odds:${codigoLiga}`, TTL_CUOTAS_MIN, () => pedirCuotas(sportKey));
+    const cuotas = await obtenerConCache(`odds:${sportKey}`, TTL_CUOTAS_MIN, () => pedirCuotas(sportKey));
     if (id !== cargaId) return;
 
     partidosAnalizados = (cuotas.partidos || []).map((p, idx) => analizarPartido(p, idx)).filter(Boolean);
@@ -370,7 +415,7 @@ function abrirDetallePartido(id) {
 
   contenido.innerHTML = `
     <div class="text-center border-b border-slate-800 pb-4 mb-4">
-      <span class="text-xs text-slate-400"> Análisas Estadístico Detallado</span>
+      <span class="text-xs text-slate-400"> Análisis Estadístico Detallado</span>
       <h2 class="text-lg font-black text-white mt-1">${esc(p.local)} vs ${esc(p.visitante)}</h2>
       <p class="text-xs text-slate-400 mt-0.5">📅 ${esc(FECHA.format(p.fecha))}</p>
     </div>
