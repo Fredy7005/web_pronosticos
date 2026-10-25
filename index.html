@@ -28,13 +28,8 @@
                 📜 Ver Historial
             </button>
             
-            <!-- Botones de Autenticación por defecto (se gestionan dinámicamente desde app.js) -->
-            <button id="btn-login-header" onclick="abrirModalAuth('login')" class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 text-xs font-bold px-3.5 py-2.5 rounded-xl transition shadow flex items-center gap-1.5">
-                🔑 Iniciar Sesión
-            </button>
-            <button id="btn-registro-header" onclick="abrirModalAuth('registro')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl transition shadow flex items-center gap-1.5">
-                📝 Registrarse
-            </button>
+            <!-- Contenedor dinámico de Autenticación (lo gestiona app.js y Firebase) -->
+            <div id="auth-user-container" class="flex items-center gap-2.5"></div>
 
             <span class="bg-slate-900 text-xs px-3 py-1.5 rounded-full text-slate-300 border border-slate-800 font-bold">+18</span>
         </div>
@@ -127,6 +122,6 @@
         </div>
     </div>
 
-    <script src="app.js?v=8"></script>
+    <script src="app.js?v=9"></script>
 </body>
 </html>
