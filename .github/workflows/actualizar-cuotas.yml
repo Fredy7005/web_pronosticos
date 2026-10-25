@@ -1,0 +1,89 @@
+name: Actualizar Cuotas Diarias Inteligente
+
+on:
+  schedule:
+    # Se ejecuta todos los días automáticamente
+    - cron: '0 8 * * *'
+  workflow_dispatch: # Te permite ejecutarlo manualmente con un clic cuando quieras
+
+permissions:
+  contents: write
+
+jobs:
+  descargar-cuotas:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Consultar The Odds API y guardar en datos-ligas.json
+        env:
+          ODDS_API_KEY: '2a11173b5f716f77724b660faf014a27'
+        run: |
+          node -e '
+          const fs = require("fs");
+          const API_KEY = process.env.ODDS_API_KEY;
+          
+          // Todas las ligas configuradas
+          const LIGAS = {
+            PD: "soccer_spain_la_liga",
+            PL: "soccer_epl",
+            CL: "soccer_uefa_champs_league",
+            SA: "soccer_italy_serie_a",
+            BL: "soccer_germany_bundesliga",
+            L1: "soccer_france_ligue_one",
+            EL: "soccer_uefa_europa_league",
+            ECL: "soccer_uefa_europa_conference_league",
+            ED: "soccer_netherlands_eredivisie",
+            PPL: "soccer_portugal_primeira_liga",
+            ELC: "soccer_efl_champ",
+            MLS: "soccer_usa_mls",
+            BR: "soccer_brazil_campeonato",
+            MX: "soccer_mexico_ligamx",
+            ARG: "soccer_argentina_primera_division"
+          };
+
+          (async () => {
+            const resultado = { actualizado: new Date().toISOString(), restantes: null, ligas: {} };
+            
+            for (const [codigo, sportKey] of Object.entries(LIGAS)) {
+              try {
+                const url = `https://api.the-odds-api.com/v4/sports/${sportKey}/odds?apiKey=${API_KEY}&regions=eu&markets=h2h,totals&oddsFormat=decimal&dateFormat=iso`;
+                const res = await fetch(url);
+                
+                if (res.ok) {
+                  resultado.restantes = res.headers.get("x-requests-remaining");
+                  const data = await res.json();
+                  
+                  // Filtro inteligente: solo guardamos la liga si realmente trae partidos programados
+                  if (Array.isArray(data) && data.length > 0) {
+                    resultado.ligas[codigo] = data;
+                    console.log(`✅ ${codigo}: ${data.length} partidos encontrados (Guardados)`);
+                  } else {
+                    resultado.ligas[codigo] = [];
+                    console.log(`⚠️ ${codigo}: Sin partidos próximos (Ahorro de datos)`);
+                  }
+                } else {
+                  console.log(`❌ ${codigo} devolvió error HTTP ${res.status}`);
+                  resultado.ligas[codigo] = [];
+                }
+              } catch (e) {
+                console.error(`❌ Error en ${codigo}:`, e.message);
+                resultado.ligas[codigo] = [];
+              }
+              // Pausa de cortesía de 1.2 segundos entre peticiones para proteger la API
+              await new Promise(r => setTimeout(r, 1200));
+            }
+
+            fs.writeFileSync("datos-ligas.json", JSON.stringify(resultado));
+            console.log("📁 Archivo datos-ligas.json generado con éxito.");
+          })();
+          '
+
+      - name: Guardar y subir archivo datos-ligas.json al repositorio
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add datos-ligas.json
+          git diff --staged --quiet || git commit -m "Actualización automática inteligente de cuotas"
+          git push
