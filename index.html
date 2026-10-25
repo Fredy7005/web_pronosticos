@@ -18,18 +18,24 @@
             </div>
             <p class="text-slate-400 text-xs sm:text-sm mt-1">Pronósticos directos, goles, ambos marcan y córners inteligentes</p>
         </div>
-        <span class="bg-slate-900 text-xs px-3 py-1.5 rounded-full text-slate-300 border border-slate-800 font-bold">+18</span>
+        <div class="flex items-center gap-3">
+            <!-- 🟢 Botón de Historial añadido -->
+            <button id="btn-vista-historial" onclick="toggleVistaHistorial()" class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 text-xs font-bold px-4 py-2.5 rounded-xl transition shadow flex items-center gap-2">
+                📜 Ver Historial
+            </button>
+            <span class="bg-slate-900 text-xs px-3 py-1.5 rounded-full text-slate-300 border border-slate-800 font-bold">+18</span>
+        </div>
     </header>
 
     <!-- Contenedor Principal -->
     <main class="w-full max-w-5xl flex flex-col gap-5">
 
-        <!-- Panel Superior: Ligas y Controles -->
-        <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl flex flex-col lg:flex-row justify-between gap-5">
+        <!-- Panel Superior: Ligas y Controles (Se oculta o adapta en el historial si se desea) -->
+        <section id="panel-controles" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl flex flex-col lg:flex-row justify-between gap-5">
             
             <!-- Botones de las 23 Competiciones -->
             <div class="flex-1">
-                <h2 class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-3">Selecciona una Competición</h2>
+                <h2 id="titulo-seccion-ligas" class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-3">Selecciona una Competición</h2>
                 <div id="ligas-container" class="flex flex-wrap gap-2">
                     <button id="btn-PD" onclick="cambiarLiga('PD')" class="liga-btn bg-emerald-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition shadow">La Liga</button>
                     <button id="btn-SD" onclick="cambiarLiga('SD')" class="liga-btn bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 px-3 py-1.5 rounded-xl text-xs font-semibold transition">Segunda División</button>
@@ -57,8 +63,8 @@
                 </div>
             </div>
 
-            <!-- Controles laterales (Orden, Oportunidades Top y Stake) -->
-            <div class="flex flex-col gap-2.5 min-w-[210px] justify-center border-t lg:border-t-0 lg:border-l border-slate-800 pt-4 lg:pt-0 lg:pl-5">
+            <!-- Controles laterales -->
+            <div id="controles-derecha" class="flex flex-col gap-2.5 min-w-[210px] justify-center border-t lg:border-t-0 lg:border-l border-slate-800 pt-4 lg:pt-0 lg:pl-5">
                 <select id="select-orden" onchange="cambiarOrden()" class="bg-slate-800/90 border border-slate-700/80 text-xs text-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-emerald-500">
                     <option value="fecha">📅 Ordenar por Fecha</option>
                     <option value="probabilidad">🎯 Ordenar por Probabilidad</option>
@@ -86,7 +92,7 @@
 
     </main>
 
-    <!-- Modal de Detalle del Partido -->
+    <!-- Modal de Detalle -->
     <div id="modal-detalle" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex justify-center items-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-6 relative shadow-2xl">
             <button onclick="cerrarModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg font-bold">✕</button>
@@ -94,7 +100,6 @@
         </div>
     </div>
 
-    <!-- Carga del Script Principal -->
-    <script src="app.js?v=3"></script>
+    <script src="app.js?v=4"></script>
 </body>
 </html>
