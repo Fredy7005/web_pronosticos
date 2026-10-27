@@ -10,7 +10,6 @@ const firebaseConfig = {
   measurementId: "G-CL8NTKKTNP"
 };
 
-// Inicializar Firebase de forma segura
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
@@ -21,7 +20,6 @@ const auth = firebase.auth();
 const UMBRAL_VALOR = 0.02;
 const MAX_PARTIDOS = 15;
 
-// Catálogo oficial de las 23 competiciones para títulos e iconos
 const INFO_LIGAS = {
   'PD':  { nombre: 'La Liga', icono: '🇪🇸' },
   'SD':  { nombre: 'Segunda División', icono: '🇪🇸' },
@@ -48,8 +46,6 @@ const INFO_LIGAS = {
   'AUS': { nombre: 'A-League', icono: '🇦🇺' }
 };
 
-// ===================== ESCUDOS MANUALES =====================
-
 const ESCUDOS_MANUALES = {
   'alaves': './Logos Equipos/La Liga/alaves.png',
   'athletic bilbao': './Logos Equipos/La Liga/athletic_club.png',
@@ -74,8 +70,6 @@ const ESCUDOS_MANUALES = {
   'valencia': './Logos Equipos/La Liga/valencia.png',
   'villarreal': './Logos Equipos/La Liga/villareal.png'
 };
-
-// ===================== ESTADO =====================
 
 let ligaActual = 'PD';
 let soloValor = false;
@@ -108,7 +102,7 @@ function buscarEscudo(nombre) {
   return 'https://cdn-icons-png.flaticon.com/512/53/53283.png';
 }
 
-// ===================== CAPA DE DATOS (100% LOCAL Y SEGURA) =====================
+// ===================== CAPA DE DATOS =====================
 
 async function cargarArchivoEstatico() {
   if (dbEstatica) return dbEstatica;
@@ -596,7 +590,7 @@ function actualizarSimulacion() {
   renderizarPartidos();
 }
 
-// ===================== AUTENTICACIÓN CON FIREBASE (GESTIÓN DE HEADER) =====================
+// ===================== AUTENTICACIÓN CON FIREBASE =====================
 
 auth.onAuthStateChanged((user) => {
   const authContainer = document.getElementById('auth-user-container');
@@ -621,112 +615,6 @@ auth.onAuthStateChanged((user) => {
   }
 });
 
-function abrirModalAuth(tipo = 'login') {
-  const modal = document.getElementById('modal-auth');
-  if (modal) {
-    modal.classList.remove('hidden');
-    cambiarTabAuth(tipo);
-    return;
-  }
-  if (typeof abrirSpAuthModal === 'function') {
-    abrirSpAuthModal(tipo === 'registro');
-  }
-}
-
-function cerrarModalAuth() {
-  const modal = document.getElementById('modal-auth');
-  if (modal) modal.classList.add('hidden');
-}
-
-function cambiarTabAuth(tipo) {
-  const tabLogin = document.getElementById('tab-login');
-  const tabRegistro = document.getElementById('tab-registro');
-  const contenido = document.getElementById('auth-contenido');
-
-  if (!tabLogin || !tabRegistro || !contenido) return;
-
-  if (tipo === 'login') {
-    tabLogin.className = "flex-1 pb-3 text-xs font-bold text-emerald-400 border-b-2 border-emerald-500 transition";
-    tabRegistro.className = "flex-1 pb-3 text-xs font-semibold text-slate-400 border-b-2 border-transparent transition";
-    
-    contenido.innerHTML = `
-      <form onsubmit="manejarLogin(event)" class="flex flex-col gap-4">
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Correo Electrónico</label>
-          <input type="email" id="login-email" required placeholder="tu@correo.com" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-emerald-500">
-        </div>
-        <div>
-          <div class="flex justify-between items-center mb-1">
-            <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Contraseña</label>
-            <button type="button" onclick="recuperarContrasena()" class="text-[11px] text-emerald-400 hover:underline">¿Olvidaste tu contraseña?</button>
-          </div>
-          <input type="password" id="login-password" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-emerald-500">
-        </div>
-        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-3 rounded-xl transition shadow-lg mt-2">Acceder a SportPredicts</button>
-      </form>
-    `;
-  } else {
-    tabRegistro.className = "flex-1 pb-3 text-xs font-bold text-emerald-400 border-b-2 border-emerald-500 transition";
-    tabLogin.className = "flex-1 pb-3 text-xs font-semibold text-slate-400 border-b-2 border-transparent transition";
-    
-    contenido.innerHTML = `
-      <form onsubmit="manejarRegistro(event)" class="flex flex-col gap-3">
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Correo Electrónico</label>
-          <input type="email" id="reg-email" required placeholder="tu@correo.com" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-emerald-500">
-        </div>
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Contraseña (mínimo 6 caracteres)</label>
-          <input type="password" id="reg-password" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-emerald-500">
-        </div>
-        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-3 rounded-xl transition shadow-lg mt-2">Crear Cuenta Gratuita</button>
-      </form>
-    `;
-  }
-}
-
-async function manejarLogin(e) {
-  e.preventDefault();
-  const email = document.getElementById('login-email').value;
-  const pass = document.getElementById('login-password').value;
-  try {
-    await auth.signInWithEmailAndPassword(email, pass);
-    cerrarModalAuth();
-  } catch (err) {
-    alert('Error al iniciar sesión: ' + err.message);
-  }
-}
-
-async function manejarRegistro(e) {
-  e.preventDefault();
-  const email = document.getElementById('reg-email').value;
-  const pass = document.getElementById('reg-password').value;
-  try {
-    await auth.createUserWithEmailAndPassword(email, pass);
-    cerrarModalAuth();
-  } catch (err) {
-    alert('Error al registrarse: ' + err.message);
-  }
-}
-
-async function recuperarContrasena() {
-  const emailInput = document.getElementById('login-email');
-  const email = emailInput ? emailInput.value.trim() : '';
-
-  if (!email) {
-    alert('Por favor, introduce primero tu correo electrónico en el campo superior para recuperar tu contraseña.');
-    if (emailInput) emailInput.focus();
-    return;
-  }
-
-  try {
-    await auth.sendPasswordResetEmail(email);
-    alert(`Hemos enviado un correo de recuperación a ${email}. Revisa tu bandeja de entrada o spam.`);
-  } catch (err) {
-    alert('Error al enviar el correo de recuperación: ' + err.message);
-  }
-}
-
 async function cerrarSesionFirebase() {
   try {
     await auth.signOut();
@@ -735,12 +623,86 @@ async function cerrarSesionFirebase() {
   }
 }
 
+// ===================== PARTIDOS GLOBALES POR HORA =====================
+
+async function abrirModalPartidosGlobales() {
+    let modal = document.getElementById('modal-global-horas');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'modal-global-horas';
+        modal.className = 'fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex justify-center items-center p-4';
+        modal.innerHTML = `
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl max-h-[85vh] p-6 relative shadow-2xl flex flex-col gap-4">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xl">⏰</span>
+                        <h3 class="text-base font-black text-white">Próximos Partidos Globales (Por Hora)</h3>
+                    </div>
+                    <button onclick="document.getElementById('modal-global-horas').classList.add('hidden')" class="text-slate-400 hover:text-white text-lg font-bold px-2">✕</button>
+                </div>
+                <div id="lista-global-horas" class="flex flex-col gap-2.5 overflow-y-auto pr-1 max-h-[60vh]">
+                    <div class="text-xs text-slate-400 text-center py-8">Cargando partidos de todas las ligas...</div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    } else {
+        modal.classList.remove('hidden');
+    }
+
+    const contenedorLista = document.getElementById('lista-global-horas');
+    const estatico = await cargarArchivoEstatico();
+
+    if (!estatico || !estatico.ligas) {
+        contenedorLista.innerHTML = '<div class="text-xs text-slate-500 text-center py-6">No hay datos disponibles en este momento.</div>';
+        return;
+    }
+
+    let todos = [];
+    for (const [codigoLiga, lista] of Object.entries(estatico.ligas)) {
+        if (Array.isArray(lista)) {
+            const nombreLiga = INFO_LIGAS[codigoLiga]?.nombre || codigoLiga;
+            lista.forEach((p, idx) => {
+                const analizado = analizarPartido(p, idx);
+                if (analizado && analizado.fecha.getTime() > Date.now()) {
+                    todos.push({ ...analizado, nombreLigaCompeticion: nombreLiga });
+                }
+            });
+        }
+    }
+
+    todos.sort((a, b) => a.fecha.getTime() - b.fecha.getTime());
+
+    if (todos.length === 0) {
+        contenedorLista.innerHTML = '<div class="text-xs text-slate-500 text-center py-6">No hay partidos futuros programados.</div>';
+        return;
+    }
+
+    contenedorLista.innerHTML = todos.map(p => `
+        <div onclick="document.getElementById('modal-global-horas').classList.add('hidden'); abrirDetallePartido(${p.id});" class="bg-slate-950 border border-slate-800 hover:border-emerald-500/50 p-3 rounded-xl cursor-pointer transition flex items-center justify-between gap-3 group">
+            <div class="flex items-center gap-3">
+                <span class="text-xs font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-900/50 px-2.5 py-1.5 rounded-lg">
+                    ${FECHA.format(p.fecha)}
+                </span>
+                <div class="flex flex-col">
+                    <span class="text-xs font-bold text-white group-hover:text-emerald-400 transition">${esc(p.local)} vs ${esc(p.visitante)}</span>
+                    <span class="text-[10px] text-slate-400">🏆 ${esc(p.nombreLigaCompeticion)}</span>
+                </div>
+            </div>
+            <div class="text-right">
+                <span class="text-[10px] text-slate-400 block">Cuota ${p.mejorCuota.cuota.toFixed(2)}</span>
+                <span class="text-[11px] font-bold text-emerald-400">${descripcionApuesta(p, p.resultadoSugerido)}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
 document.addEventListener('click', (e) => {
-  const modalAuth = document.getElementById('modal-auth');
-  if (e.target === modalAuth) cerrarModalAuth();
+    const modal = document.getElementById('modal-global-horas');
+    if (e.target === modal) modal.classList.add('hidden');
 });
 
-// ===================== INICIALIZACIÓN AUTOMÁTICA POR PÁGINA =====================
+// ===================== INICIALIZACIÓN AUTOMÁTICA =====================
 
 document.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(window.location.search);
