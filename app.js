@@ -706,11 +706,15 @@ document.addEventListener('click', (e) => {
 
 document.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(window.location.search);
-  const ligaParam = params.get('liga') || 'PD';
+  const ligaParam = params.get('liga');
   modoHistorial = params.get('historial') === 'true';
 
   if (document.getElementById('partidos-container')) {
-    cambiarLiga(ligaParam);
+    if (ligaParam) {
+      cambiarLiga(ligaParam);
+    } else {
+      cargarPartidos('PD');
+    }
   }
 
   AlimentarCalculadoraSiExiste();
