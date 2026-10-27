@@ -19,8 +19,9 @@
 </div>
 <nav class="hidden md:flex items-center gap-4 text-xs font-semibold text-slate-300">
 <a href="index.html" class="hover:text-emerald-400 transition">Inicio</a>
-<a href="index.html" class="hover:text-emerald-400 transition">Competiciones</a>
+<a href="index.html#seccion-competiciones" class="hover:text-emerald-400 transition">Competiciones</a>
 <a href="calculadora.html" class="text-emerald-400 hover:text-emerald-300 transition flex items-center gap-1">🧮 Calculadora</a>
+<a href="partidos.html?liga=PD&historial=true" class="hover:text-emerald-400 transition">📜 Historial</a>
 </nav>
 </div>
 <div class="flex items-center gap-3">
@@ -37,16 +38,21 @@
 <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white">Análisis deportivo inteligente</h1>
 <p class="text-xs sm:text-sm text-slate-400">Procesamiento estadístico avanzado y probabilidades en tiempo real antes del pitido inicial.</p>
 </div>
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 max-w-2xl mx-auto w-full">
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 max-w-4xl mx-auto w-full">
 <div onclick="document.getElementById('seccion-competiciones').scrollIntoView({ behavior: 'smooth' });" class="bg-slate-900/80 border border-slate-800 hover:border-emerald-500/50 p-6 rounded-2xl cursor-pointer transition flex flex-col items-center gap-3 group">
 <span class="text-3xl">🏆</span>
 <h3 class="font-bold text-white text-base group-hover:text-emerald-400 transition">Explorar Competiciones</h3>
-<p class="text-xs text-slate-400">Elige un torneo para ver los pronósticos y análisis detallados</p>
+<p class="text-xs text-slate-400">Elige un torneo para ver pronósticos detallados</p>
 </div>
 <div onclick="window.location.href='calculadora.html'" class="bg-slate-900/80 border border-slate-800 hover:border-emerald-500/50 p-6 rounded-2xl cursor-pointer transition flex flex-col items-center gap-3 group">
 <span class="text-3xl">🧮</span>
 <h3 class="font-bold text-white text-base group-hover:text-emerald-400 transition">Calculadora de Cuotas</h3>
-<p class="text-xs text-slate-400">Calcula cuotas justas combinadas y comprueba el valor</p>
+<p class="text-xs text-slate-400">Calcula cuotas justas y comprueba el valor (EV)</p>
+</div>
+<div onclick="window.location.href='partidos.html?liga=PD&historial=true'" class="bg-slate-900/80 border border-slate-800 hover:border-emerald-500/50 p-6 rounded-2xl cursor-pointer transition flex flex-col items-center gap-3 group">
+<span class="text-3xl">📜</span>
+<h3 class="font-bold text-white text-base group-hover:text-emerald-400 transition">Historial de Partidos</h3>
+<p class="text-xs text-slate-400">Revisa los pronósticos finalizados y su precisión</p>
 </div>
 </div>
 </section>
@@ -388,6 +394,6 @@
 
 </main>
 
-<script src="app.js?v=19"></script>
+<script src="app.js?v=21"></script>
 </body>
 </html>
