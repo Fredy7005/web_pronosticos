@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SportPredicts - Todas las Competiciones</title>
+<title>SportPredicts - Calculadora de Cuotas</title>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
@@ -83,247 +83,80 @@
 
 <!-- Contenido Principal -->
 <main class="w-full max-w-6xl flex flex-col gap-6 p-3 sm:p-6 my-4">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-800 pb-4">
-        <div>
-            <h1 class="text-lg sm:text-xl font-black text-white">🏆 Todas las Competiciones</h1>
-            <p class="text-[11px] sm:text-xs text-slate-400">Selecciona un torneo para acceder a su página exclusiva de partidos.</p>
-        </div>
-        <a href="index.html" class="text-[11px] sm:text-xs text-slate-400 hover:text-white transition bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl">← Volver al Inicio</a>
+
+    <div class="bg-slate-900/70 border border-amber-500/30 rounded-xl p-3 text-[11px] text-amber-200/80 flex items-center gap-2">
+        <span>⚠️</span>
+        <span><strong>+18 Contenido informativo.</strong> Las cuotas y el valor esperado se muestran con fines estadísticos. Juega con responsabilidad.</span>
     </div>
 
-    <!-- Cuadrícula responsive de 23 ligas -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div onclick="window.location.href='partidos.html?liga=PD'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
-            <div class="flex items-start gap-3">
-                <img src="Logos Competiciones/laliga.png" alt="La Liga" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
-                <div>
-                    <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">La Liga 🇪🇸</h3>
-                    <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">Análisis IA y valor esperado.</p>
-                </div>
-            </div>
-            <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
-        </div>
-        <div onclick="window.location.href='partidos.html?liga=SD'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
-            <div class="flex items-start gap-3">
-                <img src="Logos Competiciones/laliga2.png" alt="Segunda" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
-                <div>
-                    <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">Segunda División 🇪🇸</h3>
-                    <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">Liga Hypermotion.</p>
-                </div>
-            </div>
-            <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
-        </div>
-        <div onclick="window.location.href='partidos.html?liga=PL'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
-            <div class="flex items-start gap-3">
-                <img src="Logos Competiciones/premier.png" alt="Premier" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
-                <div>
-                    <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">Premier League 🇬🇧</h3>
-                    <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">Predicciones y mercados.</p>
-                </div>
-            </div>
-            <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
-        </div>
-        <div onclick="window.location.href='partidos.html?liga=CL'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
-            <div class="flex items-start gap-3">
-                <img src="Logos Competiciones/champions.png" alt="Champions" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
-                <div>
-                    <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">Champions League ⭐</h3>
-                    <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">Máxima competición europea.</p>
-                </div>
-            </div>
-            <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
-        </div>
-        <div onclick="window.location.href='partidos.html?liga=SA'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
-            <div class="flex items-start gap-3">
-                <img src="Logos Competiciones/serie_a.png" alt="Serie A" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
-                <div>
-                    <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">Serie A 🇮🇹</h3>
-                    <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">Análisis táctico y goles.</p>
-                </div>
-            </div>
-            <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
-        </div>
-        <div onclick="window.location.href='partidos.html?liga=BL'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
-            <div class="flex items-start gap-3">
-                <img src="Logos Competiciones/bundesliga.png" alt="Bundesliga" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
-                <div>
-                    <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">Bundesliga 🇩🇪</h3>
-                    <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">Alemania y goles.</p>
-                </div>
-            </div>
-            <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
-        </div>
-        <div onclick="window.location.href='partidos.html?liga=L1'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
-            <div class="flex items-start gap-3">
-                <img src="Logos Competiciones/ligue1.png" alt="Ligue 1" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
-                <div>
-                    <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">Ligue 1 🇫🇷</h3>
-                    <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">Campeonato francés.</p>
-                </div>
-            </div>
-            <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
-        </div>
-        <div onclick="window.location.href='partidos.html?liga=EL'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
-            <div class="flex items-start gap-3">
-                <img src="Logos Competiciones/europa.png" alt="Europa" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
-                <div>
-                    <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">Europa League 🇪🇺</h3>
-                    <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">UEFA Europa League.</p>
-                </div>
-            </div>
-            <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
-        </div>
-        <div onclick="window.location.href='partidos.html?liga=ECL'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
-            <div class="flex items-start gap-3">
-                <img src="Logos Competiciones/conference.png" alt="Conference" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
-                <div>
-                    <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">Conference League 🇪🇺</h3>
-                    <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">UEFA Conference.</p>
-                </div>
-            </div>
-            <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
-        </div>
-        <div onclick="window.location.href='partidos.html?liga=ED'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
-            <div class="flex items-start gap-3">
-                <img src="Logos Competiciones/eredivisie.png" alt="Eredivisie" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
-                <div>
-                    <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">Eredivisie 🇳🇱</h3>
-                    <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">Países Bajos.</p>
-                </div>
-            </div>
-            <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
-        </div>
-        <div onclick="window.location.href='partidos.html?liga=PPL'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
-            <div class="flex items-start gap-3">
-                <img src="Logos Competiciones/primeiraliga.png" alt="Portugal" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
-                <div>
-                    <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">Primeira Liga 🇵🇹</h3>
-                    <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">Portugal.</p>
-                </div>
-            </div>
-            <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
-        </div>
-        <div onclick="window.location.href='partidos.html?liga=ELC'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
-            <div class="flex items-start gap-3">
-                <img src="Logos Competiciones/championship.png" alt="Championship" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
-                <div>
-                    <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">Championship 🇬🇧</h3>
-                    <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">Segunda Inglaterra.</p>
-                </div>
-            </div>
-            <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
-        </div>
-        <div onclick="window.location.href='partidos.html?liga=MLS'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
-            <div class="flex items-start gap-3">
-                <img src="Logos Competiciones/mls.png" alt="MLS" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
-                <div>
-                    <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">MLS 🇺🇸</h3>
-                    <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">Estados Unidos.</p>
-                </div>
-            </div>
-            <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
-        </div>
-        <div onclick="window.location.href='partidos.html?liga=BR'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
-            <div class="flex items-start gap-3">
-                <img src="Logos Competiciones/brasil.png" alt="Brasil" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
-                <div>
-                    <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">Brasileirão 🇧🇷</h3>
-                    <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">Brasil.</p>
-                </div>
-            </div>
-            <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
-        </div>
-        <div onclick="window.location.href='partidos.html?liga=MX'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
-            <div class="flex items-start gap-3">
-                <img src="Logos Competiciones/mx.png" alt="Mexico" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
-                <div>
-                    <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">Liga MX 🇲🇽</h3>
-                    <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">México.</p>
-                </div>
-            </div>
-            <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
-        </div>
-        <div onclick="window.location.href='partidos.html?liga=ARG'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
-            <div class="flex items-start gap-3">
-                <img src="Logos Competiciones/argentina.png" alt="Argentina" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
-                <div>
-                    <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">Argentina 🇦🇷</h3>
-                    <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">Liga Profesional.</p>
-                </div>
-            </div>
-            <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
-        </div>
-        <div onclick="window.location.href='partidos.html?liga=BEL'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
-            <div class="flex items-start gap-3">
-                <img src="Logos Competiciones/jupiler.png" alt="Belgica" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
-                <div>
-                    <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">Jupiler Pro League 🇧🇪</h3>
-                    <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">Bélgica.</p>
-                </div>
-            </div>
-            <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
-        </div>
-        <div onclick="window.location.href='partidos.html?liga=TUR'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
-            <div class="flex items-start gap-3">
-                <img src="Logos Competiciones/superlig.png" alt="Turquia" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
-                <div>
-                    <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">Süper Lig 🇹🇷</h3>
-                    <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">Turquía.</p>
-                </div>
-            </div>
-            <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
-        </div>
-        <div onclick="window.location.href='partidos.html?liga=COL'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
-            <div class="flex items-start gap-3">
-                <img src="Logos Competiciones/libertadores.png" alt="Libertadores" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
-                <div>
-                    <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">Copa Libertadores 🏆</h3>
-                    <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">CONMEBOL.</p>
-                </div>
-            </div>
-            <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
-        </div>
-        <div onclick="window.location.href='partidos.html?liga=URU'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
-            <div class="flex items-start gap-3">
-                <img src="Logos Competiciones/ligachile.png" alt="Chile" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
-                <div>
-                    <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">Primera División 🇨🇱</h3>
-                    <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">Chile.</p>
-                </div>
-            </div>
-            <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
-        </div>
-        <div onclick="window.location.href='partidos.html?liga=JPN'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
-            <div class="flex items-start gap-3">
-                <img src="Logos Competiciones/jleague.png" alt="Japon" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
-                <div>
-                    <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">J1 League 🇯🇵</h3>
-                    <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">Japón.</p>
-                </div>
-            </div>
-            <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
-        </div>
-        <div onclick="window.location.href='partidos.html?liga=KOR'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
-            <div class="flex items-start gap-3">
-                <img src="Logos Competiciones/kleague.png" alt="Corea" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
-                <div>
-                    <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">K League 1 🇰🇷</h3>
-                    <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">Corea del Sur.</p>
-                </div>
-            </div>
-            <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
-        </div>
-        <div onclick="window.location.href='partidos.html?liga=AUS'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
-            <div class="flex items-start gap-3">
-                <img src="Logos Competiciones/a_league.png" alt="Australia" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
-                <div>
-                    <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">A-League 🇦🇺</h3>
-                    <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">Australia.</p>
-                </div>
-            </div>
-            <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
-        </div>
+    <div class="flex flex-col gap-1">
+        <h1 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">🧮 Calculadora de Apuestas Avanzada</h1>
+        <p class="text-xs text-slate-400">Construye tu combinada basada en los partidos reales de la plataforma y calcula el valor esperado (EV).</p>
     </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- COLUMNA IZQUIERDA -->
+        <div class="lg:col-span-5 flex flex-col gap-4">
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex flex-col gap-4">
+                <h3 class="text-xs font-bold text-white uppercase tracking-wider">⚽ Partidos en Directo / Disponibles</h3>
+                <div id="estado-calc" class="text-xs text-slate-400">Sincronizando partidos oficiales...</div>
+                <div id="calc-partidos-list" class="flex flex-col gap-2 max-h-[500px] overflow-y-auto pr-1"></div>
+            </div>
+        </div>
+
+        <!-- COLUMNA DERECHA -->
+        <div class="lg:col-span-7 flex flex-col gap-4">
+
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex flex-col gap-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xs font-bold text-white uppercase tracking-wider">📋 Selecciones en la Combinada</h3>
+                    <button onclick="limpiarSelecciones()" class="text-[11px] text-rose-400 hover:text-rose-300 font-semibold transition">🗑️ Limpiar todo</button>
+                </div>
+
+                <div id="calc-selecciones-container" class="flex flex-col gap-3">
+                    <div class="text-xs text-slate-500 text-center py-8 border border-dashed border-slate-800 rounded-xl">
+                        Aún no has seleccionado ningún pronóstico. Elige un mercado de los partidos de la izquierda.
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 flex flex-col gap-4">
+                <div class="flex justify-between items-center bg-slate-950 p-4 rounded-xl border border-slate-800">
+                    <div>
+                        <span id="txt-num-selecciones" class="text-[11px] text-slate-400 font-semibold block">0 selecciones combinadas</span>
+                        <span class="text-xs font-bold text-slate-300">CUOTA JUSTA SPORTPREDICTS</span>
+                    </div>
+                    <div id="txt-cuota-combinada" class="text-2xl font-black text-emerald-400">1.00</div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-xs text-slate-400 font-semibold">Stake (Importe a apostar €)</label>
+                        <input type="number" id="calc-input-stake" value="10" min="1" max="10000" oninput="recalcularCalculadora()" class="bg-slate-950 border border-slate-800 text-white font-bold text-xs rounded-xl px-3 py-2.5 outline-none focus:border-emerald-500">
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-xs text-slate-400 font-semibold">Ganancia Potencial Teórica</label>
+                        <div id="txt-ganancia-potencial" class="bg-slate-950 border border-slate-800 text-emerald-400 font-black text-sm rounded-xl px-3 py-2.5 flex items-center">
+                            10.00 €
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-2 pt-2 border-t border-slate-800">
+                    <span class="text-xs font-bold text-slate-300">🔍 Comparar con la cuota ofrecida por la casa</span>
+                    <input type="number" id="calc-input-casa" placeholder="Ej: 2.50" step="0.01" oninput="recalcularCalculadora()" class="w-full bg-slate-950 border border-slate-800 text-white text-xs rounded-xl px-3 py-2 outline-none focus:border-emerald-500">
+                    <div id="evaluacion-valor" class="text-xs font-semibold px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-400">
+                        Introduce una cuota de casa para evaluar si hay valor (EV+).
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </main>
 
 <!-- Modal Universal de Autenticación -->
@@ -457,6 +290,144 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+let seleccionesCalculadora = [];
+
+function renderizarPartidosCalculadora(partidosReales) {
+    const contenedor = document.getElementById('calc-partidos-list');
+    const estado = document.getElementById('estado-calc');
+    contenedor.innerHTML = '';
+
+    if (!partidosReales || partidosReales.length === 0) {
+        estado.innerText = 'No hay partidos disponibles en este momento.';
+        contenedor.innerHTML = '<div class="text-xs text-slate-500 text-center py-4">Selecciona una competición o sincroniza los datos oficiales.</div>';
+        return;
+    }
+
+    estado.innerText = `Mostrando ${partidosReales.length} partidos oficiales sincronizados.`;
+
+    partidosReales.forEach((p) => {
+        let cuota1 = p.cuota1 || (p.prob1 ? (1 / p.prob1).toFixed(2) : '1.85');
+        let cuotaX = p.cuotaX || (p.probX ? (1 / p.probX).toFixed(2) : '3.40');
+        let cuota2 = p.cuota2 || (p.prob2 ? (1 / p.prob2).toFixed(2) : '4.10');
+
+        let div = document.createElement('div');
+        div.className = 'bg-slate-950 border border-slate-800 p-3 rounded-xl flex flex-col gap-2';
+        div.innerHTML = `
+            <div class="flex justify-between items-center text-[11px] text-slate-400">
+                <span>📅 ${p.hora || 'Próximo'}</span>
+                <span class="bg-slate-900 px-2 py-0.5 rounded text-[10px] text-emerald-400 border border-slate-800">${p.liga || 'Oficial'}</span>
+            </div>
+            <div class="font-bold text-white text-xs">${p.local} vs ${p.visitante}</div>
+            <div class="grid grid-cols-3 gap-1.5 pt-1">
+                <button onclick="agregarSeleccionCalc('${p.local} vs ${p.visitante}', '1 (${p.local})', ${1 / parseFloat(cuota1)})" class="bg-slate-900 hover:bg-emerald-950/60 border border-slate-800 hover:border-emerald-500/50 py-1.5 rounded-lg text-center transition">
+                    <span class="block text-[10px] text-slate-400">1</span>
+                    <span class="block text-xs font-bold text-emerald-400">${cuota1}</span>
+                </button>
+                <button onclick="agregarSeleccionCalc('${p.local} vs ${p.visitante}', 'X (Empate)', ${1 / parseFloat(cuotaX)})" class="bg-slate-900 hover:bg-emerald-950/60 border border-slate-800 hover:border-emerald-500/50 py-1.5 rounded-lg text-center transition">
+                    <span class="block text-[10px] text-slate-400">X</span>
+                    <span class="block text-xs font-bold text-emerald-400">${cuotaX}</span>
+                </button>
+                <button onclick="agregarSeleccionCalc('${p.local} vs ${p.visitante}', '2 (${p.visitante})', ${1 / parseFloat(cuota2)})" class="bg-slate-900 hover:bg-emerald-950/60 border border-slate-800 hover:border-emerald-500/50 py-1.5 rounded-lg text-center transition">
+                    <span class="block text-[10px] text-slate-400">2</span>
+                    <span class="block text-xs font-bold text-emerald-400">${cuota2}</span>
+                </button>
+            </div>
+        `;
+        contenedor.appendChild(div);
+    });
+}
+
+function agregarSeleccionCalc(encuentro, mercado, probabilidad) {
+    let cuotaJusta = (1 / probabilidad).toFixed(2);
+    seleccionesCalculadora = seleccionesCalculadora.filter(s => s.encuentro !== encuentro);
+
+    seleccionesCalculadora.push({
+        encuentro: encuentro,
+        mercado: mercado,
+        probabilidad: probabilidad,
+        cuota: parseFloat(cuotaJusta)
+    });
+
+    renderizarSeleccionesCalc();
+    recalcularCalculadora();
+}
+
+function eliminarSeleccionCalc(encuentro) {
+    seleccionesCalculadora = seleccionesCalculadora.filter(s => s.encuentro !== encuentro);
+    renderizarSeleccionesCalc();
+    recalcularCalculadora();
+}
+
+function limpiarSelecciones() {
+    seleccionesCalculadora = [];
+    renderizarSeleccionesCalc();
+    recalcularCalculadora();
+}
+
+function renderizarSeleccionesCalc() {
+    const contenedor = document.getElementById('calc-selecciones-container');
+    if (seleccionesCalculadora.length === 0) {
+        contenedor.innerHTML = '<div class="text-xs text-slate-500 text-center py-8 border border-dashed border-slate-800 rounded-xl">Aún no has seleccionado ningún pronóstico. Elige un mercado de los partidos de la izquierda.</div>';
+        return;
+    }
+
+    contenedor.innerHTML = '';
+    seleccionesCalculadora.forEach(s => {
+        let div = document.createElement('div');
+        div.className = 'bg-slate-950 border border-slate-800 p-3 rounded-xl flex justify-between items-center text-xs';
+        div.innerHTML = `
+            <div class="flex flex-col gap-0.5">
+                <span class="font-bold text-white">${s.encuentro}</span>
+                <span class="text-[11px] text-emerald-400 font-semibold">Mercado: ${s.mercado}</span>
+                <span class="text-[10px] text-slate-400">Probabilidad IA: ${(s.probabilidad * 100).toFixed(1)}%</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="text-right">
+                    <span class="text-[10px] text-slate-400 block">Cuota Justa</span>
+                    <span class="font-black text-white text-sm">${s.cuota.toFixed(2)}</span>
+                </div>
+                <button onclick="eliminarSeleccionCalc('${s.encuentro}')" class="text-rose-400 hover:text-rose-300 font-bold px-2 py-1">✕</button>
+            </div>
+        `;
+        contenedor.appendChild(div);
+    });
+}
+
+function recalcularCalculadora() {
+    let numSel = seleccionesCalculadora.length;
+    document.getElementById('txt-num-selecciones').innerText = `${numSel} selección${numSel === 1 ? '' : 'es'} combinada${numSel === 1 ? '' : 's'}`;
+
+    let cuotaCombinada = 1;
+    if (numSel > 0) {
+        seleccionesCalculadora.forEach(s => {
+            cuotaCombinada *= s.cuota;
+        });
+    }
+
+    document.getElementById('txt-cuota-combinada').innerText = cuotaCombinada.toFixed(2);
+
+    let stake = parseFloat(document.getElementById('calc-input-stake').value) || 0;
+    let ganancia = stake * cuotaCombinada;
+    document.getElementById('txt-ganancia-potencial').innerText = `${ganancia.toFixed(2)} €`;
+
+    let cuotaCasaInput = parseFloat(document.getElementById('calc-input-casa').value);
+    let evaluacionDiv = document.getElementById('evaluacion-valor');
+
+    if (!isNaN(cuotaCasaInput) && cuotaCasaInput > 0 && numSel > 0) {
+        if (cuotaCasaInput > cuotaCombinada) {
+            let diff = ((cuotaCasaInput - cuotaCombinada) / cuotaCombinada * 100).toFixed(1);
+            evaluacionDiv.className = 'text-xs font-semibold px-3 py-2 rounded-xl bg-emerald-950/60 border border-emerald-900/50 text-emerald-400';
+            evaluacionDiv.innerHTML = `✅ <strong>¡Hay Valor (EV+)!</strong> La casa ofrece más (+${diff}%) que la cuota justa combinada.`;
+        } else {
+            evaluacionDiv.className = 'text-xs font-semibold px-3 py-2 rounded-xl bg-rose-950/60 border border-rose-900/50 text-rose-400';
+            evaluacionDiv.innerHTML = `❌ <strong>Sin Valor (EV-).</strong> La cuota de la casa es inferior a la cuota justa estimada.`;
+        }
+    } else {
+        evaluacionDiv.className = 'text-xs font-semibold px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-400';
+        evaluacionDiv.innerHTML = 'Introduce una cuota de casa válida para comprobar el valor.';
+    }
+}
 </script>
 </body>
 </html>
