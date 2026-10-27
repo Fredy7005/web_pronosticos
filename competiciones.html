@@ -13,7 +13,6 @@
 
 <!-- ================= CABECERA UNIFICADA (PC Y MÓVIL) ================= -->
 <header class="w-full bg-slate-950/95 backdrop-blur-md border-b border-slate-800/80 px-4 lg:px-6 py-2.5 flex justify-between items-center sticky top-0 z-50">
-    
     <div class="flex items-center gap-3">
         <button onclick="toggleMenuMovil()" class="lg:hidden text-slate-300 hover:text-emerald-400 text-xl p-1.5 rounded-lg bg-slate-900 border border-slate-800 focus:outline-none transition">
             ☰
@@ -37,7 +36,11 @@
         <a href="competiciones.html" data-nav="competiciones.html" class="nav-item px-3 py-2 rounded-xl hover:bg-slate-900 hover:text-emerald-400 transition flex items-center gap-1.5">
             <span>🏆</span> Competiciones
         </a>
-        <a href="partidos.html?liga=PD&historial=true" data-nav="partidos.html" class="nav-item px-3 py-2 rounded-xl hover:bg-slate-900 hover:text-emerald-400 transition flex items-center gap-1.5">
+        <!-- Botón Global por Hora -->
+        <a href="#" onclick="abrirModalPartidosGlobales(); return false;" class="nav-item px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-emerald-400 font-bold transition flex items-center gap-1.5 border border-emerald-500/30">
+            <span>⏰</span> Partidos por Hora
+        </a>
+        <a href="index.html?liga=PD&historial=true" data-nav="partidos.html" class="nav-item px-3 py-2 rounded-xl hover:bg-slate-900 hover:text-emerald-400 transition flex items-center gap-1.5">
             <span>📜</span> Historial
         </a>
         <a href="calculadora.html" data-nav="calculadora.html" class="nav-item px-3.5 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 font-bold transition flex items-center gap-1.5 mx-1">
@@ -54,7 +57,6 @@
         </div>
         <span class="bg-slate-900 text-[10px] px-2.5 py-1 rounded-full text-slate-400 font-bold border border-slate-800">+18</span>
     </div>
-
 </header>
 
 <!-- ================= MENÚ DESPLEGABLE MÓVIL ================= -->
@@ -65,10 +67,13 @@
     <a href="competiciones.html" data-nav="competiciones.html" class="nav-item-movil py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5">
         <span class="text-base">🏆</span> Competiciones
     </a>
+    <a href="#" onclick="abrirModalPartidosGlobales(); toggleMenuMovil(); return false;" class="nav-item-movil py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5 text-emerald-400 font-bold">
+        <span class="text-base">⏰</span> Partidos por Hora
+    </a>
     <a href="calculadora.html" data-nav="calculadora.html" class="nav-item-movil py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5 text-amber-300 font-bold">
         <span class="text-base">🧮</span> Calculadora de Cuotas & EV
     </a>
-    <a href="partidos.html?liga=PD&historial=true" data-nav="partidos.html" class="nav-item-movil py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5">
+    <a href="index.html?liga=PD&historial=true" data-nav="partidos.html" class="nav-item-movil py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5">
         <span class="text-base">📜</span> Historial
     </a>
     <a href="planes.html" data-nav="planes.html" class="nav-item-movil py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5 text-emerald-400 font-bold">
@@ -94,7 +99,7 @@
     <!-- Cuadrícula responsive de 23 ligas -->
     <div id="ligas-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
         <!-- 1. La Liga -->
-        <div onclick="window.location.href='partidos.html?liga=PD'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
+        <div onclick="window.location.href='index.html?liga=PD'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
             <div class="flex items-start gap-3">
                 <img src="Logos Competiciones/laliga.png" alt="La Liga" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                 <div>
@@ -105,7 +110,7 @@
             <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
         </div>
         <!-- 2. Segunda División -->
-        <div onclick="window.location.href='partidos.html?liga=SD'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
+        <div onclick="window.location.href='index.html?liga=SD'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
             <div class="flex items-start gap-3">
                 <img src="Logos Competiciones/laliga2.png" alt="Segunda" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                 <div>
@@ -116,7 +121,7 @@
             <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
         </div>
         <!-- 3. Premier League -->
-        <div onclick="window.location.href='partidos.html?liga=PL'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
+        <div onclick="window.location.href='index.html?liga=PL'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
             <div class="flex items-start gap-3">
                 <img src="Logos Competiciones/premier.png" alt="Premier" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                 <div>
@@ -127,7 +132,7 @@
             <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
         </div>
         <!-- 4. Champions League -->
-        <div onclick="window.location.href='partidos.html?liga=CL'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
+        <div onclick="window.location.href='index.html?liga=CL'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
             <div class="flex items-start gap-3">
                 <img src="Logos Competiciones/champions.png" alt="Champions" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                 <div>
@@ -138,7 +143,7 @@
             <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
         </div>
         <!-- 5. Serie A -->
-        <div onclick="window.location.href='partidos.html?liga=SA'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
+        <div onclick="window.location.href='index.html?liga=SA'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
             <div class="flex items-start gap-3">
                 <img src="Logos Competiciones/serie_a.png" alt="Serie A" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                 <div>
@@ -149,7 +154,7 @@
             <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
         </div>
         <!-- 6. Bundesliga -->
-        <div onclick="window.location.href='partidos.html?liga=BL'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
+        <div onclick="window.location.href='index.html?liga=BL'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
             <div class="flex items-start gap-3">
                 <img src="Logos Competiciones/bundesliga.png" alt="Bundesliga" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                 <div>
@@ -160,7 +165,7 @@
             <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
         </div>
         <!-- 7. Ligue 1 -->
-        <div onclick="window.location.href='partidos.html?liga=L1'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
+        <div onclick="window.location.href='index.html?liga=L1'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
             <div class="flex items-start gap-3">
                 <img src="Logos Competiciones/ligue1.png" alt="Ligue 1" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                 <div>
@@ -171,7 +176,7 @@
             <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
         </div>
         <!-- 8. Europa League -->
-        <div onclick="window.location.href='partidos.html?liga=EL'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
+        <div onclick="window.location.href='index.html?liga=EL'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
             <div class="flex items-start gap-3">
                 <img src="Logos Competiciones/europa.png" alt="Europa" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                 <div>
@@ -182,7 +187,7 @@
             <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
         </div>
         <!-- 9. Conference League -->
-        <div onclick="window.location.href='partidos.html?liga=ECL'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
+        <div onclick="window.location.href='index.html?liga=ECL'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
             <div class="flex items-start gap-3">
                 <img src="Logos Competiciones/conference.png" alt="Conference" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                 <div>
@@ -193,7 +198,7 @@
             <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
         </div>
         <!-- 10. Eredivisie -->
-        <div onclick="window.location.href='partidos.html?liga=ED'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
+        <div onclick="window.location.href='index.html?liga=ED'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
             <div class="flex items-start gap-3">
                 <img src="Logos Competiciones/eredivisie.png" alt="Eredivisie" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                 <div>
@@ -204,7 +209,7 @@
             <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
         </div>
         <!-- 11. Primeira Liga -->
-        <div onclick="window.location.href='partidos.html?liga=PPL'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
+        <div onclick="window.location.href='index.html?liga=PPL'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
             <div class="flex items-start gap-3">
                 <img src="Logos Competiciones/primeiraliga.png" alt="Portugal" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                 <div>
@@ -215,7 +220,7 @@
             <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
         </div>
         <!-- 12. Championship -->
-        <div onclick="window.location.href='partidos.html?liga=ELC'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
+        <div onclick="window.location.href='index.html?liga=ELC'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
             <div class="flex items-start gap-3">
                 <img src="Logos Competiciones/championship.png" alt="Championship" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                 <div>
@@ -226,7 +231,7 @@
             <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
         </div>
         <!-- 13. MLS -->
-        <div onclick="window.location.href='partidos.html?liga=MLS'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
+        <div onclick="window.location.href='index.html?liga=MLS'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
             <div class="flex items-start gap-3">
                 <img src="Logos Competiciones/mls.png" alt="MLS" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                 <div>
@@ -237,7 +242,7 @@
             <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
         </div>
         <!-- 14. Brasileirão -->
-        <div onclick="window.location.href='partidos.html?liga=BR'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
+        <div onclick="window.location.href='index.html?liga=BR'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
             <div class="flex items-start gap-3">
                 <img src="Logos Competiciones/brasil.png" alt="Brasil" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                 <div>
@@ -248,7 +253,7 @@
             <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
         </div>
         <!-- 15. Liga MX -->
-        <div onclick="window.location.href='partidos.html?liga=MX'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
+        <div onclick="window.location.href='index.html?liga=MX'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
             <div class="flex items-start gap-3">
                 <img src="Logos Competiciones/mx.png" alt="Mexico" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                 <div>
@@ -259,7 +264,7 @@
             <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
         </div>
         <!-- 16. Argentina -->
-        <div onclick="window.location.href='partidos.html?liga=ARG'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
+        <div onclick="window.location.href='index.html?liga=ARG'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
             <div class="flex items-start gap-3">
                 <img src="Logos Competiciones/argentina.png" alt="Argentina" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                 <div>
@@ -270,7 +275,7 @@
             <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
         </div>
         <!-- 17. Jupiler Pro League -->
-        <div onclick="window.location.href='partidos.html?liga=BEL'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
+        <div onclick="window.location.href='index.html?liga=BEL'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
             <div class="flex items-start gap-3">
                 <img src="Logos Competiciones/jupiler.png" alt="Belgica" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                 <div>
@@ -281,7 +286,7 @@
             <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
         </div>
         <!-- 18. Süper Lig -->
-        <div onclick="window.location.href='partidos.html?liga=TUR'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
+        <div onclick="window.location.href='index.html?liga=TUR'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
             <div class="flex items-start gap-3">
                 <img src="Logos Competiciones/superlig.png" alt="Turquia" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                 <div>
@@ -292,7 +297,7 @@
             <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
         </div>
         <!-- 19. Copa Libertadores -->
-        <div onclick="window.location.href='partidos.html?liga=COL'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
+        <div onclick="window.location.href='index.html?liga=COL'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
             <div class="flex items-start gap-3">
                 <img src="Logos Competiciones/libertadores.png" alt="Libertadores" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                 <div>
@@ -303,7 +308,7 @@
             <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
         </div>
         <!-- 20. Primera División (Chile) -->
-        <div onclick="window.location.href='partidos.html?liga=URU'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
+        <div onclick="window.location.href='index.html?liga=URU'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
             <div class="flex items-start gap-3">
                 <img src="Logos Competiciones/ligachile.png" alt="Chile" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                 <div>
@@ -314,7 +319,7 @@
             <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
         </div>
         <!-- 21. J1 League -->
-        <div onclick="window.location.href='partidos.html?liga=JPN'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
+        <div onclick="window.location.href='index.html?liga=JPN'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
             <div class="flex items-start gap-3">
                 <img src="Logos Competiciones/jleague.png" alt="Japon" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                 <div>
@@ -325,7 +330,7 @@
             <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
         </div>
         <!-- 22. K League 1 -->
-        <div onclick="window.location.href='partidos.html?liga=KOR'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
+        <div onclick="window.location.href='index.html?liga=KOR'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
             <div class="flex items-start gap-3">
                 <img src="Logos Competiciones/kleague.png" alt="Corea" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                 <div>
@@ -336,7 +341,7 @@
             <span class="text-[11px] text-slate-400 group-hover:text-white font-semibold transition pt-2 border-t border-slate-800/80">Ver partidos →</span>
         </div>
         <!-- 23. A-League -->
-        <div onclick="window.location.href='partidos.html?liga=AUS'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
+        <div onclick="window.location.href='index.html?liga=AUS'" class="liga-btn bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex flex-col justify-between gap-3 group">
             <div class="flex items-start gap-3">
                 <img src="Logos Competiciones/a_league.png" alt="Australia" class="w-8 h-8 object-contain bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
                 <div>
@@ -370,7 +375,7 @@
     </div>
 </div>
 
-<script src="app.js?v=37"></script>
+<script src="app.js?v=38"></script>
 <script>
 function toggleMenuMovil() {
     const menu = document.getElementById('menu-movil');
