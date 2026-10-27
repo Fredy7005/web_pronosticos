@@ -381,12 +381,12 @@ function tarjetaPartido(p, stake) {
   const textoRecomendacion = descripcionApuesta(p, p.resultadoSugerido);
 
   return `
-    <article onclick="abrirDetallePartido(${p.id})" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 flex flex-col gap-4 cursor-pointer hover:border-slate-600 transition duration-200 group shadow-lg">
+    <article onclick="window.location.href='partido.html?liga=${ligaActual}&id=${p.id}'" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 flex flex-col gap-4 cursor-pointer hover:border-slate-600 transition duration-200 group shadow-lg">
       <div class="flex justify-between items-center text-xs text-slate-400 border-b border-slate-800 pb-3">
         <span>📅 ${esc(FECHA.format(p.fecha))}</span>
         <div class="flex items-center gap-2">
           ${modoHistorial ? '<span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-bold text-[10px]">🏁 Finalizado</span>' : (p.esOportunidadTop ? '<span class="bg-amber-500/20 text-amber-300 font-bold px-2.5 py-1 rounded-lg border border-amber-500/30">💎 Oportunidad Destacada</span>' : `<span class="text-slate-400">${p.etiquetaConfianza}</span>`)}
-          <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded group-hover:bg-slate-700 group-hover:text-white transition">🔍 Ver Más</span>
+          <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded group-hover:bg-slate-700 group-hover:text-white transition">🔍 Ver Partido</span>
         </div>
       </div>
 
@@ -434,80 +434,6 @@ function tarjetaPartido(p, stake) {
       </div>
     </article>`;
 }
-
-function abrirDetallePartido(id) {
-  const p = partidosAnalizados.find(item => item.id === id);
-  if (!p) return;
-
-  const modal = document.getElementById('modal-detalle');
-  const contenido = document.getElementById('modal-contenido');
-  if (!modal || !contenido) return;
-
-  const pctLocal = Math.round(p.justa.local * 100);
-  const pctEmpate = Math.round(p.justa.empate * 100);
-  const pctVisitante = Math.round(p.justa.visitante * 100);
-
-  contenido.innerHTML = `
-    <div class="text-center border-b border-slate-800 pb-4 mb-4">
-      <span class="text-xs text-slate-400">📊 Análisis Estadístico Detallado</span>
-      <h2 class="text-lg font-black text-white mt-1">${esc(p.local)} vs ${esc(p.visitante)}</h2>
-      <p class="text-xs text-slate-400 mt-0.5">📅 ${esc(FECHA.format(p.fecha))}</p>
-    </div>
-
-    <div class="mb-5">
-      <div class="text-xs font-bold text-slate-300 mb-2">📊 Probabilidades Reales de Resultado (1X2):</div>
-      <div class="grid grid-cols-3 gap-2 text-center text-xs">
-        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
-          <div class="text-slate-400">1 (Local)</div>
-          <div class="text-base font-extrabold text-emerald-400 mt-1">${pctLocal}%</div>
-          <div class="text-[10px] text-slate-500 mt-0.5">Cuota: ${p.cuotasOriginales.local.toFixed(2)}</div>
-        </div>
-        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
-          <div class="text-slate-400">X (Empate)</div>
-          <div class="text-base font-extrabold text-amber-400 mt-1">${pctEmpate}%</div>
-          <div class="text-[10px] text-slate-500 mt-0.5">Cuota: ${p.cuotasOriginales.empate.toFixed(2)}</div>
-        </div>
-        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
-          <div class="text-slate-400">2 (Visitante)</div>
-          <div class="text-base font-extrabold text-blue-400 mt-1">${pctVisitante}%</div>
-          <div class="text-[10px] text-slate-500 mt-0.5">Cuota: ${p.cuotasOriginales.visitante.toFixed(2)}</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="bg-slate-950/70 p-4 rounded-xl border border-slate-800 text-xs space-y-2 mb-5">
-      <div class="font-bold text-slate-300 mb-1">🔍 Desglose de Predicción:</div>
-      <div class="flex justify-between border-b border-slate-800 pb-1.5">
-        <span class="text-slate-400">Mercado 1X2 recomendado:</span>
-        <span class="font-extrabold text-emerald-400">${descripcionApuesta(p, p.resultadoSugerido)}</span>
-      </div>
-      <div class="flex justify-between border-b border-slate-800 pb-1.5">
-        <span class="text-slate-400">Línea de Goles recomendada:</span>
-        <span class="font-bold text-slate-200">${esc(p.tendenciaGoles)}</span>
-      </div>
-      <div class="flex justify-between border-b border-slate-800 pb-1.5">
-        <span class="text-slate-400">Mercado Ambos Marcan:</span>
-        <span class="font-bold text-slate-200">${esc(p.ambosMarcanTexto)}</span>
-      </div>
-      <div class="flex justify-between">
-        <span class="text-slate-400">Pronóstico de Córners:</span>
-        <span class="font-bold text-slate-200">${esc(p.tendenciaCorners)}</span>
-      </div>
-    </div>
-  `;
-
-  modal.classList.remove('hidden');
-}
-
-function cerrarModal() {
-  const modal = document.getElementById('modal-detalle');
-  if (modal) modal.classList.add('hidden');
-}
-
-document.addEventListener('click', (e) => {
-  const modal = document.getElementById('modal-detalle');
-  if (e.target === modal) cerrarModal();
-});
 
 function renderizarPartidos() {
   const container = document.getElementById('partidos-container');
@@ -659,13 +585,14 @@ async function abrirModalPartidosGlobales() {
     }
 
     let todos = [];
+    let globalIndex = 0;
     for (const [codigoLiga, lista] of Object.entries(estatico.ligas)) {
         if (Array.isArray(lista)) {
             const nombreLiga = INFO_LIGAS[codigoLiga]?.nombre || codigoLiga;
             lista.forEach((p, idx) => {
                 const analizado = analizarPartido(p, idx);
                 if (analizado && analizado.fecha.getTime() > Date.now()) {
-                    todos.push({ ...analizado, nombreLigaCompeticion: nombreLiga });
+                    todos.push({ ...analizado, ligaCodigo: codigoLiga, indexReal: idx, nombreLigaCompeticion: nombreLiga });
                 }
             });
         }
@@ -679,7 +606,7 @@ async function abrirModalPartidosGlobales() {
     }
 
     contenedorLista.innerHTML = todos.map(p => `
-        <div onclick="document.getElementById('modal-global-horas').classList.add('hidden'); abrirDetallePartido(${p.id});" class="bg-slate-950 border border-slate-800 hover:border-emerald-500/50 p-3 rounded-xl cursor-pointer transition flex items-center justify-between gap-3 group">
+        <div onclick="window.location.href='partido.html?liga=${p.ligaCodigo}&id=${p.indexReal}'" class="bg-slate-950 border border-slate-800 hover:border-emerald-500/50 p-3 rounded-xl cursor-pointer transition flex items-center justify-between gap-3 group">
             <div class="flex items-center gap-3">
                 <span class="text-xs font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-900/50 px-2.5 py-1.5 rounded-lg">
                     ${FECHA.format(p.fecha)}
