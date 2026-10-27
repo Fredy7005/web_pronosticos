@@ -1,4 +1,4 @@
-name: Actualizar Ligas con 1 Clave
+name: Actualizar Ligas con Clave Verificada
 
 on:
   schedule:
@@ -27,12 +27,13 @@ jobs:
 
           const apiKey = process.env.API_KEY;
           if (!apiKey) {
-            console.error("❌ La clave ODDS_API_KEY1 no está definida en los Secrets.");
+            console.error("❌ La clave ODDS_API_KEY1 no está definida.");
             process.exit(1);
           }
 
-          console.log("🔑 Clave cargada correctamente. Conectando con The Odds API...");
+          console.log("🔑 Usando clave:", apiKey.substring(0, 6) + "...");
 
+          // Mapeo adaptado y limpio para The Odds API v4
           const LIGAS_MAP = {
             "PD": "soccer_spain_la_liga",
             "SD": "soccer_spain_segunda_division",
@@ -42,28 +43,20 @@ jobs:
             "BL": "soccer_germany_bundesliga",
             "L1": "soccer_france_ligue_one",
             "EL": "soccer_uefa_europa_league",
-            "ECL": "soccer_uefa_europa_conference_league",
             "ED": "soccer_netherlands_eredivisie",
             "PPL": "soccer_portugal_primeira_liga",
-            "ELC": "soccer_efl_champ",
             "MLS": "soccer_usa_mls",
             "BR": "soccer_brazil_campeonato",
             "MX": "soccer_mexico_ligamx",
-            "ARG": "soccer_argentina_primera_division",
-            "BEL": "soccer_belgium_first_div",
-            "TUR": "soccer_turkey_super_league",
-            "COL": "soccer_colombia_primera_a",
-            "URU": "soccer_uruguay_primera_division",
-            "JPN": "soccer_japan_j_league",
-            "KOR": "soccer_korea_kleague1",
-            "AUS": "soccer_australia_aleague"
+            "ARG": "soccer_argentina_primera_division"
           };
 
           function peticion(sportKey) {
             return new Promise((resolve) => {
+              // Quitamos temporales restrictivos para asegurar que devuelva datos si los hay
               const options = {
                 hostname: "api.the-odds-api.com",
-                path: `/v4/sports/${sportKey}/odds?apiKey=${apiKey}&regions=eu&markets=h2h,totals&oddsFormat=decimal`,
+                path: `/v4/sports/${sportKey}/odds/?apiKey=${apiKey}&regions=eu&markets=h2h`,
                 method: "GET"
               };
 
@@ -74,17 +67,18 @@ jobs:
                   if (res.statusCode === 200) {
                     try {
                       const json = JSON.parse(data);
-                      console.log(`✅ ${sportKey}: ${json.length} partidos encontrados.`);
+                      console.log(`✅ ${sportKey}: ${json.length} eventos encontrados.`);
                       resolve(json);
                     } catch (e) {
                       resolve([]);
                     }
                   } else {
-                    console.warn(`⚠️ ${sportKey} devolvió error HTTP ${res.statusCode}`);
+                    console.warn(`⚠️ ${sportKey} devolvió HTTP ${res.statusCode} - Respuesta: ${data.substring(0, 100)}`);
                     resolve([]);
                   }
                 });
-              }).on("error", () => {
+              }).on("error", (err) => {
+                console.warn(`⚠️ Error de red en ${sportKey}:`, err.message);
                 resolve([]);
               });
             });
@@ -94,7 +88,7 @@ jobs:
             const resultadosLigas = {};
             for (const [codigo, sportKey] of Object.entries(LIGAS_MAP)) {
               resultadosLigas[codigo] = await peticion(sportKey);
-              await new Promise(r => setTimeout(r, 300));
+              await new Promise(r => setTimeout(r, 400));
             }
 
             const payload = {
@@ -103,7 +97,7 @@ jobs:
             };
 
             fs.writeFileSync("datos-ligas.json", JSON.stringify(payload, null, 2));
-            console.log("📁 Archivo datos-ligas.json generado con éxito.");
+            console.log("📁 Archivo datos-ligas.json generado correctamente.");
           }
 
           run();
@@ -114,4 +108,4 @@ jobs:
           git config --global user.name 'GitHub Actions Bot'
           git config --global user.email 'actions@github.com'
           git add datos-ligas.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Actualización con una sola clave" && git push)
+          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Actualización con clave verificada" && git push)
