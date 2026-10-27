@@ -1,4 +1,4 @@
-name: Actualizar Ligas con Clave Correcta
+name: Actualizar Ligas con Doble Clave
 
 on:
   schedule:
@@ -17,21 +17,24 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Descargar datos de The Odds API
+      - name: Descargar datos de The Odds API con Respaldo Dual
         env:
-          API_KEY: ${{ secrets.ODDS_API_KEY1 }}
+          KEY_1: ${{ secrets.ODDS_API_KEY1 }}
+          KEY_2: ${{ secrets.ODDS_API_KEY2 }}
         run: |
           node -e '
           const https = require("https");
           const fs = require("fs");
 
-          const apiKeyActiva = process.env.API_KEY;
-          if (!apiKeyActiva) {
-            console.error("❌ La clave ODDS_API_KEY1 no está definida en los Secrets.");
+          console.log("🔍 Diagnóstico de Claves:");
+          console.log("KEY_1 existe:", !!process.env.KEY_1, "Longitud:", process.env.KEY_1 ? process.env.KEY_1.length : 0);
+          console.log("KEY_2 existe:", !!process.env.KEY_2, "Longitud:", process.env.KEY_2 ? process.env.KEY_2.length : 0);
+
+          const keys = [process.env.KEY_1, process.env.KEY_2].filter(Boolean);
+          if (keys.length === 0) {
+            console.error("❌ ERROR CRÍTICO: No hay ninguna clave disponible en las variables de entorno.");
             process.exit(1);
           }
-
-          console.log("🔑 Conectando con The Odds API usando ODDS_API_KEY1...");
 
           const LIGAS_MAP = {
             "PD": "soccer_spain_la_liga",
@@ -59,11 +62,16 @@ jobs:
             "AUS": "soccer_australia_aleague"
           };
 
-          function peticion(sportKey) {
-            return new Promise((resolve) => {
+          function peticionConClave(sportKey, keyIndex) {
+            return new Promise((resolve, reject) => {
+              if (keyIndex >= keys.length) {
+                reject(new Error("Agotadas todas las claves"));
+                return;
+              }
+              const apiKey = keys[keyIndex];
               const options = {
                 hostname: "api.the-odds-api.com",
-                path: `/v4/sports/${sportKey}/odds?apiKey=${apiKeyActiva}&regions=eu&markets=h2h,totals&oddsFormat=decimal`,
+                path: `/v4/sports/${sportKey}/odds?apiKey=${apiKey}&regions=eu&markets=h2h,totals&oddsFormat=decimal`,
                 method: "GET"
               };
 
@@ -74,18 +82,17 @@ jobs:
                   if (res.statusCode === 200) {
                     try {
                       const json = JSON.parse(data);
-                      console.log(`✅ ${sportKey}: ${json.length} partidos encontrados.`);
-                      resolve(json);
+                      resolve({ json, keyUsada: keyIndex + 1 });
                     } catch (e) {
-                      resolve([]);
+                      reject(new Error("Error parseando JSON"));
                     }
                   } else {
-                    console.warn(`⚠️ ${sportKey} devolvió error HTTP ${res.statusCode}`);
-                    resolve([]);
+                    console.warn(`⚠️ Clave #${keyIndex + 1} falló para ${sportKey} (HTTP ${res.statusCode}). Probando siguiente clave...`);
+                    peticionConClave(sportKey, keyIndex + 1).then(resolve).catch(reject);
                   }
                 });
               }).on("error", () => {
-                resolve([]);
+                peticionConClave(sportKey, keyIndex + 1).then(resolve).catch(reject);
               });
             });
           }
@@ -93,7 +100,14 @@ jobs:
           async function run() {
             const resultadosLigas = {};
             for (const [codigo, sportKey] of Object.entries(LIGAS_MAP)) {
-              resultadosLigas[codigo] = await peticion(sportKey);
+              try {
+                const resultado = await peticionConClave(sportKey, 0);
+                resultadosLigas[codigo] = resultado.json;
+                console.log(`✅ ${sportKey}: ${resultado.json.length} partidos encontrados (Clave #${resultado.keyUsada})`);
+              } catch (e) {
+                console.warn(`❌ No se pudo descargar ${sportKey} con ninguna clave.`);
+                resultadosLigas[codigo] = [];
+              }
               await new Promise(r => setTimeout(r, 300));
             }
 
@@ -114,4 +128,4 @@ jobs:
           git config --global user.name 'GitHub Actions Bot'
           git config --global user.email 'actions@github.com'
           git add datos-ligas.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Enlace correcto con ODDS_API_KEY1" && git push)
+          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Diagnóstico de claves en Actions" && git push)
