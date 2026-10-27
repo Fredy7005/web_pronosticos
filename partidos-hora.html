@@ -61,7 +61,7 @@
     <a href="planes.html" class="py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5 text-sky-400 font-bold">💎 Planes</a>
 </div>
 
-<!-- Contenido Principal con idéntica estructura a las demás páginas -->
+<!-- Contenido Principal -->
 <main class="w-full max-w-4xl flex flex-col gap-6 p-3 sm:p-6 my-4">
     
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-800 pb-4">
@@ -77,15 +77,23 @@
         </a>
     </div>
 
-    <!-- Estado del Motor -->
-    <div id="estado" class="text-xs text-emerald-400 font-semibold px-1">
-        🟢 Sincronizando agenda global de partidos...
+    <!-- Controles y Filtros (Stake para calcular beneficio en las tarjetas) -->
+    <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-900/60 border border-slate-800 p-3.5 rounded-2xl">
+        <div class="text-xs text-emerald-400 font-semibold" id="estado">
+            🟢 Sincronizando agenda global...
+        </div>
+
+        <div class="flex items-center gap-2">
+            <span class="text-xs text-slate-400 font-semibold">Stake:</span>
+            <input type="number" id="input-stake" value="10" min="1" max="10000" oninput="cargarVistaGlobalHoras()" class="w-20 bg-slate-950 border border-slate-800 text-white text-xs font-bold rounded-xl px-3 py-2 text-center outline-none focus:border-emerald-500">
+            <span class="text-xs text-slate-400 font-bold">€</span>
+        </div>
     </div>
 
-    <!-- Contenedor de la lista global con el mismo estilo de tarjetas -->
+    <!-- Contenedor de Partidos Globales con el diseño exacto -->
     <div id="lista-global-horas-page" class="flex flex-col gap-4">
-        <div class="bg-slate-900/50 animate-pulse h-24 rounded-2xl border border-slate-800"></div>
-        <div class="bg-slate-900/50 animate-pulse h-24 rounded-2xl border border-slate-800"></div>
+        <div class="bg-slate-900/50 animate-pulse h-44 rounded-2xl border border-slate-800"></div>
+        <div class="bg-slate-900/50 animate-pulse h-44 rounded-2xl border border-slate-800"></div>
     </div>
 
 </main>
@@ -98,7 +106,7 @@
     </div>
 </div>
 
-<script src="app.js?v=49"></script>
+<script src="app.js?v=50"></script>
 <script>
 function toggleMenuMovil() {
     const menu = document.getElementById('menu-movil');
@@ -123,6 +131,9 @@ window.addEventListener('resize', reubicarAuthContainer);
 async function cargarVistaGlobalHoras() {
     const contenedorLista = document.getElementById('lista-global-horas-page');
     const estadoEl = document.getElementById('estado');
+    const inputStake = document.getElementById('input-stake');
+    const stake = Math.min(Math.max(parseFloat(inputStake?.value) || 10, 1), 10000);
+
     if (!contenedorLista) return;
 
     const estatico = await cargarArchivoEstatico();
@@ -134,17 +145,21 @@ async function cargarVistaGlobalHoras() {
     }
 
     let todos = [];
+    let globalIndex = 0;
     for (const [codigoLiga, lista] of Object.entries(estatico.ligas)) {
         if (Array.isArray(lista)) {
             const nombreLiga = INFO_LIGAS[codigoLiga]?.nombre || codigoLiga;
             lista.forEach((p, idx) => {
-                const analizado = analizarPartido(p, idx);
+                const analizado = analizarPartido(p, globalIndex++);
                 if (analizado && analizado.fecha.getTime() > Date.now()) {
                     todos.push({ ...analizado, nombreLigaCompeticion: nombreLiga });
                 }
             });
         }
     }
+
+    // Guardamos en la variable global para que el modal funcione perfectamente
+    partidosAnalizados = todos;
 
     todos.sort((a, b) => a.fecha.getTime() - b.fecha.getTime());
 
@@ -156,26 +171,8 @@ async function cargarVistaGlobalHoras() {
 
     if (estadoEl) estadoEl.textContent = `🟢 Motor V5 activo — ${todos.length} partido(s) globales disponibles`;
 
-    contenedorLista.innerHTML = todos.map(p => `
-        <div onclick="abrirDetallePartido(${p.id})" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 cursor-pointer hover:border-slate-600 transition duration-200 group shadow-lg">
-            <div class="flex items-center gap-4 w-full sm:w-auto">
-                <span class="text-xs font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-900/50 px-3 py-2 rounded-xl shrink-0 text-center">
-                    📅 ${FECHA.format(p.fecha)}
-                </span>
-                <div class="flex flex-col gap-1">
-                    <span class="text-sm sm:text-base font-bold text-white group-hover:text-emerald-400 transition">${esc(p.local)} vs ${esc(p.visitante)}</span>
-                    <span class="text-xs text-slate-400 flex items-center gap-1.5">🏆 <strong>${esc(p.nombreLigaCompeticion)}</strong></span>
-                </div>
-            </div>
-            <div class="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-800">
-                <div class="text-right">
-                    <span class="text-[11px] text-slate-400">Pronóstico recomendado:</span>
-                    <span class="text-xs sm:text-sm font-extrabold text-emerald-400 block">${descripcionApuesta(p, p.resultadoSugerido)}</span>
-                    <span class="text-[10px] text-slate-400">Cuota: <strong class="text-white">${p.mejorCuota.cuota.toFixed(2)}</strong></span>
-                </div>
-            </div>
-        </div>
-    `).join('');
+    // Renderizamos usando exactamente la función tarjetaPartido() con los escudos y diseño completo
+    contenedorLista.innerHTML = todos.map(p => tarjetaPartido(p, stake)).join('');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
