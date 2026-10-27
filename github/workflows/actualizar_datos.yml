@@ -1,8 +1,8 @@
-name: Actualizar Ligas con Doble Clave
+name: Actualizar Ligas con Clave Correcta
 
 on:
   schedule:
-    - cron: '0 */6 * * *' # Cada 6 horas
+    - cron: '0 */6 * * *'
   workflow_dispatch:
 
 jobs:
@@ -19,23 +19,19 @@ jobs:
 
       - name: Descargar datos de The Odds API
         env:
-          KEY_1: ${{ secrets.ODDS_API_KEY1 }}
-          KEY_2: ${{ secrets.ODDS_API_KEY2 }}
+          API_KEY: ${{ secrets.ODDS_API_KEY1 }}
         run: |
           node -e '
           const https = require("https");
           const fs = require("fs");
 
-          // Seleccionamos la clave según la quincena del mes (estrategia inteligente)
-          const diaActual = new Date().getDate();
-          const apiKeyActiva = (diaActual <= 15 ? process.env.KEY_1 : process.env.KEY_2) || process.env.KEY_1;
-
+          const apiKeyActiva = process.env.API_KEY;
           if (!apiKeyActiva) {
-            console.error("❌ No se encontró ninguna clave válida en los Secrets.");
+            console.error("❌ La clave ODDS_API_KEY1 no está definida en los Secrets.");
             process.exit(1);
           }
 
-          console.log(`🔑 Usando clave correspondiente a la quincena (Día ${diaActual})...`);
+          console.log("🔑 Conectando con The Odds API usando ODDS_API_KEY1...");
 
           const LIGAS_MAP = {
             "PD": "soccer_spain_la_liga",
@@ -81,16 +77,14 @@ jobs:
                       console.log(`✅ ${sportKey}: ${json.length} partidos encontrados.`);
                       resolve(json);
                     } catch (e) {
-                      console.warn(`⚠️ Error parseando ${sportKey}`);
                       resolve([]);
                     }
                   } else {
-                    console.warn(`⚠️ ${sportKey} devolvió estado HTTP ${res.statusCode}`);
+                    console.warn(`⚠️ ${sportKey} devolvió error HTTP ${res.statusCode}`);
                     resolve([]);
                   }
                 });
               }).on("error", () => {
-                console.warn(`⚠️ Error de red en ${sportKey}`);
                 resolve([]);
               });
             });
@@ -100,7 +94,7 @@ jobs:
             const resultadosLigas = {};
             for (const [codigo, sportKey] of Object.entries(LIGAS_MAP)) {
               resultadosLigas[codigo] = await peticion(sportKey);
-              await new Promise(r => setTimeout(r, 300)); // Pausa breve para evitar bloqueo por velocidad
+              await new Promise(r => setTimeout(r, 300));
             }
 
             const payload = {
@@ -109,7 +103,7 @@ jobs:
             };
 
             fs.writeFileSync("datos-ligas.json", JSON.stringify(payload, null, 2));
-            console.log("📁 Archivo datos-ligas.json actualizado correctamente.");
+            console.log("📁 Archivo datos-ligas.json generado con éxito.");
           }
 
           run();
@@ -120,4 +114,4 @@ jobs:
           git config --global user.name 'GitHub Actions Bot'
           git config --global user.email 'actions@github.com'
           git add datos-ligas.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Actualización con doble clave por quincenas" && git push)
+          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Enlace correcto con ODDS_API_KEY1" && git push)
