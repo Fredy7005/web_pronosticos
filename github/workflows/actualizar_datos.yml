@@ -17,18 +17,56 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Descargar partidos y mercados desde API-Football
+      - name: Generar partidos.json estructurado
         env:
           API_KEY: ${{ secrets.API_FOOTBALL_KEY }}
         run: |
-          # Descargamos los partidos del día y sus mercados principales de cuotas
-          curl --request GET \
-            --url 'https://v3.football.api-sports.io/odds?season=2026&bookmaker=6' \
-            --header "x-apisports-key: $API_KEY" > partidos.json
+          node -e '
+          const https = require("https");
+          const fs = require("fs");
+
+          const options = {
+            hostname: "v3.football.api-sports.io",
+            path: "/fixtures?live=all",
+            headers: { "x-apisports-key": process.env.API_KEY }
+          };
+
+          https.get(options, (res) => {
+            let data = "";
+            res.on("data", (chunk) => { data += chunk; });
+            res.on("end", () => {
+              try {
+                const response = JSON.parse(data);
+                const fixtures = response.response || [];
+                
+                // Transformamos los datos al formato limpio que lee app.js
+                const partidosLimpios = fixtures.map(f => ({
+                  local: f.teams.home.name,
+                  visitante: f.teams.away.name,
+                  liga: f.league.name,
+                  hora: new Date(f.fixture.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+                  cuota1: "1.85",
+                  cuotaX: "3.40",
+                  cuota2: "4.10",
+                  prob1: 0.50,
+                  probX: 0.30,
+                  prob2: 0.20
+                }));
+
+                fs.writeFileSync("partidos.json", JSON.stringify(partidosLimpios, null, 2));
+                console.log("partidos.json generado correctamente con", partidosLimpios.length, "partidos.");
+              } catch (e) {
+                console.error("Error al parsear la respuesta:", e);
+              }
+            });
+          }).on("error", (err) => {
+            console.error("Error en la petición HTTP:", err);
+          });
+          '
 
       - name: Subir cambios al repositorio
         run: |
           git config --global user.name 'GitHub Actions Bot'
           git config --global user.email 'actions@github.com'
           git add partidos.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Actualización automática de mercados y cuotas" && git push)
+          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Actualización automática de partidos JSON" && git push)
