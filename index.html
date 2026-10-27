@@ -40,7 +40,7 @@
         <a href="#" onclick="abrirModalPartidosGlobales(); return false;" class="nav-item px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-emerald-400 font-bold transition flex items-center gap-1.5 border border-emerald-500/30">
             <span>⏰</span> Partidos por Hora
         </a>
-        <a href="index.html?liga=PD&historial=true" data-nav="historial" class="nav-item px-3 py-2 rounded-xl hover:bg-slate-900 hover:text-emerald-400 transition flex items-center gap-1.5">
+        <a href="partidos.html?liga=PD&historial=true" data-nav="historial" class="nav-item px-3 py-2 rounded-xl hover:bg-slate-900 hover:text-emerald-400 transition flex items-center gap-1.5">
             <span>📜</span> Historial IA
         </a>
         <a href="calculadora.html" data-nav="calculadora.html" class="nav-item px-3.5 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 font-bold transition flex items-center gap-1.5 mx-1">
@@ -73,7 +73,7 @@
     <a href="calculadora.html" data-nav="calculadora.html" class="nav-item-movil py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5 text-amber-300 font-bold">
         <span class="text-base">🧮</span> Calculadora de Cuotas & EV
     </a>
-    <a href="index.html?liga=PD&historial=true" data-nav="partidos.html" class="nav-item-movil py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5">
+    <a href="partidos.html?liga=PD&historial=true" data-nav="partidos.html" class="nav-item-movil py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5">
         <span class="text-base">📜</span> Historial IA
     </a>
     <a href="planes.html" data-nav="planes.html" class="nav-item-movil py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5 text-sky-400 font-bold">
@@ -86,7 +86,7 @@
     </div>
 </div>
 
-<!-- Contenido Principal: Panel de Bienvenida con Bloques y 4 Competiciones Destacadas -->
+<!-- Contenido Principal: Panel de Bienvenida -->
 <main class="w-full max-w-5xl flex flex-col gap-8 p-4 sm:p-8 my-6">
 
     <!-- Hero / Bienvenida -->
@@ -146,7 +146,7 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- 1. La Liga -->
-            <div onclick="window.location.href='index.html?liga=PD'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex items-center gap-3 group">
+            <div onclick="window.location.href='partidos.html?liga=PD'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex items-center gap-3 group">
                 <img src="Logos Competiciones/laliga.png" alt="La Liga" class="w-10 h-10 object-contain bg-slate-950 p-1.5 rounded-xl border border-slate-800 shrink-0">
                 <div>
                     <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">La Liga 🇪🇸</h3>
@@ -155,7 +155,7 @@
             </div>
 
             <!-- 2. Premier League -->
-            <div onclick="window.location.href='index.html?liga=PL'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex items-center gap-3 group">
+            <div onclick="window.location.href='partidos.html?liga=PL'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex items-center gap-3 group">
                 <img src="Logos Competiciones/premier.png" alt="Premier League" class="w-10 h-10 object-contain bg-slate-950 p-1.5 rounded-xl border border-slate-800 shrink-0">
                 <div>
                     <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">Premier League 🇬🇧</h3>
@@ -164,7 +164,7 @@
             </div>
 
             <!-- 3. Champions League -->
-            <div onclick="window.location.href='index.html?liga=CL'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex items-center gap-3 group">
+            <div onclick="window.location.href='partidos.html?liga=CL'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex items-center gap-3 group">
                 <img src="Logos Competiciones/champions.png" alt="Champions League" class="w-10 h-10 object-contain bg-slate-950 p-1.5 rounded-xl border border-slate-800 shrink-0">
                 <div>
                     <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">Champions League ⭐</h3>
@@ -173,7 +173,7 @@
             </div>
 
             <!-- 4. Serie A -->
-            <div onclick="window.location.href='index.html?liga=SA'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex items-center gap-3 group">
+            <div onclick="window.location.href='partidos.html?liga=SA'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex items-center gap-3 group">
                 <img src="Logos Competiciones/serie_a.png" alt="Serie A" class="w-10 h-10 object-contain bg-slate-950 p-1.5 rounded-xl border border-slate-800 shrink-0">
                 <div>
                     <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">Serie A 🇮🇹</h3>
@@ -207,7 +207,7 @@
 </div>
 
 <!-- Script Principal -->
-<script src="app.js?v=42"></script>
+<script src="app.js?v=44"></script>
 <script>
 function toggleMenuMovil() {
     const menu = document.getElementById('menu-movil');
