@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SportPredicts - Pronósticos de Fútbol y Valor Esperado (EV+)</title>
+<title>SportPredicts - Panel Principal</title>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
@@ -73,7 +73,7 @@
     <a href="calculadora.html" data-nav="calculadora.html" class="nav-item-movil py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5 text-amber-300 font-bold">
         <span class="text-base">🧮</span> Calculadora de Cuotas & EV
     </a>
-    <a href="index.html?liga=PD&historial=true" class="nav-item-movil py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5">
+    <a href="index.html?liga=PD&historial=true" data-nav="partidos.html" class="nav-item-movil py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5">
         <span class="text-base">📜</span> Historial IA
     </a>
     <a href="planes.html" data-nav="planes.html" class="nav-item-movil py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5 text-sky-400 font-bold">
@@ -86,62 +86,104 @@
     </div>
 </div>
 
-<!-- Contenido Principal -->
-<main class="w-full max-w-4xl flex flex-col gap-6 p-3 sm:p-6 my-4">
-    
-    <!-- Cabecera de Liga Seleccionada -->
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-800 pb-4">
-        <div class="flex items-center gap-3">
-            <span id="liga-icono" class="text-2xl">🇪🇸</span>
+<!-- Contenido Principal: Panel de Bienvenida con Bloques y 4 Competiciones Destacadas -->
+<main class="w-full max-w-5xl flex flex-col gap-8 p-4 sm:p-8 my-6">
+
+    <!-- Hero / Bienvenida -->
+    <div class="bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950/40 border border-slate-800 rounded-3xl p-6 sm:p-10 flex flex-col gap-4 shadow-2xl relative overflow-hidden">
+        <div class="absolute -right-10 -bottom-10 text-9xl opacity-5 pointer-events-none">⚽</div>
+        <div class="flex items-center gap-2">
+            <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs font-bold px-3 py-1 rounded-full">⚡ Motor V5 Activo</span>
+            <span class="text-xs text-slate-400">Análisis y Valor Esperado (EV+)</span>
+        </div>
+        <h1 class="text-2xl sm:text-4xl font-black text-white tracking-tight">Pronósticos de Fútbol Inteligentes</h1>
+        <p class="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
+            Plataforma avanzada de estadísticas y cuotas en tiempo real. Explora todos los partidos ordenados por hora, calcula combinadas con rentabilidad o consulta las ligas principales.
+        </p>
+        <div class="flex flex-wrap items-center gap-3 pt-2">
+            <button onclick="abrirModalPartidosGlobales()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm px-5 py-3 rounded-xl transition shadow-lg shadow-emerald-950/50 flex items-center gap-2">
+                <span>⏰</span> Ver Partidos por Hora
+            </button>
+            <a href="competiciones.html" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs sm:text-sm px-5 py-3 rounded-xl transition border border-slate-700 flex items-center gap-2">
+                <span>🏆</span> Ver las 23 Ligas
+            </a>
+        </div>
+    </div>
+
+    <!-- Bloques de Accesos Rápidos -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div onclick="window.location.href='calculadora.html'" class="bg-slate-900/80 border border-slate-800 hover:border-amber-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col gap-3 group">
+            <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-lg">🧮</div>
             <div>
-                <h1 id="liga-titulo" class="text-lg sm:text-xl font-black text-white">La Liga</h1>
-                <p class="text-[11px] sm:text-xs text-slate-400">Análisis, pronósticos y resultados de la jornada</p>
+                <h3 class="font-bold text-white text-sm group-hover:text-amber-300 transition">Calculadora de Cuotas & EV</h3>
+                <p class="text-xs text-slate-400 mt-1">Construye combinadas y comprueba si hay valor esperado positivo frente a las casas.</p>
             </div>
         </div>
-        <a href="competiciones.html" class="text-[11px] sm:text-xs text-slate-400 hover:text-white transition bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl flex items-center gap-1.5">
-            <span>←</span> Volver a Competiciones
-        </a>
-    </div>
 
-    <!-- Controles y Filtros -->
-    <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-900/60 border border-slate-800 p-3.5 rounded-2xl">
-        <div class="flex items-center gap-2 flex-wrap">
-            <select id="select-orden" onchange="cambiarOrden()" class="bg-slate-950 border border-slate-800 text-slate-300 text-xs rounded-xl px-3 py-2 outline-none focus:border-emerald-500 font-semibold cursor-pointer">
-                <option value="fecha">📅 Por Fecha</option>
-                <option value="probabilidad">⭐ Por Probabilidad</option>
-            </select>
-            <button id="btn-solo-valor" onclick="toggleSoloValor()" aria-pressed="false" class="bg-slate-950 border border-slate-800 hover:border-slate-700 text-slate-300 text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5">
-                <span>💎</span> Top (EV+)
-            </button>
+        <div onclick="window.location.href='competiciones.html'" class="bg-slate-900/80 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col gap-3 group">
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-lg">🏆</div>
+            <div>
+                <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Competiciones Oficiales</h3>
+                <p class="text-xs text-slate-400 mt-1">Accede directamente a los pronósticos de La Liga, Premier League, Serie A y más.</p>
+            </div>
         </div>
 
-        <div class="flex items-center gap-2">
-            <span class="text-xs text-slate-400 font-semibold">Stake:</span>
-            <input type="number" id="input-stake" value="10" min="1" max="10000" oninput="actualizarSimulacion()" class="w-20 bg-slate-950 border border-slate-800 text-white text-xs font-bold rounded-xl px-3 py-2 text-center outline-none focus:border-emerald-500">
-            <span class="text-xs text-slate-400 font-bold">€</span>
+        <div onclick="window.location.href='planes.html'" class="bg-slate-900/80 border border-slate-800 hover:border-sky-500/50 p-5 rounded-2xl cursor-pointer transition flex flex-col gap-3 group">
+            <div class="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-lg">💎</div>
+            <div>
+                <h3 class="font-bold text-white text-sm group-hover:text-sky-400 transition">Planes y Suscripciones</h3>
+                <p class="text-xs text-slate-400 mt-1">Desbloquea el acceso ilimitado a todas las herramientas avanzadas del motor.</p>
+            </div>
         </div>
     </div>
 
-    <!-- Estado del Motor -->
-    <div id="estado" class="text-xs text-emerald-400 font-semibold px-1">
-        🟢 Motor V5 activo — Sincronizando pronósticos...
-    </div>
+    <!-- 4 Competiciones Destacadas -->
+    <div class="flex flex-col gap-4">
+        <div class="flex justify-between items-center">
+            <h2 class="text-base font-black text-white flex items-center gap-2">⭐ Competiciones Destacadas</h2>
+            <a href="competiciones.html" class="text-xs text-emerald-400 hover:underline font-semibold">Ver todas (23) →</a>
+        </div>
 
-    <!-- Contenedor de Partidos -->
-    <div id="partidos-container" class="flex flex-col gap-4">
-        <div class="bg-slate-900/50 animate-pulse h-44 rounded-2xl border border-slate-800"></div>
-        <div class="bg-slate-900/50 animate-pulse h-44 rounded-2xl border border-slate-800"></div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- 1. La Liga -->
+            <div onclick="window.location.href='index.html?liga=PD'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex items-center gap-3 group">
+                <img src="Logos Competiciones/laliga.png" alt="La Liga" class="w-10 h-10 object-contain bg-slate-950 p-1.5 rounded-xl border border-slate-800 shrink-0">
+                <div>
+                    <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">La Liga 🇪🇸</h3>
+                    <p class="text-[10px] text-slate-400 mt-0.5">España</p>
+                </div>
+            </div>
+
+            <!-- 2. Premier League -->
+            <div onclick="window.location.href='index.html?liga=PL'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex items-center gap-3 group">
+                <img src="Logos Competiciones/premier.png" alt="Premier League" class="w-10 h-10 object-contain bg-slate-950 p-1.5 rounded-xl border border-slate-800 shrink-0">
+                <div>
+                    <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">Premier League 🇬🇧</h3>
+                    <p class="text-[10px] text-slate-400 mt-0.5">Inglaterra</p>
+                </div>
+            </div>
+
+            <!-- 3. Champions League -->
+            <div onclick="window.location.href='index.html?liga=CL'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex items-center gap-3 group">
+                <img src="Logos Competiciones/champions.png" alt="Champions League" class="w-10 h-10 object-contain bg-slate-950 p-1.5 rounded-xl border border-slate-800 shrink-0">
+                <div>
+                    <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">Champions League ⭐</h3>
+                    <p class="text-[10px] text-slate-400 mt-0.5">Europa</p>
+                </div>
+            </div>
+
+            <!-- 4. Serie A -->
+            <div onclick="window.location.href='index.html?liga=SA'" class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl cursor-pointer transition flex items-center gap-3 group">
+                <img src="Logos Competiciones/serie_a.png" alt="Serie A" class="w-10 h-10 object-contain bg-slate-950 p-1.5 rounded-xl border border-slate-800 shrink-0">
+                <div>
+                    <h3 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-400 transition">Serie A 🇮🇹</h3>
+                    <p class="text-[10px] text-slate-400 mt-0.5">Italia</p>
+                </div>
+            </div>
+        </div>
     </div>
 
 </main>
-
-<!-- Modal Detalle de Partido -->
-<div id="modal-detalle" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex justify-center items-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-6 relative shadow-2xl flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
-        <button onclick="cerrarModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg font-bold">✕</button>
-        <div id="modal-contenido"></div>
-    </div>
-</div>
 
 <!-- Modal Universal de Autenticación -->
 <div id="sp-auth-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex justify-center items-center p-4">
@@ -165,7 +207,7 @@
 </div>
 
 <!-- Script Principal -->
-<script src="app.js?v=41"></script>
+<script src="app.js?v=42"></script>
 <script>
 function toggleMenuMovil() {
     const menu = document.getElementById('menu-movil');
