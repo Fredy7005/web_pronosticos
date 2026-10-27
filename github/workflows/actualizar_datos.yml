@@ -1,9 +1,9 @@
-name: Actualizar Datos de Fútbol
+name: Actualizar Partidos y Mercados
 
 on:
   schedule:
-    - cron: '0 */6 * * *' # Se ejecuta automáticamente cada 6 horas
-  workflow_dispatch: # Permite ejecutarlo manualmente desde la pestaña Actions en GitHub
+    - cron: '0 */6 * * *' # Cada 6 horas
+  workflow_dispatch:
 
 jobs:
   actualizar:
@@ -17,13 +17,13 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Descargar partidos y estadísticas desde API-Football
+      - name: Descargar partidos y mercados desde API-Football
         env:
           API_KEY: ${{ secrets.API_FOOTBALL_KEY }}
         run: |
-          # Aquí haremos la petición a la API y guardaremos el resultado en un archivo JSON local
+          # Descargamos los partidos del día y sus mercados principales de cuotas
           curl --request GET \
-            --url 'https://v3.football.api-sports.io/fixtures?live=all' \
+            --url 'https://v3.football.api-sports.io/odds?season=2026&bookmaker=6' \
             --header "x-apisports-key: $API_KEY" > partidos.json
 
       - name: Subir cambios al repositorio
@@ -31,4 +31,4 @@ jobs:
           git config --global user.name 'GitHub Actions Bot'
           git config --global user.email 'actions@github.com'
           git add partidos.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Actualización automática de partidos y estadísticas" && git push)
+          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Actualización automática de mercados y cuotas" && git push)
