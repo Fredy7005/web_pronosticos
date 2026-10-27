@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SportPredicts - Detalle del Partido</title>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center">
+
+<!-- ================= CABECERA UNIFICADA (PC Y MÓVIL) ================= -->
+<header class="w-full bg-slate-950/95 backdrop-blur-md border-b border-slate-800/80 px-4 lg:px-6 py-2.5 flex justify-between items-center sticky top-0 z-50">
+    <div class="flex items-center gap-3">
+        <button onclick="toggleMenuMovil()" class="lg:hidden text-slate-300 hover:text-emerald-400 text-xl p-1.5 rounded-lg bg-slate-900 border border-slate-800 focus:outline-none transition">
+            ☰
+        </button>
+
+        <div class="flex items-center gap-2.5 cursor-pointer group" onclick="window.location.href='index.html'">
+            <div class="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center shadow-inner group-hover:border-emerald-500/50 transition">
+                <span class="text-lg">⚽</span>
+            </div>
+            <div class="flex flex-col">
+                <span class="font-black tracking-tight text-white text-sm sm:text-base leading-none group-hover:text-emerald-400 transition">Sport<span class="text-emerald-400">Predicts</span></span>
+                <span class="text-[9px] font-bold text-amber-400/90 tracking-wider uppercase mt-0.5 flex items-center gap-0.5">⚡ MOTOR V5</span>
+            </div>
+        </div>
+    </div>
+
+    <nav class="hidden lg:flex items-center gap-1 xl:gap-2 text-xs font-semibold text-slate-300">
+        <a href="index.html" class="nav-item px-3 py-2 rounded-xl hover:bg-slate-900 hover:text-emerald-400 transition">Inicio</a>
+        <a href="competiciones.html" class="nav-item px-3 py-2 rounded-xl hover:bg-slate-900 hover:text-emerald-400 transition">🏆 Competiciones</a>
+        <a href="partidos-hora.html" class="nav-item px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-emerald-400 font-bold transition flex items-center gap-1.5 border border-emerald-500/30">
+            <span>⏰</span> Partidos por Hora
+        </a>
+        <a href="partidos.html?liga=PD&historial=true" class="nav-item px-3 py-2 rounded-xl hover:bg-slate-900 hover:text-emerald-400 transition">📜 Historial</a>
+        <a href="calculadora.html" class="nav-item px-3.5 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 font-bold transition mx-1">🧮 Calculadora & EV</a>
+        <a href="planes.html" class="nav-item px-3 py-2 rounded-xl hover:bg-slate-900 hover:text-emerald-400 transition text-sky-400">💎 Planes</a>
+    </nav>
+
+    <div class="flex items-center gap-2.5">
+        <div id="auth-desktop-slot" class="hidden lg:flex items-center">
+            <div id="auth-user-container" class="flex items-center gap-2"></div>
+        </div>
+        <span class="bg-slate-900 text-[10px] px-2.5 py-1 rounded-full text-slate-400 font-bold border border-slate-800">+18</span>
+    </div>
+</header>
+
+<!-- ================= MENÚ DESPLEGABLE MÓVIL ================= -->
+<div id="menu-movil" class="hidden lg:hidden w-full bg-slate-900/98 backdrop-blur-xl border-b border-slate-800 px-5 py-5 flex flex-col gap-2 text-xs font-semibold text-slate-200 sticky top-[57px] z-40 shadow-2xl">
+    <a href="index.html" class="py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5">🏠 Inicio</a>
+    <a href="competiciones.html" class="py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5">🏆 Competiciones</a>
+    <a href="partidos-hora.html" class="py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5 text-emerald-400 font-bold">⏰ Partidos por Hora</a>
+    <a href="calculadora.html" class="py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5 text-amber-300 font-bold">🧮 Calculadora & EV</a>
+    <a href="partidos.html?liga=PD&historial=true" class="py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5">📜 Historial</a>
+    <a href="planes.html" class="py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5 text-sky-400 font-bold">💎 Planes</a>
+
+    <div class="border-t border-slate-800 my-2 pt-3 flex flex-col gap-2">
+        <span class="text-[10px] uppercase tracking-wider text-slate-500 font-bold px-1">CUENTA DE USUARIO</span>
+        <div class="grid grid-cols-2 gap-2 w-full pt-1">
+            <button onclick="abrirSpAuthModal(false)" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold py-2.5 rounded-xl transition shadow flex items-center justify-center gap-1.5">
+                🔑 Iniciar Sesión
+            </button>
+            <button onclick="abrirSpAuthModal(true)" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-2.5 rounded-xl transition shadow flex items-center justify-center gap-1.5">
+                📝 Registrarse
+            </button>
+        </div>
+        <div id="auth-mobile-slot" class="hidden"></div>
+    </div>
+</div>
+
+<!-- ================= CONTENIDO PRINCIPAL: DETALLE DEL PARTIDO ================= -->
+<main class="w-full max-w-4xl flex flex-col gap-6 p-3 sm:p-6 my-6">
+    
+    <!-- Botón de retorno -->
+    <div>
+        <button onclick="history.back()" class="text-xs text-slate-400 hover:text-white transition bg-slate-900 border border-slate-800 px-3.5 py-2 rounded-xl flex items-center gap-1.5">
+            <span>←</span> Volver a partidos
+        </button>
+    </div>
+
+    <!-- Contenedor Dinámico del Partido -->
+    <div id="detalle-partido-container" class="flex flex-col gap-4">
+        <div class="bg-slate-900/50 animate-pulse h-64 rounded-2xl border border-slate-800 flex items-center justify-center text-xs text-slate-400">
+            Cargando estadísticas del encuentro...
+        </div>
+    </div>
+
+</main>
+
+<!-- Modal Universal de Autenticación -->
+<div id="sp-auth-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex justify-center items-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-6 relative shadow-2xl flex flex-col gap-4">
+        <button onclick="cerrarSpAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg font-bold">✕</button>
+        <div class="flex items-center gap-2">
+            <span class="text-xl">⚽</span>
+            <h3 id="sp-auth-title" class="text-lg font-black text-white">Iniciar Sesión</h3>
+        </div>
+        <p id="sp-auth-subtitle" class="text-xs text-slate-400">Accede a tu cuenta de SportPredicts V5.</p>
+        <div id="sp-auth-error" class="hidden bg-rose-950/80 border border-rose-800 text-rose-300 text-xs p-2.5 rounded-xl"></div>
+        <div class="flex flex-col gap-3">
+            <input type="email" id="sp-auth-email" placeholder="Correo electrónico" class="w-full bg-slate-950 border border-slate-800 text-white text-xs rounded-xl px-3.5 py-2.5 outline-none focus:border-emerald-500">
+            <input type="password" id="sp-auth-pass" placeholder="Contraseña (mín. 6 caracteres)" class="w-full bg-slate-950 border border-slate-800 text-white text-xs rounded-xl px-3.5 py-2.5 outline-none focus:border-emerald-500">
+            <button id="sp-auth-submit" onclick="ejecutarSpAuth()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-3 rounded-xl transition shadow-lg shadow-emerald-950/50">Continuar</button>
+        </div>
+        <div class="text-center border-t border-slate-800 pt-3">
+            <button id="sp-auth-switch" onclick="cambiarModoSpAuth()" class="text-xs text-emerald-400 hover:underline font-semibold">¿No tienes cuenta? Regístrate gratis</button>
+        </div>
+    </div>
+</div>
+
+<!-- Script Principal de la Plataforma -->
+<script src="app.js?v=52"></script>
+<script>
+function toggleMenuMovil() {
+    const menu = document.getElementById('menu-movil');
+    if (menu) menu.classList.toggle('hidden');
+}
+
+function reubicarAuthContainer() {
+    const authContainer = document.getElementById('auth-user-container');
+    const desktopSlot = document.getElementById('auth-desktop-slot');
+    const mobileSlot = document.getElementById('auth-mobile-slot');
+    if (!authContainer || !desktopSlot || !mobileSlot) return;
+
+    if (window.innerWidth >= 1024) {
+        if (!desktopSlot.contains(authContainer)) desktopSlot.appendChild(authContainer);
+    } else {
+        if (!mobileSlot.contains(authContainer)) mobileSlot.appendChild(authContainer);
+    }
+}
+
+window.addEventListener('resize', reubicarAuthContainer);
+
+let spModoRegistro = false;
+function abrirSpAuthModal(esRegistro) {
+    spModoRegistro = esRegistro;
+    const modal = document.getElementById('sp-auth-modal');
+    const title = document.getElementById('sp-auth-title');
+    const sub = document.getElementById('sp-auth-subtitle');
+    const btn = document.getElementById('sp-auth-submit');
+    const sw = document.getElementById('sp-auth-switch');
+    const err = document.getElementById('sp-auth-error');
+
+    err.classList.add('hidden');
+    if (esRegistro) {
+        title.innerText = 'Crear Cuenta Gratis';
+        sub.innerText = 'Regístrate en segundos para guardar tus pronósticos.';
+        btn.innerText = '📝 Registrarse';
+        sw.innerText = '¿Ya tienes cuenta? Inicia Sesión';
+    } else {
+        title.innerText = 'Iniciar Sesión';
+        sub.innerText = 'Accede a tu cuenta de SportPredicts V5.';
+        btn.innerText = '🔑 Entrar';
+        sw.innerText = '¿No tienes cuenta? Regístrate gratis';
+    }
+    modal.classList.remove('hidden');
+}
+
+function cerrarSpAuthModal() {
+    document.getElementById('sp-auth-modal').classList.add('hidden');
+}
+
+function cambiarModoSpAuth() {
+    abrirSpAuthModal(!spModoRegistro);
+}
+
+async function ejecutarSpAuth() {
+    const email = document.getElementById('sp-auth-email').value.trim();
+    const pass = document.getElementById('sp-auth-pass').value;
+    const err = document.getElementById('sp-auth-error');
+    err.classList.add('hidden');
+
+    if (!email || pass.length < 6) {
+        err.innerText = 'Introduce un correo válido y una contraseña de al menos 6 caracteres.';
+        err.classList.remove('hidden');
+        return;
+    }
+
+    try {
+        if (spModoRegistro) {
+            await firebase.auth().createUserWithEmailAndPassword(email, pass);
+        } else {
+            await firebase.auth().signInWithEmailAndPassword(email, pass);
+        }
+        cerrarSpAuthModal();
+    } catch (e) {
+        err.innerText = e.message || 'Error al autenticar. Verifica tus datos.';
+        err.classList.remove('hidden');
+    }
+}
+
+// Lógica de carga del partido dinámico mediante el ID en la URL
+async function inicializarPaginaPartido() {
+    const params = new URLSearchParams(window.location.search);
+    const ligaParam = params.get('liga') || 'PD';
+    const indexParam = parseInt(params.get('id')) || 0;
+
+    const estatico = await cargarArchivoEstatico();
+    const contenedor = document.getElementById('detalle-partido-container');
+
+    if (!estatico || !estatico.ligas || !estatico.ligas[ligaParam] || !estatico.ligas[ligaParam][indexParam]) {
+        if (contenedor) {
+            contenedor.innerHTML = '<div class="bg-slate-900 border border-slate-800 rounded-2xl p-10 text-center text-slate-400 text-sm">No se han encontrado los datos para este encuentro.</div>';
+        }
+        return;
+    }
+
+    const partidoBruto = estatico.ligas[ligaParam][indexParam];
+    const partido = analizarPartido(partidoBruto, indexParam);
+    const nombreLiga = INFO_LIGAS[ligaParam]?.nombre || ligaParam;
+    const iconoLiga = INFO_LIGAS[ligaParam]?.icono || '⚽';
+
+    if (!partido) return;
+
+    // Renderizamos la página dedicada con todos los acordeones
+    contenedor.innerHTML = `
+        <!-- Cabecera del Partido -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col items-center text-center gap-3 shadow-xl">
+            <span class="bg-slate-950 px-3 py-1 rounded-full text-xs font-bold text-emerald-400 border border-slate-800 flex items-center gap-1.5">
+                <span>${iconoLiga}</span> ${nombreLiga}
+            </span>
+            <h1 class="text-xl sm:text-2xl font-black text-white">${partido.local} vs ${partido.visitante}</h1>
+            <span class="text-xs text-slate-400 font-semibold">📅 ${FECHA.format(partido.fecha)}</span>
+        </div>
+
+        <!-- SECCIÓN GRATIS -->
+        <div class="flex flex-col gap-1.5">
+            <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider px-1">Gratis</span>
+            
+            <!-- Acordeón Goles Totales -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg">
+                <button onclick="toggleAcordeon('goles')" class="w-full p-4 flex justify-between items-center hover:bg-slate-800/60 transition">
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-base">⚽</span>
+                        <span class="font-bold text-white text-xs sm:text-sm">Goles totales</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-slate-400 text-xs">
+                        <span>Más / Menos goles</span>
+                        <span id="arrow-goles" class="font-bold">▼</span>
+                    </div>
+                </button>
+                <div id="content-goles" class="hidden p-4 border-t border-slate-800 bg-slate-950 grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 text-center">
+                        <span class="text-[10px] text-slate-400 block font-bold mb-1">MÁS / MENOS 0.5</span>
+                        <span class="text-emerald-400 font-black text-xs">O: 95% | U: 5%</span>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 text-center">
+                        <span class="text-[10px] text-slate-400 block font-bold mb-1">MÁS / MENOS 1.5</span>
+                        <span class="text-emerald-400 font-black text-xs">O: 78% | U: 22%</span>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 text-center">
+                        <span class="text-[10px] text-slate-400 block font-bold mb-1">MÁS / MENOS 2.5</span>
+                        <span class="text-emerald-400 font-black text-xs">O: 55% | U: 45%</span>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 text-center">
+                        <span class="text-[10px] text-slate-400 block font-bold mb-1">MÁS / MENOS 3.5</span>
+                        <span class="text-emerald-400 font-black text-xs">O: 30% | U: 70%</span>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 text-center">
+                        <span class="text-[10px] text-slate-400 block font-bold mb-1">MÁS / MENOS 4.5</span>
+                        <span class="text-emerald-400 font-black text-xs">O: 12% | U: 88%</span>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 text-center">
+                        <span class="text-[10px] text-slate-400 block font-bold mb-1">MÁS / MENOS 5.5</span>
+                        <span class="text-emerald-400 font-black text-xs">O: 4% | U: 96%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN PREMIUM -->
+        <div class="flex flex-col gap-1.5 mt-2">
+            <span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider px-1">Premium — Mercados avanzados y estadísticas</span>
+
+            <!-- Acordeón H2H -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg mb-3">
+                <button onclick="toggleAcordeon('h2h')" class="w-full p-4 flex justify-between items-center hover:bg-slate-800/60 transition">
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-base">🏆</span>
+                        <span class="font-bold text-white text-xs sm:text-sm">Resultado Final (1X2)</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-slate-400 text-xs">
+                        <span>Cuotas y Probabilidades</span>
+                        <span class="text-sky-400">💎</span>
+                        <span id="arrow-h2h" class="font-bold">▼</span>
+                    </div>
+                </button>
+                <div id="content-h2h" class="hidden p-4 border-t border-slate-800 bg-slate-950 grid grid-cols-3 gap-3 text-center">
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                        <span class="text-[10px] text-slate-400 block mb-1">1 (${partido.local})</span>
+                        <span class="font-black text-emerald-400 text-sm">${partido.cuotasOriginales?.local?.toFixed(2) || '-'}</span>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                        <span class="text-[10px] text-slate-400 block mb-1">X (Empate)</span>
+                        <span class="font-black text-slate-200 text-sm">${partido.cuotasOriginales?.empate?.toFixed(2) || '-'}</span>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                        <span class="text-[10px] text-slate-400 block mb-1">2 (${partido.visitante})</span>
+                        <span class="font-black text-emerald-400 text-sm">${partido.cuotasOriginales?.visitante?.toFixed(2) || '-'}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Acordeón Córners -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg mb-3">
+                <button onclick="toggleAcordeon('corners')" class="w-full p-4 flex justify-between items-center hover:bg-slate-800/60 transition">
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-base">🚩</span>
+                        <span class="font-bold text-white text-xs sm:text-sm">Córners (+/- 5.5 a 11.5)</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-slate-400 text-xs">
+                        <span>Líneas totales</span>
+                        <span class="text-sky-400">💎</span>
+                        <span id="arrow-corners" class="font-bold">▼</span>
+                    </div>
+                </button>
+                <div id="content-corners" class="hidden p-4 border-t border-slate-800 bg-slate-950 text-center text-slate-400 text-xs">
+                    Estimaciones de saques de esquina basadas en el ritmo de juego de la temporada.
+                </div>
+            </div>
+
+            <!-- Acordeón Tarjetas -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg">
+                <button onclick="toggleAcordeon('tarjetas')" class="w-full p-4 flex justify-between items-center hover:bg-slate-800/60 transition">
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-base">🟨</span>
+                        <span class="font-bold text-white text-xs sm:text-sm">Tarjetas (+/- 0.5 a 4.5)</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-slate-400 text-xs">
+                        <span>Amonestaciones</span>
+                        <span class="text-sky-400">💎</span>
+                        <span id="arrow-tarjetas" class="font-bold">▼</span>
+                    </div>
+                </button>
+                <div id="content-tarjetas" class="hidden p-4 border-t border-slate-800 bg-slate-950 text-center text-slate-400 text-xs">
+                    Análisis de amonestaciones y perfil arbitral del encuentro.
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function toggleAcordeon(id) {
+    const content = document.getElementById(`content-${id}`);
+    const arrow = document.getElementById(`arrow-${id}`);
+    if (!content) return;
+
+    if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        if (arrow) arrow.innerText = '▲';
+    } else {
+        content.classList.add('hidden');
+        if (arrow) arrow.innerText = '▼';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    reubicarAuthContainer();
+    inicializarPaginaPartido();
+});
+</script>
+</body>
+</html>
