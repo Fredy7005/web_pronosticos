@@ -59,6 +59,19 @@
     <a href="calculadora.html" class="py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5 text-amber-300 font-bold">🧮 Calculadora & EV</a>
     <a href="partidos.html?liga=PD&historial=true" class="py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5">📜 Historial</a>
     <a href="planes.html" class="py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5 text-sky-400 font-bold">💎 Planes</a>
+
+    <div class="border-t border-slate-800 my-2 pt-3 flex flex-col gap-2">
+        <span class="text-[10px] uppercase tracking-wider text-slate-500 font-bold px-1">CUENTA DE USUARIO</span>
+        <div class="grid grid-cols-2 gap-2 w-full pt-1">
+            <button onclick="abrirSpAuthModal(false)" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold py-2.5 rounded-xl transition shadow flex items-center justify-center gap-1.5">
+                🔑 Iniciar Sesión
+            </button>
+            <button onclick="abrirSpAuthModal(true)" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-2.5 rounded-xl transition shadow flex items-center justify-center gap-1.5">
+                📝 Registrarse
+            </button>
+        </div>
+        <div id="auth-mobile-slot" class="hidden"></div>
+    </div>
 </div>
 
 <!-- Contenido Principal -->
@@ -106,6 +119,27 @@
     </div>
 </div>
 
+<!-- Modal Universal de Autenticación -->
+<div id="sp-auth-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex justify-center items-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-6 relative shadow-2xl flex flex-col gap-4">
+        <button onclick="cerrarSpAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg font-bold">✕</button>
+        <div class="flex items-center gap-2">
+            <span class="text-xl">⚽</span>
+            <h3 id="sp-auth-title" class="text-lg font-black text-white">Iniciar Sesión</h3>
+        </div>
+        <p id="sp-auth-subtitle" class="text-xs text-slate-400">Accede a tu cuenta de SportPredicts V5.</p>
+        <div id="sp-auth-error" class="hidden bg-rose-950/80 border border-rose-800 text-rose-300 text-xs p-2.5 rounded-xl"></div>
+        <div class="flex flex-col gap-3">
+            <input type="email" id="sp-auth-email" placeholder="Correo electrónico" class="w-full bg-slate-950 border border-slate-800 text-white text-xs rounded-xl px-3.5 py-2.5 outline-none focus:border-emerald-500">
+            <input type="password" id="sp-auth-pass" placeholder="Contraseña (mín. 6 caracteres)" class="w-full bg-slate-950 border border-slate-800 text-white text-xs rounded-xl px-3.5 py-2.5 outline-none focus:border-emerald-500">
+            <button id="sp-auth-submit" onclick="ejecutarSpAuth()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-3 rounded-xl transition shadow-lg shadow-emerald-950/50">Continuar</button>
+        </div>
+        <div class="text-center border-t border-slate-800 pt-3">
+            <button id="sp-auth-switch" onclick="cambiarModoSpAuth()" class="text-xs text-emerald-400 hover:underline font-semibold">¿No tienes cuenta? Regístrate gratis</button>
+        </div>
+    </div>
+</div>
+
 <script src="app.js?v=50"></script>
 <script>
 function toggleMenuMovil() {
@@ -127,6 +161,65 @@ function reubicarAuthContainer() {
 }
 
 window.addEventListener('resize', reubicarAuthContainer);
+
+let spModoRegistro = false;
+
+function abrirSpAuthModal(esRegistro) {
+    spModoRegistro = esRegistro;
+    const modal = document.getElementById('sp-auth-modal');
+    const title = document.getElementById('sp-auth-title');
+    const sub = document.getElementById('sp-auth-subtitle');
+    const btn = document.getElementById('sp-auth-submit');
+    const sw = document.getElementById('sp-auth-switch');
+    const err = document.getElementById('sp-auth-error');
+
+    err.classList.add('hidden');
+    if (esRegistro) {
+        title.innerText = 'Crear Cuenta Gratis';
+        sub.innerText = 'Regístrate en segundos para guardar tus pronósticos.';
+        btn.innerText = '📝 Registrarse';
+        sw.innerText = '¿Ya tienes cuenta? Inicia Sesión';
+    } else {
+        title.innerText = 'Iniciar Sesión';
+        sub.innerText = 'Accede a tu cuenta de SportPredicts V5.';
+        btn.innerText = '🔑 Entrar';
+        sw.innerText = '¿No tienes cuenta? Regístrate gratis';
+    }
+    modal.classList.remove('hidden');
+}
+
+function cerrarSpAuthModal() {
+    document.getElementById('sp-auth-modal').classList.add('hidden');
+}
+
+function cambiarModoSpAuth() {
+    abrirSpAuthModal(!spModoRegistro);
+}
+
+async function ejecutarSpAuth() {
+    const email = document.getElementById('sp-auth-email').value.trim();
+    const pass = document.getElementById('sp-auth-pass').value;
+    const err = document.getElementById('sp-auth-error');
+    err.classList.add('hidden');
+
+    if (!email || pass.length < 6) {
+        err.innerText = 'Introduce un correo válido y una contraseña de al menos 6 caracteres.';
+        err.classList.remove('hidden');
+        return;
+    }
+
+    try {
+        if (spModoRegistro) {
+            await firebase.auth().createUserWithEmailAndPassword(email, pass);
+        } else {
+            await firebase.auth().signInWithEmailAndPassword(email, pass);
+        }
+        cerrarSpAuthModal();
+    } catch (e) {
+        err.innerText = e.message || 'Error al autenticar. Verifica tus datos.';
+        err.classList.remove('hidden');
+    }
+}
 
 async function cargarVistaGlobalHoras() {
     const contenedorLista = document.getElementById('lista-global-horas-page');
