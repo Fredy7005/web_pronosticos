@@ -11,7 +11,7 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center">
 
-<!-- Barra de Navegación Superior -->
+<!-- Barra de Navegación Superior Unificada -->
 <header class="w-full bg-slate-900/85 backdrop-blur border-b border-slate-800 px-6 py-3.5 flex justify-between items-center sticky top-0 z-40">
 <div class="flex items-center gap-6">
 <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
@@ -20,11 +20,13 @@
 </div>
 <nav class="hidden md:flex items-center gap-4 text-xs font-semibold text-slate-300">
 <a href="index.html" class="hover:text-emerald-400 transition">Inicio</a>
-<a href="index.html" class="hover:text-emerald-400 transition">Competiciones</a>
+<a href="index.html#seccion-competiciones" class="hover:text-emerald-400 transition">Competiciones</a>
 <a href="calculadora.html" class="text-emerald-400 transition">🧮 Calculadora</a>
+<a href="partidos.html?liga=PD&historial=true" class="hover:text-emerald-400 transition">📜 Historial</a>
 </nav>
 </div>
 <div class="flex items-center gap-3">
+<a href="planes.html" class="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5">💎 Planes</a>
 <div id="auth-user-container" class="flex items-center gap-2"></div>
 <span class="bg-slate-800 text-[10px] px-2.5 py-1 rounded-full text-slate-400 font-bold border border-slate-700">+18</span>
 </div>
@@ -116,9 +118,8 @@ Introduce una cuota de casa para evaluar si hay valor (EV+).
 
 </main>
 
-<script src="app.js?v=20"></script>
+<script src="app.js?v=24"></script>
 <script>
-// Lógica para conectar la calculadora con los partidos reales cargados en app.js
 let seleccionesCalculadora = [];
 
 function renderizarPartidosCalculadora(partidosReales) {
@@ -168,8 +169,6 @@ function renderizarPartidosCalculadora(partidosReales) {
 
 function agregarSeleccionCalc(encuentro, mercado, probabilidad) {
     let cuotaJusta = (1 / probabilidad).toFixed(2);
-
-    // Reemplazar si ya existe una selección del mismo encuentro
     seleccionesCalculadora = seleccionesCalculadora.filter(s => s.encuentro !== encuentro);
 
     seleccionesCalculadora.push({
