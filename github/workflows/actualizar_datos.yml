@@ -1,12 +1,12 @@
-name: Actualizar Partidos y Mercados
+name: Actualizar 23 Competiciones (Doble Respaldo)
 
 on:
   schedule:
-    - cron: '0 */6 * * *' # Cada 6 horas
-  workflow_dispatch:
+    - cron: '0 */6 * * *' # Se ejecuta automáticamente cada 6 horas
+  workflow_dispatch: # Permite lanzarlo manualmente desde la pestaña Actions
 
 jobs:
-  actualizar:
+  sincronizar:
     runs-on: ubuntu-latest
     steps:
       - name: Clonar repositorio
@@ -17,56 +17,120 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Generar partidos.json estructurado
+      - name: Ejecutar motor de descarga con The Odds API (Doble Clave)
         env:
-          API_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          KEY_1: ${{ secrets.ODDS_API_KEY1 }}
+          KEY_2: ${{ secrets.ODDS_API_KEY2 }}
         run: |
           node -e '
           const https = require("https");
           const fs = require("fs");
 
-          const options = {
-            hostname: "v3.football.api-sports.io",
-            path: "/fixtures?live=all",
-            headers: { "x-apisports-key": process.env.API_KEY }
+          const keys = [process.env.KEY_1, process.env.KEY_2].filter(Boolean);
+          if (keys.length === 0) {
+            console.error("❌ No hay ninguna clave de The Odds API configurada en los Secrets.");
+            process.exit(1);
+          }
+
+          // Catálogo de tus 23 competiciones
+          const LIGAS_MAP = {
+            "PD": "soccer_spain_la_liga",
+            "SD": "soccer_spain_segunda_division",
+            "PL": "soccer_epl",
+            "CL": "soccer_uefa_champs_league",
+            "SA": "soccer_italy_serie_a",
+            "BL": "soccer_germany_bundesliga",
+            "L1": "soccer_france_ligue_one",
+            "EL": "soccer_uefa_europa_league",
+            "ECL": "soccer_uefa_europa_conference_league",
+            "ED": "soccer_netherlands_eredivisie",
+            "PPL": "soccer_portugal_primeira_liga",
+            "ELC": "soccer_efl_champ",
+            "MLS": "soccer_usa_mls",
+            "BR": "soccer_brazil_campeonato",
+            "MX": "soccer_mexico_ligamx",
+            "ARG": "soccer_argentina_primera_division",
+            "BEL": "soccer_belgium_first_div",
+            "TUR": "soccer_turkey_super_league",
+            "COL": "soccer_colombia_primera_a",
+            "URU": "soccer_uruguay_primera_division",
+            "JPN": "soccer_japan_j_league",
+            "KOR": "soccer_korea_kleague1",
+            "AUS": "soccer_australia_aleague"
           };
 
-          https.get(options, (res) => {
-            let data = "";
-            res.on("data", (chunk) => { data += chunk; });
-            res.on("end", () => {
-              try {
-                const response = JSON.parse(data);
-                const fixtures = response.response || [];
-                
-                // Transformamos los datos al formato limpio que lee app.js
-                const partidosLimpios = fixtures.map(f => ({
-                  local: f.teams.home.name,
-                  visitante: f.teams.away.name,
-                  liga: f.league.name,
-                  hora: new Date(f.fixture.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-                  cuota1: "1.85",
-                  cuotaX: "3.40",
-                  cuota2: "4.10",
-                  prob1: 0.50,
-                  probX: 0.30,
-                  prob2: 0.20
-                }));
+          function peticionHTTPS(url, apiKey) {
+            return new Promise((resolve, reject) => {
+              const options = {
+                hostname: "api.the-odds-api.com",
+                path: url + `&apiKey=${apiKey}&regions=eu&markets=h2h,totals&oddsFormat=decimal`,
+                method: "GET"
+              };
 
-                fs.writeFileSync("partidos.json", JSON.stringify(partidosLimpios, null, 2));
-                console.log("partidos.json generado correctamente con", partidosLimpios.length, "partidos.");
-              } catch (e) {
-                console.error("Error al parsear la respuesta:", e);
-              }
+              const req = https.request(options, (res) => {
+                let data = "";
+                res.on("data", (chunk) => { data += chunk; });
+                res.on("end", () => {
+                  if (res.statusCode === 200) {
+                    const remaining = res.headers["x-requests-remaining"] || null;
+                    try {
+                      resolve({ json: JSON.parse(data), remaining });
+                    } catch (e) {
+                      reject(new Error("Error al parsear JSON"));
+                    }
+                  } else {
+                    reject({ status: res.statusCode });
+                  }
+                });
+              });
+
+              req.on("error", (err) => reject(err));
+              req.end();
             });
-          }).on("error", (err) => {
-            console.error("Error en la petición HTTP:", err);
-          });
+          }
+
+          async function descargarLigaConRespaldo(sportKey) {
+            for (let i = 0; i < keys.length; i++) {
+              try {
+                const resultado = await peticionHTTPS(`/v4/sports/${sportKey}/odds?`, keys[i]);
+                console.log(`✅ ${sportKey} descargado con éxito usando clave #${i + 1}`);
+                return resultado;
+              } catch (err) {
+                console.warn(`⚠️ Clave #${i + 1} falló para ${sportKey} (Código: ${err.status || err.message}). Probando siguiente clave...`);
+              }
+            }
+            console.warn(`❌ No se pudieron obtener datos activos para ${sportKey} con ninguna clave.`);
+            return { json: [], remaining: null };
+          }
+
+          async function iniciarProceso() {
+            const resultadosLigas = {};
+            let ultimosRestantes = null;
+
+            for (const [codigo, sportKey] of Object.entries(LIGAS_MAP)) {
+              const res = await descargarLigaConRespaldo(sportKey);
+              resultadosLigas[codigo] = res.json;
+              if (res.remaining) ultimosRestantes = res.remaining;
+              // Pausa breve para cuidar la tasa de peticiones por segundo
+              await new Promise(r => setTimeout(r, 400));
+            }
+
+            const payloadFinal = {
+              actualizacion: new Date().toISOString(),
+              restantes: ultimosRestantes,
+              ligas: resultadosLigas
+            };
+
+            fs.writeFileSync("datos-ligas.json", JSON.stringify(payloadFinal, null, 2));
+            console.log("📁 Archivo datos-ligas.json generado correctamente.");
+          }
+
+          iniciarProceso();
           '
 
       - name: Subir cambios al repositorio
         run: |
           git config --global user.name 'GitHub Actions Bot'
           git config --global user.email 'actions@github.com'
-          git add partidos.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Actualización automática de partidos JSON" && git push)
+          git add datos-ligas.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Actualización automática de las 23 competiciones con doble clave" && git push)
