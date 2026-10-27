@@ -1,0 +1,117 @@
+name: Actualizar Datos de Ligas
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  sincronizar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Descargar datos de The Odds API
+        env:
+          API_KEY: ${{ secrets.ODDS_API_KEY1 }}
+        run: |
+          node -e '
+          const https = require("https");
+          const fs = require("fs");
+
+          const apiKey = process.env.API_KEY;
+          if (!apiKey) {
+            console.error("❌ La clave ODDS_API_KEY1 no está definida en los Secrets.");
+            process.exit(1);
+          }
+
+          console.log("🔑 Conectando con The Odds API...");
+
+          const LIGAS_MAP = {
+            "PD": "soccer_spain_la_liga",
+            "SD": "soccer_spain_segunda_division",
+            "PL": "soccer_epl",
+            "CL": "soccer_uefa_champs_league",
+            "SA": "soccer_italy_serie_a",
+            "BL": "soccer_germany_bundesliga",
+            "L1": "soccer_france_ligue_one",
+            "EL": "soccer_uefa_europa_league",
+            "ECL": "soccer_uefa_europa_conference_league",
+            "ED": "soccer_netherlands_eredivisie",
+            "PPL": "soccer_portugal_primeira_liga",
+            "ELC": "soccer_efl_champ",
+            "MLS": "soccer_usa_mls",
+            "BR": "soccer_brazil_campeonato",
+            "MX": "soccer_mexico_ligamx",
+            "ARG": "soccer_argentina_primera_division",
+            "BEL": "soccer_belgium_first_div",
+            "TUR": "soccer_turkey_super_league",
+            "COL": "soccer_conmebol_copa_libertadores",
+            "URU": "soccer_chile_campeonato",
+            "JPN": "soccer_japan_j_league",
+            "KOR": "soccer_korea_kleague1",
+            "AUS": "soccer_australia_aleague"
+          };
+
+          function peticion(sportKey) {
+            return new Promise((resolve) => {
+              const options = {
+                hostname: "api.the-odds-api.com",
+                path: `/v4/sports/${sportKey}/odds/?apiKey=${apiKey}&regions=eu&markets=h2h`,
+                method: "GET"
+              };
+
+              https.get(options, (res) => {
+                let data = "";
+                res.on("data", (chunk) => { data += chunk; });
+                res.on("end", () => {
+                  if (res.statusCode === 200) {
+                    try {
+                      const json = JSON.parse(data);
+                      console.log(`✅ ${sportKey}: ${json.length} partidos encontrados.`);
+                      resolve(json);
+                    } catch (e) {
+                      resolve([]);
+                    }
+                  } else {
+                    console.warn(`⚠️ ${sportKey} devolvió HTTP ${res.statusCode}`);
+                    resolve([]);
+                  }
+                });
+              }).on("error", () => {
+                resolve([]);
+              });
+            });
+          }
+
+          async function run() {
+            const resultadosLigas = {};
+            for (const [codigo, sportKey] of Object.entries(LIGAS_MAP)) {
+              resultadosLigas[codigo] = await peticion(sportKey);
+              await new Promise(r => setTimeout(r, 400));
+            }
+
+            const payload = {
+              actualizacion: new Date().toISOString(),
+              ligas: resultadosLigas
+            };
+
+            fs.writeFileSync("datos-ligas.json", JSON.stringify(payload, null, 2));
+            console.log("📁 Archivo datos-ligas.json generado correctamente.");
+          }
+
+          run();
+          '
+
+      - name: Subir cambios al repositorio
+        run: |
+          git config --global user.name 'GitHub Actions Bot'
+          git config --global user.email 'actions@github.com'
+          git add datos-ligas.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Actualización automática con datos reales" && git push)
