@@ -11,10 +11,12 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center">
 
-<!-- Barra Superior con Botón de Menú Desplegable (Hamburguesa) -->
+<!-- Barra Superior Adaptativa -->
 <header class="w-full bg-slate-900/95 backdrop-blur border-b border-slate-800 px-4 py-3 flex justify-between items-center sticky top-0 z-50">
-    <!-- Izquierda: Logo y Botón Menú Móvil -->
+    
+    <!-- Lado Izquierdo: Menú Hamburguesa (Móvil) + Logo -->
     <div class="flex items-center gap-3">
+        <!-- Botón Hamburguesa (Solo visible en móvil) -->
         <button onclick="toggleMenuMovil()" class="md:hidden text-slate-300 hover:text-emerald-400 text-xl p-1 focus:outline-none">
             ☰
         </button>
@@ -24,30 +26,36 @@
         </div>
     </div>
 
-    <!-- Navegación Escritorio (Oculta en móvil) -->
-    <nav class="hidden md:flex items-center gap-4 text-xs font-semibold text-slate-300">
+    <!-- Navegación de Escritorio (Oculta en móvil, visible en PC) -->
+    <nav class="hidden md:flex items-center gap-5 text-xs font-semibold text-slate-300">
         <a href="index.html" class="hover:text-emerald-400 transition">Inicio</a>
         <a href="competiciones.html" class="text-emerald-400 transition">Competiciones</a>
         <a href="calculadora.html" class="hover:text-emerald-400 transition">Calculadora</a>
         <a href="partidos.html?liga=PD&historial=true" class="hover:text-emerald-400 transition">Historial</a>
     </nav>
 
-    <!-- Derecha: Planes y Usuario -->
-    <div class="flex items-center gap-2">
-        <a href="planes.html" class="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/40 text-xs font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1">💎 Planes</a>
-        <div id="auth-user-container" class="flex items-center gap-1"></div>
-        <span class="bg-slate-800 text-[10px] px-2 py-0.5 rounded-full text-slate-400 font-bold border border-slate-700">+18</span>
+    <!-- Lado Derecho: Planes, Autenticación y +18 -->
+    <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Botón Planes visible en PC (en móvil estará dentro del desplegable) -->
+        <a href="planes.html" class="hidden md:flex bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/40 text-xs font-bold px-3 py-1.5 rounded-xl transition items-center gap-1">💎 Planes</a>
+        
+        <!-- Contenedor de Firebase Auth (Inscribir/Registrar en PC) -->
+        <div id="auth-user-container" class="flex items-center gap-2"></div>
+        
+        <span class="bg-slate-800 text-[10px] px-2.5 py-1 rounded-full text-slate-400 font-bold border border-slate-700">+18</span>
     </div>
 </header>
 
-<!-- Menú Desplegable para Móvil (Oculto por defecto) -->
-<div id="menu-movil" class="hidden md:hidden w-full bg-slate-900 border-b border-slate-800 px-6 py-4 flex flex-col gap-3 text-xs font-semibold text-slate-300 sticky top-[57px] z-40 shadow-xl">
-    <a href="index.html" class="py-2 border-b border-slate-800/60 hover:text-emerald-400 transition">🏠 Inicio</a>
-    <a href="competiciones.html" class="py-2 border-b border-slate-800/60 text-emerald-400 transition">🏆 Competiciones</a>
-    <a href="calculadora.html" class="py-2 border-b border-slate-800/60 hover:text-emerald-400 transition">🧮 Calculadora de Cuotas</a>
-    <a href="partidos.html?liga=PD&historial=true" class="py-2 hover:text-emerald-400 transition">📜 Historial de Partidos</a>
+<!-- Menú Desplegable para Móvil (Oculto en PC con md:hidden) -->
+<div id="menu-movil" class="hidden w-full bg-slate-900 border-b border-slate-800 px-6 py-5 flex flex-col gap-4 text-xs font-semibold text-slate-300 sticky top-[57px] z-40 shadow-2xl">
+    <a href="index.html" class="py-2 border-b border-slate-800/80 hover:text-emerald-400 transition flex items-center gap-2">🏠 Inicio</a>
+    <a href="competiciones.html" class="py-2 border-b border-slate-800/80 text-emerald-400 transition flex items-center gap-2">🏆 Competiciones</a>
+    <a href="calculadora.html" class="py-2 border-b border-slate-800/80 hover:text-emerald-400 transition flex items-center gap-2">🧮 Calculadora de Cuotas</a>
+    <a href="partidos.html?liga=PD&historial=true" class="py-2 border-b border-slate-800/80 hover:text-emerald-400 transition flex items-center gap-2">📜 Historial de Partidos</a>
+    <a href="planes.html" class="py-2 text-emerald-400 hover:text-emerald-300 transition flex items-center gap-2 font-bold">💎 Planes y Suscripciones</a>
 </div>
 
+<!-- Contenido Principal -->
 <main class="w-full max-w-6xl flex flex-col gap-6 p-3 sm:p-6 my-4">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-800 pb-4">
         <div>
@@ -323,6 +331,6 @@ function toggleMenuMovil() {
 }
 </script>
 
-<script src="app.js?v=33"></script>
+<script src="app.js?v=34"></script>
 </body>
 </html>
