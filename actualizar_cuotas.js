@@ -1,11 +1,11 @@
 const fs = require('fs');
-const https = https; // o require('https');
+const https = require('https');
 
 const API_KEY = process.env.ODDS_API_KEY; 
-const LIGA = 'soccer_italy_serie_a'; 
-const REGIONS = 'eu';
-// Añadimos los mercados adicionales de córners, tarjetas o props si tu plan los admite
-const MARKETS = 'h2h,totals,spreads,doublechance,btts,team_corners,player_shots_on_target';
+const LIGA = 'soccer_italy_serie_a'; // Solo Serie A
+const REGIONS = 'eu'; // Región europea
+// Solicitamos los mercados principales y avanzados disponibles en Europa
+const MARKETS = 'h2h,totals,spreads,doublechance,btts';
 
 const url = `https://api.the-odds-api.v4/sports/${LIGA}/odds/?apiKey=${API_KEY}&regions=${REGIONS}&markets=${MARKETS}&oddsFormat=decimal`;
 
@@ -27,22 +27,38 @@ function obtenerDatosAPI() {
             const remainingRequests = res.headers['x-requests-remaining'];
             console.log(`Peticiones restantes en The Odds API: ${remainingRequests}`);
 
+            // Filtramos o priorizamos las cuotas de Winamax si está disponible entre las casas europeas
+            const partidosProcesados = partidosAPI.map((p, idx) => {
+                // Buscamos si Winamax está en las casas devueltas para este partido
+                const bookmakersFiltrados = p.bookmakers.filter(b => 
+                    (b.title || '').toLowerCase().includes('winamax') || 
+                    (b.key || '').toLowerCase().includes('winamax')
+                );
+
+                // Si Winamax está disponible, la ponemos primera; si no, dejamos las disponibles en eu
+                const bookmakersFinales = bookmakersFiltrados.length > 0 
+                    ? [...bookmakersFiltrados, ...p.bookmakers.filter(b => !b.title.toLowerCase().includes('winamax'))] 
+                    : p.bookmakers;
+
+                return {
+                    id: `match_sa_${idx}_${Date.now()}`,
+                    sport_key: p.sport_key,
+                    commence_time: p.commence_time,
+                    home_team: p.home_team,
+                    away_team: p.away_team,
+                    bookmakers: bookmakersFinales
+                };
+            });
+
             const estructuraFinal = {
                 restantes: parseInt(remainingRequests) || 0,
                 ligas: {
-                    "SA": partidosAPI.map((p, idx) => ({
-                        id: `match_${idx}_${Date.now()}`,
-                        sport_key: p.sport_key,
-                        commence_time: p.commence_time,
-                        home_team: p.home_team,
-                        away_team: p.away_team,
-                        bookmakers: p.bookmakers
-                    }))
+                    "SA": partidosProcesados
                 }
             };
 
             fs.writeFileSync('datos-ligas.json', JSON.stringify(estructuraFinal, null, 2));
-            console.log('¡Archivo datos-ligas.json actualizado con todos los mercados!');
+            console.log('¡Archivo datos-ligas.json actualizado exclusivamente para la Serie A con enfoque en Winamax!');
         });
 
     }).on('error', (err) => {
