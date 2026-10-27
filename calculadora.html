@@ -41,55 +41,25 @@
 
 <!-- Título de Sección -->
 <div class="flex flex-col gap-1">
-<h1 class="text-xl font-black text-white flex items-center gap-2">🧮 Calculadora de Apuestas</h1>
-<p class="text-xs text-slate-400">Construye tu combinada, compara cuotas en base al modelo IA y calcula el valor esperado (EV).</p>
+<h1 class="text-xl font-black text-white flex items-center gap-2">🧮 Calculadora de Apuestas Avanzada</h1>
+<p class="text-xs text-slate-400">Construye tu combinada basada en los partidos reales de la plataforma y calcula el valor esperado (EV).</p>
 </div>
 
-<!-- Explicación de Funcionamiento -->
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 bg-slate-900/50 border border-slate-800 p-4 rounded-2xl text-xs">
-<div class="flex flex-col gap-1">
-<span class="font-bold text-emerald-400">1. Elige partido y tipo</span>
-<span class="text-[11px] text-slate-400">Selecciona el encuentro y el mercado (1X2, BTTS, Over/Under).</span>
-</div>
-<div class="flex flex-col gap-1">
-<span class="font-bold text-emerald-400">2. Cuota justa SportPredicts</span>
-<span class="text-[11px] text-slate-400">El motor calcula la cuota exacta según probabilidad matemática.</span>
-</div>
-<div class="flex flex-col gap-1">
-<span class="font-bold text-emerald-400">3. Introduce tu stake</span>
-<span class="text-[11px] text-slate-400">Indica el importe para ver el retorno teórico y beneficio.</span>
-</div>
-<div class="flex flex-col gap-1">
-<span class="font-bold text-emerald-400">4. Comparativa de valor</span>
-<span class="text-[11px] text-slate-400">Compara con la casa de apuestas para detectar EV positivo.</span>
-</div>
-</div>
-
-<!-- Layout de 2 Columnas (Selector Izquierda / Combinada y Resultados Derecha) -->
+<!-- Layout de 2 Columnas -->
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-<!-- COLUMNA IZQUIERDA: Selector de Competiciones y Partidos (5 cols) -->
+<!-- COLUMNA IZQUIERDA: Selector de Partidos Reales (5 cols) -->
 <div class="lg:col-span-5 flex flex-col gap-4">
 <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex flex-col gap-4">
-<h3 class="text-xs font-bold text-white uppercase tracking-wider">🏆 Filtrar por Competición</h3>
-<div id="calc-competencias-filters" class="flex flex-wrap gap-1.5">
-<button onclick="filtrarCalcComp('todos')" id="btn-comp-todos" class="bg-emerald-600 text-white text-[11px] font-bold px-3 py-1 rounded-lg transition">Todos</button>
-<button onclick="filtrarCalcComp('PD')" class="bg-slate-950 border border-slate-800 text-slate-300 text-[11px] px-3 py-1 rounded-lg hover:border-slate-700 transition">La Liga 🇪🇸</button>
-<button onclick="filtrarCalcComp('PL')" class="bg-slate-950 border border-slate-800 text-slate-300 text-[11px] px-3 py-1 rounded-lg hover:border-slate-700 transition">Premier 🇬🇧</button>
-<button onclick="filtrarCalcComp('CL')" class="bg-slate-950 border border-slate-800 text-slate-300 text-[11px] px-3 py-1 rounded-lg hover:border-slate-700 transition">Champions ⭐</button>
-<button onclick="filtrarCalcComp('SA')" class="bg-slate-950 border border-slate-800 text-slate-300 text-[11px] px-3 py-1 rounded-lg hover:border-slate-700 transition">Serie A 🇮🇹</button>
-</div>
-
-<hr class="border-slate-800">
-
-<h3 class="text-xs font-bold text-white uppercase tracking-wider">⚽ Partidos Disponibles</h3>
-<div id="calc-partidos-list" class="flex flex-col gap-2 max-h-[400px] overflow-y-auto pr-1">
-<div class="text-xs text-slate-400 text-center py-6">Cargando partidos para calcular...</div>
+<h3 class="text-xs font-bold text-white uppercase tracking-wider">⚽ Partidos en Directo / Disponibles</h3>
+<div id="estado-calc" class="text-xs text-slate-400">Sincronizando partidos oficiales...</div>
+<div id="calc-partidos-list" class="flex flex-col gap-2 max-h-[500px] overflow-y-auto pr-1">
+<!-- Se rellenará automáticamente con app.js -->
 </div>
 </div>
 </div>
 
-<!-- COLUMNA DERECHA: Selecciones, Cuotas y Simulador (7 cols) -->
+<!-- COLUMNA DERECHA: Selecciones, Cuotas Combinadas y Simulador (7 cols) -->
 <div class="lg:col-span-7 flex flex-col gap-4">
 
 <!-- Lista de Selecciones Añadidas -->
@@ -101,7 +71,7 @@
 
 <div id="calc-selecciones-container" class="flex flex-col gap-3">
 <div class="text-xs text-slate-500 text-center py-8 border border-dashed border-slate-800 rounded-xl">
-Aún no has seleccionado ningún pronóstico. Haz clic en un partido de la izquierda para añadirlo.
+Aún no has seleccionado ningún pronóstico. Elige un mercado de los partidos de la izquierda.
 </div>
 </div>
 </div>
@@ -132,9 +102,7 @@ Aún no has seleccionado ningún pronóstico. Haz clic en un partido de la izqui
 <!-- Comparador con la Casa de Apuestas -->
 <div class="flex flex-col gap-2 pt-2 border-t border-slate-800">
 <span class="text-xs font-bold text-slate-300">🔍 Comparar con la cuota ofrecida por la casa</span>
-<div class="flex items-center gap-3">
 <input type="number" id="calc-input-casa" placeholder="Ej: 2.50" step="0.01" oninput="recalcularCalculadora()" class="w-full bg-slate-950 border border-slate-800 text-white text-xs rounded-xl px-3 py-2 outline-none focus:border-emerald-500">
-</div>
 <div id="evaluacion-valor" class="text-xs font-semibold px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-400">
 Introduce una cuota de casa para evaluar si hay valor (EV+).
 </div>
@@ -148,58 +116,47 @@ Introduce una cuota de casa para evaluar si hay valor (EV+).
 
 </main>
 
-<!-- Footer -->
-<footer class="w-full max-w-6xl text-center py-6 text-[11px] text-slate-500 border-t border-slate-900 mt-auto">
-SportPredicts V5 — Herramienta analítica independiente.
-</footer>
-
-<!-- Script de Lógica de la Calculadora -->
+<script src="app.js?v=20"></script>
 <script>
-// Array global de selecciones en la calculadora
+// Lógica para conectar la calculadora con los partidos reales cargados en app.js
 let seleccionesCalculadora = [];
-let partidosMockCalc = [
-    { id: 1, liga: 'PD', local: 'Real Madrid', visitante: 'Barcelona', hora: '21:00', probLocal: 0.52, probEmpate: 0.26, probVisita: 0.22 },
-    { id: 2, liga: 'PD', local: 'Atlético Madrid', visitante: 'Real Sociedad', hora: '18:30', probLocal: 0.58, probEmpate: 0.25, probVisita: 0.17 },
-    { id: 3, liga: 'PL', local: 'Manchester City', visitante: 'Arsenal', hora: '17:30', probLocal: 0.48, probEmpate: 0.28, probVisita: 0.24 },
-    { id: 4, liga: 'PL', local: 'Liverpool', visitante: 'Chelsea', hora: '15:00', probLocal: 0.60, probEmpate: 0.24, probVisita: 0.16 },
-    { id: 5, liga: 'CL', local: 'Bayern Múnich', visitante: 'Inter Milán', hora: '21:00', probLocal: 0.55, probEmpate: 0.25, probVisita: 0.20 },
-    { id: 6, liga: 'SA', local: 'Juventus', visitante: 'AC Milan', hora: '20:45', probLocal: 0.42, probEmpate: 0.32, probVisita: 0.26 }
-];
 
-function cargarPartidosCalculadora(filtroLiga = 'todos') {
+function renderizarPartidosCalculadora(partidosReales) {
     const contenedor = document.getElementById('calc-partidos-list');
+    const estado = document.getElementById('estado-calc');
     contenedor.innerHTML = '';
 
-    let filtrados = filtroLiga === 'todos' ? partidosMockCalc : partidosMockCalc.filter(p => p.liga === filtroLiga);
-
-    if (filtrados.length === 0) {
-        contenedor.innerHTML = '<div class="text-xs text-slate-500 text-center py-4">No hay partidos disponibles para esta competición.</div>';
+    if (!partidosReales || partidosReales.length === 0) {
+        estado.innerText = 'No hay partidos disponibles en este momento.';
+        contenedor.innerHTML = '<div class="text-xs text-slate-500 text-center py-4">Selecciona una competición o sincroniza los datos oficiales.</div>';
         return;
     }
 
-    filtrados.forEach(p => {
-        let cuota1 = (1 / p.probLocal).toFixed(2);
-        let cuotaX = (1 / p.probEmpate).toFixed(2);
-        let cuota2 = (1 / p.probVisita).toFixed(2);
+    estado.innerText = `Mostrando ${partidosReales.length} partidos oficiales sincronizados.`;
+
+    partidosReales.forEach((p, index) => {
+        let cuota1 = p.cuota1 || (p.prob1 ? (1 / p.prob1).toFixed(2) : '1.85');
+        let cuotaX = p.cuotaX || (p.probX ? (1 / p.probX).toFixed(2) : '3.40');
+        let cuota2 = p.cuota2 || (p.prob2 ? (1 / p.prob2).toFixed(2) : '4.10');
 
         let div = document.createElement('div');
         div.className = 'bg-slate-950 border border-slate-800 p-3 rounded-xl flex flex-col gap-2';
         div.innerHTML = `
             <div class="flex justify-between items-center text-[11px] text-slate-400">
-                <span>📅 ${p.hora}</span>
-                <span class="bg-slate-900 px-2 py-0.5 rounded text-[10px] text-emerald-400 border border-slate-800">${p.liga}</span>
+                <span>📅 ${p.hora || 'Próximo'}</span>
+                <span class="bg-slate-900 px-2 py-0.5 rounded text-[10px] text-emerald-400 border border-slate-800">${p.liga || 'Oficial'}</span>
             </div>
             <div class="font-bold text-white text-xs">${p.local} vs ${p.visitante}</div>
             <div class="grid grid-cols-3 gap-1.5 pt-1">
-                <button onclick="agregarSeleccion(${p.id}, '1 (${p.local})', ${p.probLocal})" class="bg-slate-900 hover:bg-emerald-950/60 border border-slate-800 hover:border-emerald-500/50 py-1.5 rounded-lg text-center transition">
+                <button onclick="agregarSeleccionCalc('${p.local} vs ${p.visitante}', '1 (${p.local})', ${1 / parseFloat(cuota1)})" class="bg-slate-900 hover:bg-emerald-950/60 border border-slate-800 hover:border-emerald-500/50 py-1.5 rounded-lg text-center transition">
                     <span class="block text-[10px] text-slate-400">1</span>
                     <span class="block text-xs font-bold text-emerald-400">${cuota1}</span>
                 </button>
-                <button onclick="agregarSeleccion(${p.id}, 'X (Empate)', ${p.probEmpate})" class="bg-slate-900 hover:bg-emerald-950/60 border border-slate-800 hover:border-emerald-500/50 py-1.5 rounded-lg text-center transition">
+                <button onclick="agregarSeleccionCalc('${p.local} vs ${p.visitante}', 'X (Empate)', ${1 / parseFloat(cuotaX)})" class="bg-slate-900 hover:bg-emerald-950/60 border border-slate-800 hover:border-emerald-500/50 py-1.5 rounded-lg text-center transition">
                     <span class="block text-[10px] text-slate-400">X</span>
                     <span class="block text-xs font-bold text-emerald-400">${cuotaX}</span>
                 </button>
-                <button onclick="agregarSeleccion(${p.id}, '2 (${p.visitante})', ${p.probVisita})" class="bg-slate-900 hover:bg-emerald-950/60 border border-slate-800 hover:border-emerald-500/50 py-1.5 rounded-lg text-center transition">
+                <button onclick="agregarSeleccionCalc('${p.local} vs ${p.visitante}', '2 (${p.visitante})', ${1 / parseFloat(cuota2)})" class="bg-slate-900 hover:bg-emerald-950/60 border border-slate-800 hover:border-emerald-500/50 py-1.5 rounded-lg text-center transition">
                     <span class="block text-[10px] text-slate-400">2</span>
                     <span class="block text-xs font-bold text-emerald-400">${cuota2}</span>
                 </button>
@@ -209,49 +166,39 @@ function cargarPartidosCalculadora(filtroLiga = 'todos') {
     });
 }
 
-function filtrarCalcComp(liga) {
-    document.querySelectorAll('#calc-competencias-filters button').forEach(b => {
-        b.className = 'bg-slate-950 border border-slate-800 text-slate-300 text-[11px] px-3 py-1 rounded-lg hover:border-slate-700 transition';
-    });
-    event.target.className = 'bg-emerald-600 text-white text-[11px] font-bold px-3 py-1 rounded-lg transition';
-    cargarPartidosCalculadora(liga);
-}
-
-function agregarSeleccion(partidoId, mercado, probabilidad) {
-    let partido = partidosMockCalc.find(p => p.id === partidoId);
+function agregarSeleccionCalc(encuentro, mercado, probabilidad) {
     let cuotaJusta = (1 / probabilidad).toFixed(2);
 
-    // Evitar duplicar el mismo partido
-    seleccionesCalculadora = seleccionesCalculadora.filter(s => s.partidoId !== partidoId);
+    // Reemplazar si ya existe una selección del mismo encuentro
+    seleccionesCalculadora = seleccionesCalculadora.filter(s => s.encuentro !== encuentro);
 
     seleccionesCalculadora.push({
-        partidoId: partidoId,
-        encuentro: `${partido.local} vs ${partido.visitante}`,
+        encuentro: encuentro,
         mercado: mercado,
         probabilidad: probabilidad,
         cuota: parseFloat(cuotaJusta)
     });
 
-    renderizarSelecciones();
+    renderizarSeleccionesCalc();
     recalcularCalculadora();
 }
 
-function eliminarSeleccion(partidoId) {
-    seleccionesCalculadora = seleccionesCalculadora.filter(s => s.partidoId !== partidoId);
-    renderizarSelecciones();
+function eliminarSeleccionCalc(encuentro) {
+    seleccionesCalculadora = seleccionesCalculadora.filter(s => s.encuentro !== encuentro);
+    renderizarSeleccionesCalc();
     recalcularCalculadora();
 }
 
 function limpiarSelecciones() {
     seleccionesCalculadora = [];
-    renderizarSelecciones();
+    renderizarSeleccionesCalc();
     recalcularCalculadora();
 }
 
-function renderizarSelecciones() {
+function renderizarSeleccionesCalc() {
     const contenedor = document.getElementById('calc-selecciones-container');
     if (seleccionesCalculadora.length === 0) {
-        contenedor.innerHTML = '<div class="text-xs text-slate-500 text-center py-8 border border-dashed border-slate-800 rounded-xl">Aún no has seleccionado ningún pronóstico. Haz clic en un partido de la izquierda para añadirlo.</div>';
+        contenedor.innerHTML = '<div class="text-xs text-slate-500 text-center py-8 border border-dashed border-slate-800 rounded-xl">Aún no has seleccionado ningún pronóstico. Elige un mercado de los partidos de la izquierda.</div>';
         return;
     }
 
@@ -270,7 +217,7 @@ function renderizarSelecciones() {
                     <span class="text-[10px] text-slate-400 block">Cuota Justa</span>
                     <span class="font-black text-white text-sm">${s.cuota.toFixed(2)}</span>
                 </div>
-                <button onclick="eliminarSeleccion(${s.partidoId})" class="text-rose-400 hover:text-rose-300 font-bold px-2 py-1">✕</button>
+                <button onclick="eliminarSeleccionCalc('${s.encuentro}')" class="text-rose-400 hover:text-rose-300 font-bold px-2 py-1">✕</button>
             </div>
         `;
         contenedor.appendChild(div);
@@ -286,8 +233,6 @@ function recalcularCalculadora() {
         seleccionesCalculadora.forEach(s => {
             cuotaCombinada *= s.cuota;
         });
-    } else {
-        cuotaCombinada = 1;
     }
 
     document.getElementById('txt-cuota-combinada').innerText = cuotaCombinada.toFixed(2);
@@ -296,7 +241,6 @@ function recalcularCalculadora() {
     let ganancia = stake * cuotaCombinada;
     document.getElementById('txt-ganancia-potencial').innerText = `${ganancia.toFixed(2)} €`;
 
-    // Evaluar valor frente a la casa
     let cuotaCasaInput = parseFloat(document.getElementById('calc-input-casa').value);
     let evaluacionDiv = document.getElementById('evaluacion-valor');
 
@@ -304,20 +248,16 @@ function recalcularCalculadora() {
         if (cuotaCasaInput > cuotaCombinada) {
             let diff = ((cuotaCasaInput - cuotaCombinada) / cuotaCombinada * 100).toFixed(1);
             evaluacionDiv.className = 'text-xs font-semibold px-3 py-2 rounded-xl bg-emerald-950/60 border border-emerald-900/50 text-emerald-400';
-            evaluacionDiv.innerHTML = `✅ <strong>¡Hay Valor (EV+)!</strong> La casa ofrece más (+${diff}%) que la cuota justa calculada por SportPredicts.`;
+            evaluacionDiv.innerHTML = `✅ <strong>¡Hay Valor (EV+)!</strong> La casa ofrece más (+${diff}%) que la cuota justa combinada.`;
         } else {
             evaluacionDiv.className = 'text-xs font-semibold px-3 py-2 rounded-xl bg-rose-950/60 border border-rose-900/50 text-rose-400';
-            evaluacionDiv.innerHTML = `❌ <strong>Sin Valor (EV-).</strong> La cuota de la casa es inferior a la cuota justa estimada por el modelo.`;
+            evaluacionDiv.innerHTML = `❌ <strong>Sin Valor (EV-).</strong> La cuota de la casa es inferior a la cuota justa estimada.`;
         }
     } else {
         evaluacionDiv.className = 'text-xs font-semibold px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-400';
         evaluacionDiv.innerHTML = 'Introduce una cuota de casa válida para comprobar el valor.';
     }
 }
-
-window.addEventListener('DOMContentLoaded', () => {
-    cargarPartidosCalculadora('todos');
-});
 </script>
 
 </body>
