@@ -112,7 +112,7 @@
 </div>
 
 <!-- Script Principal de la Plataforma -->
-<script src="app.js?v=52"></script>
+<script src="app.js?v=53"></script>
 <script>
 function toggleMenuMovil() {
     const menu = document.getElementById('menu-movil');
@@ -188,7 +188,7 @@ async function ejecutarSpAuth() {
         cerrarSpAuthModal();
     } catch (e) {
         err.innerText = e.message || 'Error al autenticar. Verifica tus datos.';
-        err.classList.remove('hidden');
+        err.classList.add('hidden');
     }
 }
 
@@ -215,7 +215,7 @@ async function inicializarPaginaPartido() {
 
     if (!partido) return;
 
-    // Renderizamos la página dedicada con todos los acordeones
+    // Renderizamos la página dedicada con todos los acordeones avanzados solicitados
     contenedor.innerHTML = `
         <!-- Cabecera del Partido -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col items-center text-center gap-3 shadow-xl">
@@ -275,7 +275,7 @@ async function inicializarPaginaPartido() {
         <div class="flex flex-col gap-1.5 mt-2">
             <span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider px-1">Premium — Mercados avanzados y estadísticas</span>
 
-            <!-- Acordeón H2H -->
+            <!-- 1. Resultado Final (H2H) -->
             <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg mb-3">
                 <button onclick="toggleAcordeon('h2h')" class="w-full p-4 flex justify-between items-center hover:bg-slate-800/60 transition">
                     <div class="flex items-center gap-2.5">
@@ -304,7 +304,86 @@ async function inicializarPaginaPartido() {
                 </div>
             </div>
 
-            <!-- Acordeón Córners -->
+            <!-- 2. Doble Oportunidad -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg mb-3">
+                <button onclick="toggleAcordeon('doble')" class="w-full p-4 flex justify-between items-center hover:bg-slate-800/60 transition">
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-base">➗</span>
+                        <span class="font-bold text-white text-xs sm:text-sm">Doble oportunidad</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-slate-400 text-xs">
+                        <span>1X · X2 · 12</span>
+                        <span class="text-sky-400">💎</span>
+                        <span id="arrow-doble" class="font-bold">▼</span>
+                    </div>
+                </button>
+                <div id="content-doble" class="hidden p-4 border-t border-slate-800 bg-slate-950 grid grid-cols-3 gap-3 text-center text-xs">
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                        <span class="text-[10px] text-slate-400 block mb-1">1X (Local o Empate)</span>
+                        <span class="font-black text-emerald-400">82.4%</span>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                        <span class="text-[10px] text-slate-400 block mb-1">X2 (Empate o Visitante)</span>
+                        <span class="font-black text-amber-400">45.2%</span>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                        <span class="text-[10px] text-slate-400 block mb-1">12 (Local o Visitante)</span>
+                        <span class="font-black text-sky-400">76.8%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Ambos Equipos Marcan (BTTS) -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg mb-3">
+                <button onclick="toggleAcordeon('btts')" class="w-full p-4 flex justify-between items-center hover:bg-slate-800/60 transition">
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-base">🎯</span>
+                        <span class="font-bold text-white text-xs sm:text-sm">Ambos equipos marcan</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-slate-400 text-xs">
+                        <span>BTTS</span>
+                        <span class="text-sky-400">💎</span>
+                        <span id="arrow-btts" class="font-bold">▼</span>
+                    </div>
+                </button>
+                <div id="content-btts" class="hidden p-4 border-t border-slate-800 bg-slate-950 grid grid-cols-2 gap-3 text-center text-xs">
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                        <span class="text-[10px] text-slate-400 block mb-1">SÍ (BTTS)</span>
+                        <span class="font-black text-emerald-400 text-sm">52.4%</span>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                        <span class="text-[10px] text-slate-400 block mb-1">NO (BTTS)</span>
+                        <span class="font-black text-rose-400 text-sm">47.6%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Hándicap Asiático -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg mb-3">
+                <button onclick="toggleAcordeon('handicap')" class="w-full p-4 flex justify-between items-center hover:bg-slate-800/60 transition">
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-base">⚖️</span>
+                        <span class="font-bold text-white text-xs sm:text-sm">Hándicap asiático</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-slate-400 text-xs">
+                        <span>Elige la línea</span>
+                        <span class="text-sky-400">💎</span>
+                        <span id="arrow-handicap" class="font-bold">▼</span>
+                    </div>
+                </button>
+                <div id="content-handicap" class="hidden p-4 border-t border-slate-800 bg-slate-950 grid grid-cols-2 gap-3 text-center text-xs">
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                        <span class="text-[10px] text-slate-400 block mb-1">${partido.local} (-0.5)</span>
+                        <span class="font-black text-emerald-400">Cuota 1.95</span>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                        <span class="text-[10px] text-slate-400 block mb-1">${partido.visitante} (+0.5)</span>
+                        <span class="font-black text-sky-400">Cuota 1.85</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. Córners (+/- 5.5 a 11.5) -->
             <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg mb-3">
                 <button onclick="toggleAcordeon('corners')" class="w-full p-4 flex justify-between items-center hover:bg-slate-800/60 transition">
                     <div class="flex items-center gap-2.5">
@@ -317,13 +396,24 @@ async function inicializarPaginaPartido() {
                         <span id="arrow-corners" class="font-bold">▼</span>
                     </div>
                 </button>
-                <div id="content-corners" class="hidden p-4 border-t border-slate-800 bg-slate-950 text-center text-slate-400 text-xs">
-                    Estimaciones de saques de esquina basadas en el ritmo de juego de la temporada.
+                <div id="content-corners" class="hidden p-4 border-t border-slate-800 bg-slate-950 grid grid-cols-2 sm:grid-cols-3 gap-3 text-center text-xs">
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                        <span class="text-[10px] text-slate-400 block font-bold mb-1">MÁS DE 8.5 CÓRNERS</span>
+                        <span class="text-emerald-400 font-black text-xs">68.5%</span>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                        <span class="text-[10px] text-slate-400 block font-bold mb-1">MÁS DE 9.5 CÓRNERS</span>
+                        <span class="text-emerald-400 font-black text-xs">54.2%</span>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                        <span class="text-[10px] text-slate-400 block font-bold mb-1">MÁS DE 10.5 CÓRNERS</span>
+                        <span class="text-amber-400 font-black text-xs">38.0%</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- Acordeón Tarjetas -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg">
+            <!-- 6. Tarjetas (+/- 0.5 a 4.5) -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg mb-3">
                 <button onclick="toggleAcordeon('tarjetas')" class="w-full p-4 flex justify-between items-center hover:bg-slate-800/60 transition">
                     <div class="flex items-center gap-2.5">
                         <span class="text-base">🟨</span>
@@ -335,8 +425,51 @@ async function inicializarPaginaPartido() {
                         <span id="arrow-tarjetas" class="font-bold">▼</span>
                     </div>
                 </button>
-                <div id="content-tarjetas" class="hidden p-4 border-t border-slate-800 bg-slate-950 text-center text-slate-400 text-xs">
-                    Análisis de amonestaciones y perfil arbitral del encuentro.
+                <div id="content-tarjetas" class="hidden p-4 border-t border-slate-800 bg-slate-950 grid grid-cols-2 sm:grid-cols-3 gap-3 text-center text-xs">
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                        <span class="text-[10px] text-slate-400 block font-bold mb-1">MÁS DE 3.5 TARJETAS</span>
+                        <span class="text-emerald-400 font-black text-xs">61.0%</span>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                        <span class="text-[10px] text-slate-400 block font-bold mb-1">MÁS DE 4.5 TARJETAS</span>
+                        <span class="text-amber-400 font-black text-xs">42.5%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7. Paradas y Tiros -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg mb-3">
+                <button onclick="toggleAcordeon('paradas')" class="w-full p-4 flex justify-between items-center hover:bg-slate-800/60 transition">
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-base">🧤</span>
+                        <span class="font-bold text-white text-xs sm:text-sm">Paradas de portero y Tiros a puerta</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-slate-400 text-xs">
+                        <span>Estimación IA</span>
+                        <span class="text-sky-400">💎</span>
+                        <span id="arrow-paradas" class="font-bold">▼</span>
+                    </div>
+                </button>
+                <div id="content-paradas" class="hidden p-4 border-t border-slate-800 bg-slate-950 text-center text-slate-400 text-xs">
+                    Estimación de paradas clave y promedio de tiros a puerta de ambos guardametas.
+                </div>
+            </div>
+
+            <!-- 8. Mercados por Jugador -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg">
+                <button onclick="toggleAcordeon('jugadores')" class="w-full p-4 flex justify-between items-center hover:bg-slate-800/60 transition">
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-base">👤</span>
+                        <span class="font-bold text-white text-xs sm:text-sm">Mercados por jugador</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-slate-400 text-xs">
+                        <span>Tiros, tarjetas y faltas</span>
+                        <span class="text-sky-400">💎</span>
+                        <span id="arrow-jugadores" class="font-bold">▼</span>
+                    </div>
+                </button>
+                <div id="content-jugadores" class="hidden p-4 border-t border-slate-800 bg-slate-950 text-center text-slate-400 text-xs">
+                    Estadísticas individuales de disparos, asistencias y amonestaciones esperadas por jugador principal.
                 </div>
             </div>
         </div>
