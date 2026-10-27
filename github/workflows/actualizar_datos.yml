@@ -1,9 +1,9 @@
-name: Actualizar 23 Competiciones (Doble Respaldo)
+name: Actualizar Ligas con Doble Clave
 
 on:
   schedule:
-    - cron: '0 */6 * * *' # Se ejecuta automáticamente cada 6 horas
-  workflow_dispatch: # Permite lanzarlo manualmente desde la pestaña Actions
+    - cron: '0 */6 * * *' # Cada 6 horas
+  workflow_dispatch:
 
 jobs:
   sincronizar:
@@ -17,7 +17,7 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Ejecutar motor de descarga con The Odds API (Doble Clave)
+      - name: Descargar datos de The Odds API
         env:
           KEY_1: ${{ secrets.ODDS_API_KEY1 }}
           KEY_2: ${{ secrets.ODDS_API_KEY2 }}
@@ -26,13 +26,17 @@ jobs:
           const https = require("https");
           const fs = require("fs");
 
-          const keys = [process.env.KEY_1, process.env.KEY_2].filter(Boolean);
-          if (keys.length === 0) {
-            console.error("❌ No hay ninguna clave de The Odds API configurada en los Secrets.");
+          // Seleccionamos la clave según la quincena del mes (estrategia inteligente)
+          const diaActual = new Date().getDate();
+          const apiKeyActiva = (diaActual <= 15 ? process.env.KEY_1 : process.env.KEY_2) || process.env.KEY_1;
+
+          if (!apiKeyActiva) {
+            console.error("❌ No se encontró ninguna clave válida en los Secrets.");
             process.exit(1);
           }
 
-          // Catálogo de tus 23 competiciones
+          console.log(`🔑 Usando clave correspondiente a la quincena (Día ${diaActual})...`);
+
           const LIGAS_MAP = {
             "PD": "soccer_spain_la_liga",
             "SD": "soccer_spain_segunda_division",
@@ -59,73 +63,56 @@ jobs:
             "AUS": "soccer_australia_aleague"
           };
 
-          function peticionHTTPS(url, apiKey) {
-            return new Promise((resolve, reject) => {
+          function peticion(sportKey) {
+            return new Promise((resolve) => {
               const options = {
                 hostname: "api.the-odds-api.com",
-                path: url + `&apiKey=${apiKey}&regions=eu&markets=h2h,totals&oddsFormat=decimal`,
+                path: `/v4/sports/${sportKey}/odds?apiKey=${apiKeyActiva}&regions=eu&markets=h2h,totals&oddsFormat=decimal`,
                 method: "GET"
               };
 
-              const req = https.request(options, (res) => {
+              https.get(options, (res) => {
                 let data = "";
                 res.on("data", (chunk) => { data += chunk; });
                 res.on("end", () => {
                   if (res.statusCode === 200) {
-                    const remaining = res.headers["x-requests-remaining"] || null;
                     try {
-                      resolve({ json: JSON.parse(data), remaining });
+                      const json = JSON.parse(data);
+                      console.log(`✅ ${sportKey}: ${json.length} partidos encontrados.`);
+                      resolve(json);
                     } catch (e) {
-                      reject(new Error("Error al parsear JSON"));
+                      console.warn(`⚠️ Error parseando ${sportKey}`);
+                      resolve([]);
                     }
                   } else {
-                    reject({ status: res.statusCode });
+                    console.warn(`⚠️ ${sportKey} devolvió estado HTTP ${res.statusCode}`);
+                    resolve([]);
                   }
                 });
+              }).on("error", () => {
+                console.warn(`⚠️ Error de red en ${sportKey}`);
+                resolve([]);
               });
-
-              req.on("error", (err) => reject(err));
-              req.end();
             });
           }
 
-          async function descargarLigaConRespaldo(sportKey) {
-            for (let i = 0; i < keys.length; i++) {
-              try {
-                const resultado = await peticionHTTPS(`/v4/sports/${sportKey}/odds?`, keys[i]);
-                console.log(`✅ ${sportKey} descargado con éxito usando clave #${i + 1}`);
-                return resultado;
-              } catch (err) {
-                console.warn(`⚠️ Clave #${i + 1} falló para ${sportKey} (Código: ${err.status || err.message}). Probando siguiente clave...`);
-              }
-            }
-            console.warn(`❌ No se pudieron obtener datos activos para ${sportKey} con ninguna clave.`);
-            return { json: [], remaining: null };
-          }
-
-          async function iniciarProceso() {
+          async function run() {
             const resultadosLigas = {};
-            let ultimosRestantes = null;
-
             for (const [codigo, sportKey] of Object.entries(LIGAS_MAP)) {
-              const res = await descargarLigaConRespaldo(sportKey);
-              resultadosLigas[codigo] = res.json;
-              if (res.remaining) ultimosRestantes = res.remaining;
-              // Pausa breve para cuidar la tasa de peticiones por segundo
-              await new Promise(r => setTimeout(r, 400));
+              resultadosLigas[codigo] = await peticion(sportKey);
+              await new Promise(r => setTimeout(r, 300)); // Pausa breve para evitar bloqueo por velocidad
             }
 
-            const payloadFinal = {
+            const payload = {
               actualizacion: new Date().toISOString(),
-              restantes: ultimosRestantes,
               ligas: resultadosLigas
             };
 
-            fs.writeFileSync("datos-ligas.json", JSON.stringify(payloadFinal, null, 2));
-            console.log("📁 Archivo datos-ligas.json generado correctamente.");
+            fs.writeFileSync("datos-ligas.json", JSON.stringify(payload, null, 2));
+            console.log("📁 Archivo datos-ligas.json actualizado correctamente.");
           }
 
-          iniciarProceso();
+          run();
           '
 
       - name: Subir cambios al repositorio
@@ -133,4 +120,4 @@ jobs:
           git config --global user.name 'GitHub Actions Bot'
           git config --global user.email 'actions@github.com'
           git add datos-ligas.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Actualización automática de las 23 competiciones con doble clave" && git push)
+          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Actualización con doble clave por quincenas" && git push)
