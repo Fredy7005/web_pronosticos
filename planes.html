@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SportPredicts - Planes y Suscripciones</title>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center">
+
+<!-- Barra de Navegación Superior -->
+<header class="w-full bg-slate-900/85 backdrop-blur border-b border-slate-800 px-6 py-3.5 flex justify-between items-center sticky top-0 z-40">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
+<span class="text-xl">⚽</span>
+<span class="font-black tracking-tight text-emerald-400 text-base">SportPredicts</span>
+</div>
+<nav class="hidden md:flex items-center gap-4 text-xs font-semibold text-slate-300">
+<a href="index.html" class="hover:text-emerald-400 transition">Inicio</a>
+<a href="index.html#seccion-competiciones" class="hover:text-emerald-400 transition">Competiciones</a>
+<a href="calculadora.html" class="hover:text-emerald-400 transition">🧮 Calculadora</a>
+<a href="planes.html" class="text-emerald-400 transition">💎 Planes</a>
+</nav>
+</div>
+<div class="flex items-center gap-3">
+<div id="auth-user-container" class="flex items-center gap-2"></div>
+<span class="bg-slate-800 text-[10px] px-2.5 py-1 rounded-full text-slate-400 font-bold border border-slate-700">+18</span>
+</div>
+</header>
+
+<!-- Contenido Principal -->
+<main class="w-full max-w-6xl flex flex-col items-center gap-8 p-4 sm:p-8 my-6">
+
+<div class="text-center max-w-xl flex flex-col gap-3">
+<span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Suscripciones SportPredicts V5</span>
+<h1 class="text-3xl sm:text-4xl font-black tracking-tight text-white">Elige el plan perfecto para ti</h1>
+<p class="text-xs sm:text-sm text-slate-400">Desbloquea todo el potencial del motor analítico, cuotas justas y cálculo de valor esperado (EV) sin límites.</p>
+</div>
+
+<!-- Grid de Planes -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full mt-4">
+
+<!-- 1. Plan Gratuito -->
+<div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between gap-6 relative group hover:border-slate-700 transition">
+<div class="flex flex-col gap-4">
+<div class="flex justify-between items-center">
+<span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Gratuito</span>
+<span class="text-lg">🌱</span>
+</div>
+<div>
+<h3 class="text-2xl font-black text-white">0 €</h3>
+<p class="text-[11px] text-slate-400 mt-1">Por iniciar sesión con cuenta</p>
+</div>
+<ul class="flex flex-col gap-2.5 text-xs text-slate-300 pt-2 border-t border-slate-800/80">
+<li class="flex items-center gap-2">✓ Acceso básico a 3 ligas</li>
+<li class="flex items-center gap-2">✓ Probabilidades modelo V5</li>
+<li class="flex items-center gap-2 text-slate-500">✕ Calculadora avanzada</li>
+</ul>
+</div>
+<button onclick="alert('Inicia sesión en la plataforma para activar tu plan gratuito.')" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs py-3 rounded-xl transition">Plan Activo</button>
+</div>
+
+<!-- 2. Plan Mensual -->
+<div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between gap-6 relative group hover:border-emerald-500/50 transition">
+<div class="flex flex-col gap-4">
+<div class="flex justify-between items-center">
+<span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Mensual</span>
+<span class="text-lg">⚡</span>
+</div>
+<div>
+<h3 class="text-2xl font-black text-white">14.99 €</h3>
+<p class="text-[11px] text-slate-400 mt-1">Facturación mensual</p>
+</div>
+<ul class="flex flex-col gap-2.5 text-xs text-slate-300 pt-2 border-t border-slate-800/80">
+<li class="flex items-center gap-2">✓ Acceso total a las 23 ligas</li>
+<li class="flex items-center gap-2">✓ Calculadora de cuotas y EV+</li>
+<li class="flex items-center gap-2">✓ Sincronización en tiempo real</li>
+</ul>
+</div>
+<button onclick="alert('Redirigiendo a pasarela de pago segura...')" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-3 rounded-xl transition shadow-lg shadow-emerald-900/30">Seleccionar Mensual</button>
+</div>
+
+<!-- 3. Plan Trimestral -->
+<div class="bg-slate-900/90 border border-emerald-500/60 rounded-2xl p-6 flex flex-col justify-between gap-6 relative group shadow-xl shadow-emerald-950/40">
+<div class="absolute -top-3 right-4 bg-emerald-500 text-slate-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">Ahorra 20%</div>
+<div class="flex flex-col gap-4">
+<div class="flex justify-between items-center">
+<span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Trimestral</span>
+<span class="text-lg">🔥</span>
+</div>
+<div>
+<h3 class="text-2xl font-black text-white">35.99 €</h3>
+<p class="text-[11px] text-slate-400 mt-1">11.99 € / mes (cada 3 meses)</p>
+</div>
+<ul class="flex flex-col gap-2.5 text-xs text-slate-300 pt-2 border-t border-slate-800/80">
+<li class="flex items-center gap-2">✓ Todo lo del plan mensual</li>
+<li class="flex items-center gap-2">✓ Soporte VIP prioritario</li>
+<li class="flex items-center gap-2">✓ Alertas de valor (EV)</li>
+</ul>
+</div>
+<button onclick="alert('Redirigiendo a pasarela de pago segura...')" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-3 rounded-xl transition shadow-lg shadow-emerald-900/30">Seleccionar Trimestral</button>
+</div>
+
+<!-- 4. Plan Anual -->
+<div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between gap-6 relative group hover:border-emerald-500/50 transition">
+<div class="absolute -top-3 right-4 bg-amber-500 text-slate-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">Más Popular</div>
+<div class="flex flex-col gap-4">
+<div class="flex justify-between items-center">
+<span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Anual</span>
+<span class="text-lg">👑</span>
+</div>
+<div>
+<h3 class="text-2xl font-black text-white">99.99 €</h3>
+<p class="text-[11px] text-slate-400 mt-1">8.33 € / mes (pago único anual)</p>
+</div>
+<ul class="flex flex-col gap-2.5 text-xs text-slate-300 pt-2 border-t border-slate-800/80">
+<li class="flex items-center gap-2">✓ Acceso ilimitado por 1 año</li>
+<li class="flex items-center gap-2">✓ Máxima prioridad en el motor V5</li>
+<li class="flex items-center gap-2">✓ Ahorro del 40% anual</li>
+</ul>
+</div>
+<button onclick="alert('Redirigiendo a pasarela de pago segura...')" class="w-full bg-gradient-to-r from-amber-500 to-emerald-600 hover:opacity-90 text-white font-bold text-xs py-3 rounded-xl transition shadow-lg shadow-amber-900/20">Seleccionar Anual</button>
+</div>
+
+</div>
+
+</main>
+
+<footer class="w-full max-w-6xl text-center py-6 text-[11px] text-slate-500 border-t border-slate-900 mt-auto">
+SportPredicts V5 — Todos los derechos reservados.
+</footer>
+
+<script src="app.js?v=22"></script>
+</body>
+</html>
