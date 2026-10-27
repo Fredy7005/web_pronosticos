@@ -8,6 +8,8 @@ on:
 jobs:
   sincronizar:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Clonar repositorio
         uses: actions/checkout@v4
