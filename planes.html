@@ -13,7 +13,6 @@
 
 <!-- ================= CABECERA UNIFICADA (PC Y MÓVIL) ================= -->
 <header class="w-full bg-slate-950/95 backdrop-blur-md border-b border-slate-800/80 px-4 lg:px-6 py-2.5 flex justify-between items-center sticky top-0 z-50">
-    
     <div class="flex items-center gap-3">
         <button onclick="toggleMenuMovil()" class="lg:hidden text-slate-300 hover:text-emerald-400 text-xl p-1.5 rounded-lg bg-slate-900 border border-slate-800 focus:outline-none transition">
             ☰
@@ -37,7 +36,11 @@
         <a href="competiciones.html" data-nav="competiciones.html" class="nav-item px-3 py-2 rounded-xl hover:bg-slate-900 hover:text-emerald-400 transition flex items-center gap-1.5">
             <span>🏆</span> Competiciones
         </a>
-        <a href="partidos.html?liga=PD&historial=true" data-nav="partidos.html" class="nav-item px-3 py-2 rounded-xl hover:bg-slate-900 hover:text-emerald-400 transition flex items-center gap-1.5">
+        <!-- Botón Global por Hora -->
+        <a href="#" onclick="abrirModalPartidosGlobales(); return false;" class="nav-item px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-emerald-400 font-bold transition flex items-center gap-1.5 border border-emerald-500/30">
+            <span>⏰</span> Partidos por Hora
+        </a>
+        <a href="index.html?liga=PD&historial=true" data-nav="partidos.html" class="nav-item px-3 py-2 rounded-xl hover:bg-slate-900 hover:text-emerald-400 transition flex items-center gap-1.5">
             <span>📜</span> Historial
         </a>
         <a href="calculadora.html" data-nav="calculadora.html" class="nav-item px-3.5 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 font-bold transition flex items-center gap-1.5 mx-1">
@@ -54,7 +57,6 @@
         </div>
         <span class="bg-slate-900 text-[10px] px-2.5 py-1 rounded-full text-slate-400 font-bold border border-slate-800">+18</span>
     </div>
-
 </header>
 
 <!-- ================= MENÚ DESPLEGABLE MÓVIL ================= -->
@@ -65,10 +67,13 @@
     <a href="competiciones.html" data-nav="competiciones.html" class="nav-item-movil py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5">
         <span class="text-base">🏆</span> Competiciones
     </a>
+    <a href="#" onclick="abrirModalPartidosGlobales(); toggleMenuMovil(); return false;" class="nav-item-movil py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5 text-emerald-400 font-bold">
+        <span class="text-base">⏰</span> Partidos por Hora
+    </a>
     <a href="calculadora.html" data-nav="calculadora.html" class="nav-item-movil py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5 text-amber-300 font-bold">
         <span class="text-base">🧮</span> Calculadora de Cuotas & EV
     </a>
-    <a href="partidos.html?liga=PD&historial=true" data-nav="partidos.html" class="nav-item-movil py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5">
+    <a href="index.html?liga=PD&historial=true" data-nav="partidos.html" class="nav-item-movil py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5">
         <span class="text-base">📜</span> Historial
     </a>
     <a href="planes.html" data-nav="planes.html" class="nav-item-movil py-2.5 px-3 rounded-xl hover:bg-slate-800/70 transition flex items-center gap-2.5 text-emerald-400 font-bold">
@@ -81,106 +86,47 @@
     </div>
 </div>
 
-<!-- Contenido Principal -->
-<main class="w-full max-w-6xl flex flex-col items-center gap-8 p-4 sm:p-8 my-6">
-
-    <div class="text-center max-w-xl flex flex-col gap-3">
-        <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Suscripciones SportPredicts V5</span>
-        <h1 class="text-2xl sm:text-4xl font-black tracking-tight text-white">Elige el plan perfecto para ti</h1>
-        <p class="text-xs sm:text-sm text-slate-400">Desbloquea todo el potencial del motor analítico, cuotas justas y cálculo de valor esperado (EV) sin límites.</p>
+<!-- Contenido Principal de Planes -->
+<main class="w-full max-w-4xl flex flex-col gap-6 p-3 sm:p-6 my-8">
+    <div class="text-center flex flex-col gap-2">
+        <h1 class="text-2xl sm:text-3xl font-black text-white">💎 Elige tu Plan en SportPredicts</h1>
+        <p class="text-xs sm:text-sm text-slate-400">Desbloquea todo el potencial de la Inteligencia Artificial y las cuotas con Valor Esperado (EV+).</p>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full mt-2">
-
-        <!-- 1. Plan Gratuito -->
-        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between gap-6 relative group hover:border-slate-700 transition">
-            <div class="flex flex-col gap-4">
-                <div class="flex justify-between items-center">
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Gratuito</span>
-                    <span class="text-lg">🌱</span>
-                </div>
-                <div>
-                    <h3 class="text-2xl font-black text-white">0 €</h3>
-                    <p class="text-[11px] text-slate-400 mt-1">Por iniciar sesión con cuenta</p>
-                </div>
-                <ul class="flex flex-col gap-2.5 text-xs text-slate-300 pt-2 border-t border-slate-800/80">
-                    <li class="flex items-center gap-2">✓ Acceso básico a 3 ligas</li>
-                    <li class="flex items-center gap-2">✓ Probabilidades modelo V5</li>
-                    <li class="flex items-center gap-2 text-slate-500">✕ Calculadora avanzada</li>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+        <!-- Plan Gratuito -->
+        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between gap-6 shadow-xl">
+            <div class="flex flex-col gap-3">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Plan Estándar</span>
+                <div class="text-2xl font-black text-white">Gratis</div>
+                <p class="text-xs text-slate-400">Acceso básico a los pronósticos de las principales ligas y cálculo manual en la calculadora.</p>
+                <ul class="text-xs text-slate-300 space-y-2 mt-2">
+                    <li>✓ Acceso a pronósticos 1X2</li>
+                    <li>✓ Simulador de stake básico</li>
+                    <li>✓ Listado global por hora</li>
                 </ul>
             </div>
-            <button onclick="abrirSpAuthModal(true)" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs py-3 rounded-xl transition">Plan Activo</button>
+            <a href="index.html" class="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs py-3 rounded-xl text-center transition">Tu Plan Actual</a>
         </div>
 
-        <!-- 2. Plan Mensual -->
-        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between gap-6 relative group hover:border-emerald-500/50 transition">
-            <div class="flex flex-col gap-4">
-                <div class="flex justify-between items-center">
-                    <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Mensual</span>
-                    <span class="text-lg">⚡</span>
-                </div>
-                <div>
-                    <h3 class="text-2xl font-black text-white">14.99 €</h3>
-                    <p class="text-[11px] text-slate-400 mt-1">Facturación mensual</p>
-                </div>
-                <ul class="flex flex-col gap-2.5 text-xs text-slate-300 pt-2 border-t border-slate-800/80">
-                    <li class="flex items-center gap-2">✓ Acceso total a las 23 ligas</li>
-                    <li class="flex items-center gap-2">✓ Calculadora de cuotas y EV+</li>
-                    <li class="flex items-center gap-2">✓ Sincronización en tiempo real</li>
+        <!-- Plan Premium -->
+        <div class="bg-slate-900 border border-emerald-500/50 rounded-2xl p-6 flex flex-col justify-between gap-6 shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 bg-emerald-500 text-slate-950 text-[10px] font-black px-3 py-1 rounded-bl-xl uppercase tracking-wider">Popular</div>
+            <div class="flex flex-col gap-3">
+                <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Plan Premium V5</span>
+                <div class="text-2xl font-black text-white">19.99 € <span class="text-xs text-slate-400 font-normal">/ mes</span></div>
+                <p class="text-xs text-slate-400">Para apostadores profesionales que buscan maximizar el rendimiento con algoritmos de valor esperado.</p>
+                <ul class="text-xs text-slate-300 space-y-2 mt-2">
+                    <li>✓ Oportunidades EV+ ilimitadas</li>
+                    <li>✓ Alertas automáticas de valor</li>
+                    <li>✓ Acceso prioritario a las 23 ligas</li>
+                    <li>✓ Historial avanzado de aciertos</li>
                 </ul>
             </div>
-            <button onclick="alert('Redirigiendo a pasarela de pago segura...')" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-3 rounded-xl transition shadow-lg shadow-emerald-900/30">Seleccionar Mensual</button>
+            <button onclick="alert('Sistema de pagos integrado próximamente en SportPredicts V5.')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-3 rounded-xl text-center transition shadow-lg shadow-emerald-950/50">Obtener Premium</button>
         </div>
-
-        <!-- 3. Plan Trimestral -->
-        <div class="bg-slate-900/90 border border-emerald-500/60 rounded-2xl p-6 flex flex-col justify-between gap-6 relative group shadow-xl shadow-emerald-950/40">
-            <div class="absolute -top-3 right-4 bg-emerald-500 text-slate-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">Ahorra 20%</div>
-            <div class="flex flex-col gap-4">
-                <div class="flex justify-between items-center">
-                    <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Trimestral</span>
-                    <span class="text-lg">🔥</span>
-                </div>
-                <div>
-                    <h3 class="text-2xl font-black text-white">35.99 €</h3>
-                    <p class="text-[11px] text-slate-400 mt-1">11.99 € / mes (cada 3 meses)</p>
-                </div>
-                <ul class="flex flex-col gap-2.5 text-xs text-slate-300 pt-2 border-t border-slate-800/80">
-                    <li class="flex items-center gap-2">✓ Todo lo del plan mensual</li>
-                    <li class="flex items-center gap-2">✓ Soporte VIP prioritario</li>
-                    <li class="flex items-center gap-2">✓ Alertas de valor (EV)</li>
-                </ul>
-            </div>
-            <button onclick="alert('Redirigiendo a pasarela de pago segura...')" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-3 rounded-xl transition shadow-lg shadow-emerald-900/30">Seleccionar Trimestral</button>
-        </div>
-
-        <!-- 4. Plan Anual -->
-        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between gap-6 relative group hover:border-emerald-500/50 transition">
-            <div class="absolute -top-3 right-4 bg-amber-500 text-slate-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">Más Popular</div>
-            <div class="flex flex-col gap-4">
-                <div class="flex justify-between items-center">
-                    <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Anual</span>
-                    <span class="text-lg">👑</span>
-                </div>
-                <div>
-                    <h3 class="text-2xl font-black text-white">99.99 €</h3>
-                    <p class="text-[11px] text-slate-400 mt-1">8.33 € / mes (pago único anual)</p>
-                </div>
-                <ul class="flex flex-col gap-2.5 text-xs text-slate-300 pt-2 border-t border-slate-800/80">
-                    <li class="flex items-center gap-2">✓ Acceso ilimitado por 1 año</li>
-                    <li class="flex items-center gap-2">✓ Máxima prioridad en el motor V5</li>
-                    <li class="flex items-center gap-2">✓ Ahorro del 40% anual</li>
-                </ul>
-            </div>
-            <button onclick="alert('Redirigiendo a pasarela de pago segura...')" class="w-full bg-gradient-to-r from-amber-500 to-emerald-600 hover:opacity-90 text-white font-bold text-xs py-3 rounded-xl transition shadow-lg shadow-amber-900/20">Seleccionar Anual</button>
-        </div>
-
     </div>
-
 </main>
-
-<footer class="w-full max-w-6xl text-center py-6 text-[11px] text-slate-500 border-t border-slate-900 mt-auto">
-    SportPredicts V5 — Todos los derechos reservados.
-</footer>
 
 <!-- Modal Universal de Autenticación -->
 <div id="sp-auth-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex justify-center items-center p-4">
@@ -203,7 +149,7 @@
     </div>
 </div>
 
-<script src="app.js?v=36"></script>
+<script src="app.js?v=38"></script>
 <script>
 function toggleMenuMovil() {
     const menu = document.getElementById('menu-movil');
